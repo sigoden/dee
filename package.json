@@ -1,8 +1,11 @@
 {
   "name": "@sigoden/swag",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Swag 开发框架",
   "main": "./src/index.js",
+  "publishConfig": {
+    "registry": "https://npm.sigoden.com"
+  },
   "directories": {
     "example": "examples",
     "test": "test"
