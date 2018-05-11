@@ -21,6 +21,24 @@ describe('Swag', function() {
         });
     });
   });
+  test('async handler', function(done) {
+    Swag({
+      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+      controllers: {
+        hello: require('../fixtures/controllers/hello-promisified')
+      },
+    }, function(err, swag) {
+      expect(err).toBeNull();
+      request(swag.express)
+        .get('/hello?name=tome')
+        .expect(200)
+        .end(function(err, res) {
+          expect(err).toBeNull();
+          expect(res.body).toBe('tome');
+          done();
+        });
+    });
+  });
   test('full options', function(done) {
     var beforeRouteMid = jest.fn(function(req, res, next) { next(); });
     var afterRouteMid = jest.fn(function(req, res, next) { next(); });
@@ -108,7 +126,7 @@ describe('Swag', function() {
       });
     });
     test('options.swaggerFile is not valid', function(done) {
-      Swag({ swaggerFile: '404' }, function(err) {
+      Swag({ swaggerFile: '404', controllers: {} }, function(err) {
         expect(err.message).toMatch('ENOENT: no such file or directory');
         done();
       });
@@ -138,6 +156,24 @@ describe('Swag', function() {
           expect(err.message).toBe('service.srv has error, srv wrong');
           done();
         });
+      });
+    });
+    test('options.controllers is not object', function(done) {
+      Swag({ controllers: [] }, function(err) {
+        expect(err.message).toBe('options.controllers must be an object');
+        done();
+      });
+    });
+    test('options.controllers item value is not function', function(done) {
+      Swag({ controllers: { operationId: {} }}, function(err) {
+        expect(err.message).toBe('options.controllers.operationId value must be a function');
+        done();
+      });
+    });
+    test('options.errorHandler is not function', function(done) {
+      Swag({ errorHandler: {}, controllers: {} }, function(err) {
+        expect(err.message).toBe('options.errorHandler values must be a function');
+        done();
       });
     });
     test('options.beforeRoute is not a function or function array', function(done) {

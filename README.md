@@ -4,6 +4,7 @@
 
 - 使用 swagger 注册路由，解析并校验请求，提供 mock 服务，提高开发效率。
 - 通过配置实例化服务，自动注册到路由处理函数的上下文中，省心。 
+- 路由函数可以支持 async。
 
 ## 入门
 
@@ -18,8 +19,7 @@ Swag({
   },
   // swagger 文件路径，格式可以是 yaml 或 json
   swaggerFile: path.resolve(__dirname, './swagger.yaml'),
-  // 控制器函数，可以是一个对象，其每个属性对应一个接口操作，可以是字符串（用于引用对象模块）。
-  // 也可以是字符串数组，其每个元素都执行一个控制器模块。　
+  // 控制器函数，可以是一个对象，其每个属性对应一个接口操作。
   controllers: require('./controllers'),
   // 在路由控制函数之前的中间件，可以是一个函数，传入一个 app 用于注册中间件。也可以是一个中间件函数组成的数组。
   beforeRoute: funtion(app) {
@@ -116,7 +116,17 @@ controllers.js
 funtion hello(req, res, next) {
   req.swagger.params
   req.srvs
-  res.json({})
+  res.end('')
+}
+// async
+
+async funtion hello(req, res, next) {
+  return new Promise(funtion(resolve, reject) {
+    req.swagger.params
+    req.srvs
+    res.end('')
+    resolve(next());
+  });
 }
 ```
 

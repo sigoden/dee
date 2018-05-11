@@ -1,6 +1,6 @@
 {
   "name": "@sigoden/swag",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Swag 开发框架",
   "main": "./src/index.js",
   "publishConfig": {
@@ -11,8 +11,8 @@
     "test": "test"
   },
   "scripts": {
-    "test": "RUNNING_SWAGGER_TOOLS_TESTS=true jest --coverage --testPathIgnorePatterns services",
-    "test:srvs": "jest --coverage --testPathPattern services",
+    "test": "RUNNING_SWAGGER_TOOLS_TESTS=true jest --testPathIgnorePatterns services --coverage",
+    "test:srvs": "jest --testPathPattern services --coverage",
     "pretest:srvs": "docker-compose up -d",
     "posttest:srvs": "docker-compose down"
   },
@@ -43,6 +43,9 @@
   "files": [
     "src"
   ],
+  "engines": {
+    "node": ">=4"
+  },
   "jest": {
     "coverageDirectory": "../coverage",
     "coveragePathIgnorePatterns": [

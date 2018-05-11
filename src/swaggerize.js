@@ -2,7 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var yaml = require('js-yaml');
 var _ = require('lodash');
-var swaggerTools = require('swagger-tools');
+var swaggerTools = require('@sigoden/swagger-tools');
 
 function swaggerize(app, options, cb) {
   let swaggerFile = _.get(options, 'swaggerFile', 'swagger.yaml');

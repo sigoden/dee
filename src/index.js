@@ -4,7 +4,7 @@ var asy = require('async');
 var swaggerize = require('./swaggerize');
 
 function Swag(options, cb) {
-  var app = express()
+  var app = express();
   if (!_.isPlainObject(options)) return cb(new Error('options must be an object'));
   if (!_.isPlainObject(options.config || {})) return cb(new Error('options.config must be an object'));
   if (!_.isPlainObject(options.services || {})) return cb(new Error('options.services must be an object'));
@@ -22,6 +22,31 @@ function Swag(options, cb) {
     } catch (err) {
       return cb(new Error('options.beforeRoute is not valid, ' + err.message));
     }
+
+    if (!_.isPlainObject(options.controllers)) return cb(new Error('options.controllers must be an object'));
+    var invalidControllers = []
+    _.keys(options.controllers).forEach(function (operationId) {
+      var func = options.controllers[operationId];
+      if (!_.isFunction(func)) {
+        invalidControllers.push(operationId);
+      }
+      options.controllers[operationId] = function(req, res, next) {
+        if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
+          func(req, res, next);
+        } else {
+          func(req, res, next).then(next).catch(next);
+        }
+      };
+    });
+    if (invalidControllers.length > 0) {
+      return cb(new Error('options.controllers.' + invalidControllers.join(',') + ' value must be a function'));
+    }
+
+    var errorHandler = _.get(options, 'errorHandler');
+    if (errorHandler && !_.isFunction(errorHandler)) {
+      return cb(new Error('options.errorHandler values must be a function'));
+    }
+
     swaggerize(app, options, function(err) {
       if (err) return cb(err);
       try {
@@ -30,8 +55,9 @@ function Swag(options, cb) {
         return cb(new Error('options.afterRoute is not valid, ' + err.message));
       }
 
-      var errorHandlerFunc = _.get(options, 'errorHandler');
-      if (_.isFunction(errorHandlerFunc)) app.use(errorHandlerFunc);
+      if (errorHandler) {
+        app.use(errorHandler);
+      }
 
       var instance = {
         srvs: srvs,
