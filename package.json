@@ -16,7 +16,10 @@
     "pretest:srvs": "docker-compose up -d",
     "posttest:srvs": "docker-compose down"
   },
-  "keywords": ["swagger", "express"],
+  "keywords": [
+    "swagger",
+    "express"
+  ],
   "author": "sigoden huang <sigoden@gmail.com> (https://sigoden.com)",
   "homepage": "https://github.com/sigoden/swag",
   "license": "MIT",
@@ -25,8 +28,8 @@
     "url": "git+https://github.com/sigoden/swag.git"
   },
   "dependencies": {
-    "express": "^4.16.3",
-    "swagger-tools": "^0.10.3"
+    "@sigoden/swagger-tools": "^0.10.4",
+    "express": "^4.16.3"
   },
   "devDependencies": {
     "ioredis": "^3.2.2",
