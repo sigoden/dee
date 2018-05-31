@@ -6,15 +6,12 @@ var swaggerize = require('./swaggerize');
 function Swag(options, cb) {
   var app = express();
   if (!_.isPlainObject(options)) return cb(new Error('options must be an object'));
-  if (!_.isPlainObject(options.config || {})) return cb(new Error('options.config must be an object'));
+  if (!_.isPlainObject(options.config || {name: 'SwagApp'})) return cb(new Error('options.config must be an object'));
   if (!_.isPlainObject(options.services || {})) return cb(new Error('options.services must be an object'));
   createSrvs(options.config, options.services, function(err, srvs) {
     if (err) return cb(err);
     app.use(function(req, res, next) {
-      req.swag = {
-        srvs: srvs,
-        config: options.config
-      }
+      req.swag = { srvs: srvs }
       next();
     });
     try {
@@ -25,16 +22,21 @@ function Swag(options, cb) {
 
     if (!_.isPlainObject(options.controllers)) return cb(new Error('options.controllers must be an object'));
     var invalidControllers = []
-    _.keys(options.controllers).forEach(function (operationId) {
-      var func = options.controllers[operationId];
+    var controllers = options.controllers;
+    _.keys(controllers).forEach(function(operationId) {
+      var func = controllers[operationId];
       if (!_.isFunction(func)) {
         invalidControllers.push(operationId);
       }
-      options.controllers[operationId] = function(req, res, next) {
+      controllers[operationId] = function(req, res, next) {
         if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
           func(req, res, next);
         } else {
-          func(req, res, next).then(next).catch(next);
+          func(req, res)
+            .then(function(v) {
+              next(null, v);
+            })
+            .catch(next);
         }
       };
     });
@@ -61,8 +63,7 @@ function Swag(options, cb) {
 
       var instance = {
         srvs: srvs,
-        controllers: options.controllers,
-        config: options.config,
+        controllers: controllers,
         express: app
       };
       instance.start = function() {
@@ -83,13 +84,15 @@ function Swag(options, cb) {
 }
 
 function createSrvs(config, servicesOpts, cb) {
-  var srvsObj = {}
+  var srvsObj = { '$config': config };
   var getService = function(path) {
     return _.get(srvsObj, path);
   };
   var createSrv = function(srvName, cb) {
     var srvOpts = servicesOpts[srvName];
     if (!_.isPlainObject(srvOpts)) return cb(new Error('service.' + srvName + ' must be an object'));
+    // export srvs to each srv
+    srvOpts.srvs = srvsObj;
     var srvConstructor;
     if (_.isFunction(srvOpts.constructor)) {
       srvConstructor = srvOpts.constructor;

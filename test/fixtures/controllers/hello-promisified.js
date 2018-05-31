@@ -1,15 +1,7 @@
-async function hello(req, res, next) {
+async function hello(req, res) {
   var name = req.swagger.params.name.value || 'stranger';
-  return wrap(name).then(function(v) {
-    res.json(name);
-    next();
-  });
-}
-
-async function wrap(v) {
-  return new Promise(function(resolve) {
-    resolve(v);
-  });
+  res.json(name);
+  return Promise.resolve(name)
 }
 
 module.exports = hello;

@@ -60,7 +60,7 @@ describe('Swag', function() {
           expect(req.swagger.params).toBeDefined()
           expect(req.swag.srvs).toBeDefined();
           expect(req.swag.srvs.srv).toBeDefined();
-          expect(req.swag.config).toEqual(config);
+          expect(req.swag.srvs.$config).toEqual(config);
           controllerFunc();
           res.end();
           next();

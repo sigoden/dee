@@ -12,6 +12,7 @@ index.js
 ``` js
 Swag({
   config: {
+    name: 'MyApp',
     host: 'localhost',
     port: 3000,
     // 是否是生产环境
@@ -19,7 +20,7 @@ Swag({
   },
   // swagger 文件路径，格式可以是 yaml 或 json
   swaggerFile: path.resolve(__dirname, './swagger.yaml'),
-  // 控制器函数，可以是一个对象，其每个属性对应一个接口操作。
+  // 控制器函数，是一个对象，其每个属性对应一个接口操作。
   controllers: require('./controllers'),
   // 在路由控制函数之前的中间件，可以是一个函数，传入一个 app 用于注册中间件。也可以是一个中间件函数组成的数组。
   beforeRoute: funtion(app) {
