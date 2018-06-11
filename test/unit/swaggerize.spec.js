@@ -39,43 +39,16 @@ describe('swaggerize', function() {
         done();
       });
     });
-    test('controllers is not valid', function(done) {
-      var app = require('express')();
-      var options = {
-        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-        controllers: function() {}
-      };
-      swaggerize(app, options, function(err) {
-        expect(err.message).toMatch('initializeMiddleware throw');
-        done();
-      });
-    });
   });
   test('valid options', function(done) {
     var app = require('express')();
-    app.use = jest.fn();
     var options = {
       swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: { hello:  function() {} }
+      handlers: { hello:  function() {} }
     };
     swaggerize(app, options, function(err) {
       expect(err).toBeNull();
-      expect(app.use).toHaveBeenCalledTimes(5);
       done();
     });
-  })
-  test('prod mode', function(done) {
-    var app = require('express')();
-    app.use = jest.fn();
-    var options = {
-      config: { prod: true },
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: { hello:  function() {} }
-    };
-    swaggerize(app, options, function(err) {
-      expect(err).toBeNull();
-      expect(app.use).toHaveBeenCalledTimes(4);
-      done();
-    });
-  })
+  });
 });

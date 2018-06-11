@@ -10,6 +10,7 @@ describe('sequelize', function() {
         password: 'mysql',
         options: {
           dialect: 'mysql',
+          port: 3406,
           operatorsAliases: false,
           logging: false
         }
@@ -42,6 +43,7 @@ describe('sequelize', function() {
         username: 'root',
         password: 'doknow',
         options: {
+          port: 3406,
           dialect: 'mysql',
           operatorsAliases: false,
           logging: false

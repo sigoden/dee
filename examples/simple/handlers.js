@@ -1,6 +1,6 @@
 
 function hello (req, res, next) {
-  var name = req.swagger.params.name.value || 'stranger';
+  var name = req.params.name || 'stranger';
   res.json(name);
 }
 

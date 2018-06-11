@@ -1,34 +1,33 @@
 {
-  "name": "@sigoden/swag",
-  "version": "0.1.2",
-  "description": "Swag 开发框架",
+  "name": "@sigodenh/dee",
+  "version": "0.2.0",
+  "description": "Dee 框架",
   "main": "./src/index.js",
-  "publishConfig": {
-    "registry": "https://npm.sigoden.com"
-  },
   "directories": {
     "example": "examples",
     "test": "test"
   },
   "scripts": {
-    "test": "RUNNING_SWAGGER_TOOLS_TESTS=true jest --testPathIgnorePatterns services --coverage",
+    "test": "jest --testPathIgnorePatterns services --coverage",
     "test:srvs": "jest --testPathPattern services --coverage",
     "pretest:srvs": "docker-compose up -d",
     "posttest:srvs": "docker-compose down"
   },
   "keywords": [
+    "dee",
+    "ddd",
     "swagger",
     "express"
   ],
   "author": "sigoden huang <sigoden@gmail.com> (https://sigoden.com)",
-  "homepage": "https://github.com/sigoden/swag",
+  "homepage": "https://github.com/sigoden/dee",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sigoden/swag.git"
+    "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigoden/swagger-tools": "^0.10.4",
+    "@sigodenh/dee-swaggerize": "^0.1.2",
     "express": "^4.16.3"
   },
   "devDependencies": {

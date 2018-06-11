@@ -1,17 +1,19 @@
-var Swag = require('../../src');
+var Dee = require('../../src');
 var request = require('supertest');
 var path = require('path');
 
-describe('Swag', function() {
+describe('Dee', function() {
   test('minimal options', function(done) {
-    Swag({
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: {
-        hello: require('../fixtures/controllers/hello')
-      },
-    }, function(err, swag) {
+    Dee({
+      swaggerize: {
+        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+        handlers: {
+          hello: require('../fixtures/handlers/hello')
+        },
+      }
+    }, function(err, dee) {
       expect(err).toBeNull();
-      request(swag.express)
+      request(dee.express)
         .get('/hello?name=tome')
         .expect(200)
         .end(function(err, res) {
@@ -22,14 +24,16 @@ describe('Swag', function() {
     });
   });
   test('async handler', function(done) {
-    Swag({
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: {
-        hello: require('../fixtures/controllers/hello-promisified')
-      },
-    }, function(err, swag) {
+    Dee({
+      swaggerize: {
+        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+        handlers: {
+          hello: require('../fixtures/handlers/hello-promisified')
+        },
+      }
+    }, function(err, dee) {
       expect(err).toBeNull();
-      request(swag.express)
+      request(dee.express)
         .get('/hello?name=tome')
         .expect(200)
         .end(function(err, res) {
@@ -49,22 +53,22 @@ describe('Swag', function() {
       port: 13000,
       prod: false
     };
-    var controllerFunc = jest.fn();
+    var handlerFunc = jest.fn();
     var srv = {};
-    Swag({
+    Dee({
       config: config,
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: {
-        hello: function(req, res, next) {
-          expect(req.swagger).toBeDefined()
-          expect(req.swagger.params).toBeDefined()
-          expect(req.swag.srvs).toBeDefined();
-          expect(req.swag.srvs.srv).toBeDefined();
-          expect(req.swag.srvs.$config).toEqual(config);
-          controllerFunc();
-          res.end();
-          next();
-        }
+      swaggerize: {
+        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+        handlers: {
+          hello: function(req, res, next) {
+            expect(req.dee.srvs).toBeDefined();
+            expect(req.dee.srvs.srv).toBeDefined();
+            expect(req.dee.srvs.$config).toEqual(config);
+            handlerFunc();
+            res.end();
+            next();
+          }
+        },
       },
       beforeRoute: function(app) {
         app.use(beforeRouteMid);
@@ -77,10 +81,10 @@ describe('Swag', function() {
           constructor: jest.fn(function(opts, callback) { callback(null, srv); })
         }
       }
-    }, function(err, swag) {
+    }, function(err, dee) {
       expect(err).toBeNull();
-      expect(ready).toHaveBeenCalledWith(swag);
-      request(swag.express)
+      expect(ready).toHaveBeenCalledWith(dee);
+      request(dee.express)
         .get('/hello')
         .expect(200)
         .end(function(err, res) {
@@ -89,10 +93,10 @@ describe('Swag', function() {
           expect(beforeRouteMid).toHaveBeenCalledTimes(1);
           expect(afterRouteMid).toHaveBeenCalledTimes(1);
           expect(errorHandler).toHaveBeenCalledTimes(0);
-          controllerFunc.mockImplementation(function() {
+          handlerFunc.mockImplementation(function() {
             throw new Error('ops, something wrong');
           });
-          request(swag.express)
+          request(dee.express)
             .get('/hello')
             .expect(200)
             .end(function(err, res) {
@@ -108,85 +112,93 @@ describe('Swag', function() {
   });
   describe('wrong options', function() {
     test('options is not an object', function(done) {
-      Swag('', function(err) {
+      Dee('', function(err) {
         expect(err.message).toBe('options must be an object');
         done();
       });
     });
     test('options.config is not an object', function(done) {
-      Swag({ config: [] }, function(err) {
+      Dee({ config: [] }, function(err) {
         expect(err.message).toBe('options.config must be an object');
         done();
       });
     });
+    test('options.swaggerize is not an object', function(done) {
+      Dee({ swaggerize: [] }, function(err) {
+        expect(err.message).toBe('options.swaggerize must be an object');
+        done();
+      });
+    });
     test('options.services is not an object', function(done) {
-      Swag({ services: [] }, function(err) {
+      Dee({ swaggerize: {}, services: [] }, function(err) {
         expect(err.message).toBe('options.services must be an object');
         done();
       });
     });
-    test('options.swaggerFile is not valid', function(done) {
-      Swag({ swaggerFile: '404', controllers: {} }, function(err) {
+    test('options.swaggerize.swaggerFile is not valid', function(done) {
+      Dee({ swaggerize: { swaggerFile: '404', handlers: {} } }, function(err) {
         expect(err.message).toMatch('ENOENT: no such file or directory');
         done();
       });
     });
     describe('options.services element', function() {
       test('its value is not an object', function(done) {
-        Swag({ services: { srv: [] } }, function(err) {
+        Dee({ swaggerize: {}, services: { srv: [] } }, function(err) {
           expect(err.message).toBe('service.srv must be an object');
           done();
         });
       });
-      test('element.controller is string but it is not a module', function(done) {
-        Swag({ services: { srv: { constructor: '404' } } }, function(err) {
+      test('srv.constructor is string but it is not a module', function(done) {
+        Dee({ swaggerize: {}, services: { srv: { constructor: '404' } } }, function(err) {
           expect(err.message).toBe('service.srv.constructor is not a module');
           done();
         });
       });
-      test('element.controller is not a string nor function', function(done) {
-        Swag({ services: { srv: { constructor: { } } } }, function(err) {
+      test('srv.constructor is not a string nor function', function(done) {
+        Dee({ swaggerize: {}, services: { srv: { constructor: { } } } }, function(err) {
           expect(err.message).toBe('service.srv.constructor is not a string nor function');
           done();
         });
       });
-      test('element.constructor exectue failed', function(done) {
+      test('srv.constructor exectue failed', function(done) {
         var func = jest.fn(function(opts, callback) {  callback(new Error('srv wrong')) });
-        Swag({ services: { srv: { constructor: func } } }, function(err) {
+        Dee({ swaggerize: {}, services: { srv: { constructor: func } } }, function(err) {
           expect(err.message).toBe('service.srv has error, srv wrong');
           done();
         });
       });
     });
-    test('options.controllers is not object', function(done) {
-      Swag({ controllers: [] }, function(err) {
-        expect(err.message).toBe('options.controllers must be an object');
+    test('options.swaggerize.handlers is not object', function(done) {
+      Dee({ swaggerize: { handlers: [] } }, function(err) {
+        expect(err.message).toBe('options.swaggerize.handlers must be an object');
         done();
       });
     });
-    test('options.controllers item value is not function', function(done) {
-      Swag({ controllers: { operationId: {} }}, function(err) {
-        expect(err.message).toBe('options.controllers.operationId value must be a function');
+    test('options.swaggerize.handlers item value is not function', function(done) {
+      Dee({ swaggerize: { handlers: { operationId: {} }}}, function(err) {
+        expect(err.message).toBe('options.handlers.operationId value must be a function');
         done();
       });
     });
     test('options.errorHandler is not function', function(done) {
-      Swag({ errorHandler: {}, controllers: {} }, function(err) {
+      Dee({ errorHandler: {}, swaggerize: { handlers: {} }}, function(err) {
         expect(err.message).toBe('options.errorHandler values must be a function');
         done();
       });
     });
     test('options.beforeRoute is not a function or function array', function(done) {
-      Swag({ beforeRoute: {} }, function(err) {
+      Dee({ beforeRoute: {}, swaggerize: { handlers: {} }}, function(err) {
         expect(err.message).toBe('options.beforeRoute is not valid, not a function nor array of functions');
         done();
       });
     });
     test('options.afterRoute is not a function or function array', function(done) {
-      Swag({
-        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-        controllers: {
-          hello: require('../fixtures/controllers/hello')
+      Dee({
+        swaggerize: {
+          swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+          handlers: {
+            hello: require('../fixtures/handlers/hello')
+          },
         },
         afterRoute: {} 
       }, function(err) {
@@ -195,46 +207,52 @@ describe('Swag', function() {
       });
     });
     test('options.ready throw error', function(done) {
-      var err = new Error('ready func wrong');
-      Swag({
-        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-        controllers: {
-          hello: require('../fixtures/controllers/hello')
+      var readyErr = new Error('ready func wrong');
+      Dee({
+        swaggerize: {
+          swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+          handlers: {
+            hello: require('../fixtures/handlers/hello')
+          },
         },
-        ready: jest.fn(function() { throw err })
+        ready: jest.fn(function() { throw readyErr })
       }, function(err) {
-        expect(err).toBe(err);
+        expect(err).toBe(readyErr);
         done();
       });
     })
   });
   test('srv.getService', function(done) {
     var srv = {}
-    Swag({
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: {
-        hello: require('../fixtures/controllers/hello')
+    Dee({
+      swaggerize: {
+        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+        handlers: {
+          hello: require('../fixtures/handlers/hello')
+        },
       },
       services: {
         srv: {
           constructor: jest.fn(function(opts, callback) { callback(null, srv); })
         }
       }
-    }, function(err, swag) {
+    }, function(err, dee) {
       expect(err).toBeNull();
       expect(srv.getService('srv')).toBe(srv);
       done();
     });
   });
-  test('swag.start', function(done) {
-    Swag({
-      swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      controllers: {
-        hello: require('../fixtures/controllers/hello')
+  test('dee.start', function(done) {
+    Dee({
+      swaggerize: {
+        swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
+        handlers: {
+          hello: require('../fixtures/handlers/hello')
+        }
       }
-    }, function(err, swag) {
+    }, function(err, dee) {
       expect(err).toBeNull();
-      var server = swag.start()
+      var server = dee.start()
       server.close();
       done();
     });

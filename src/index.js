@@ -3,15 +3,16 @@ var _ = require('lodash');
 var asy = require('async');
 var swaggerize = require('./swaggerize');
 
-function Swag(options, cb) {
+function Dee(options, cb) {
   var app = express();
   if (!_.isPlainObject(options)) return cb(new Error('options must be an object'));
-  if (!_.isPlainObject(options.config || {name: 'SwagApp'})) return cb(new Error('options.config must be an object'));
+  if (!_.isPlainObject(options.config || {name: 'DeeApp'})) return cb(new Error('options.config must be an object'));
+  if (!_.isPlainObject(options.swaggerize)) return cb(new Error('options.swaggerize must be an object'));
   if (!_.isPlainObject(options.services || {})) return cb(new Error('options.services must be an object'));
   createSrvs(options.config, options.services, function(err, srvs) {
     if (err) return cb(err);
     app.use(function(req, res, next) {
-      req.swag = { srvs: srvs }
+      req.dee = { srvs: srvs }
       next();
     });
     try {
@@ -20,15 +21,15 @@ function Swag(options, cb) {
       return cb(new Error('options.beforeRoute is not valid, ' + err.message));
     }
 
-    if (!_.isPlainObject(options.controllers)) return cb(new Error('options.controllers must be an object'));
+    if (!_.isPlainObject(options.swaggerize.handlers)) return cb(new Error('options.swaggerize.handlers must be an object'));
     var invalidControllers = []
-    var controllers = options.controllers;
-    _.keys(controllers).forEach(function(operationId) {
-      var func = controllers[operationId];
+    var handlers = options.swaggerize.handlers;
+    _.keys(handlers).forEach(function(operationId) {
+      var func = handlers[operationId];
       if (!_.isFunction(func)) {
         invalidControllers.push(operationId);
       }
-      controllers[operationId] = function(req, res, next) {
+      handlers[operationId] = function(req, res, next) {
         if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
           func(req, res, next);
         } else {
@@ -41,7 +42,7 @@ function Swag(options, cb) {
       };
     });
     if (invalidControllers.length > 0) {
-      return cb(new Error('options.controllers.' + invalidControllers.join(',') + ' value must be a function'));
+      return cb(new Error('options.handlers.' + invalidControllers.join(',') + ' value must be a function'));
     }
 
     var errorHandler = _.get(options, 'errorHandler');
@@ -49,7 +50,7 @@ function Swag(options, cb) {
       return cb(new Error('options.errorHandler values must be a function'));
     }
 
-    swaggerize(app, options, function(err) {
+    swaggerize(app, options.swaggerize, function(err) {
       if (err) return cb(err);
       try {
         useMiddlewares(app, options.afterRoute);
@@ -63,7 +64,7 @@ function Swag(options, cb) {
 
       var instance = {
         srvs: srvs,
-        controllers: controllers,
+        handlers: handlers,
         express: app
       };
       instance.start = function() {
@@ -140,4 +141,4 @@ function useMiddlewares(app, hook) {
   throw new Error('not a function nor array of functions');
 }
 
-module.exports = Swag;
+module.exports = Dee;

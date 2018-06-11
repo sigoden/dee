@@ -1,5 +1,5 @@
 async function hello(req, res) {
-  var name = req.swagger.params.name.value || 'stranger';
+  var name = req.query.name || 'stranger';
   res.json(name);
   return Promise.resolve(name)
 }

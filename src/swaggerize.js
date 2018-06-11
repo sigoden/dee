@@ -2,36 +2,17 @@ var path = require('path');
 var fs = require('fs');
 var yaml = require('js-yaml');
 var _ = require('lodash');
-var swaggerTools = require('@sigoden/swagger-tools');
+var deeSwaggerize = require('@sigodenh/dee-swaggerize');
 
 function swaggerize(app, options, cb) {
   let swaggerFile = _.get(options, 'swaggerFile', 'swagger.yaml');
-  let prod = _.get(options, 'config.prod', false)
-  let controllers = _.get(options, 'controllers', {})
-  let securityHandlers = _.get(options, 'securityHandlers', {})
   if (!_.isString(swaggerFile)) return cb(new Error('options.swaggerFile must be a string'));
 
-  loadSwaggerObject(swaggerFile, function(err, swaggerObject) {
+  loadSwaggerObject(swaggerFile, function(err, api) {
     if (err) return cb(err);
-
-    swaggerTools.initializeMiddleware(swaggerObject, function(obj) {
-      // if RUNNING_SWAGGER_TOOLS_TESTS is true, obj will be error when initializeMiddleware failed
-      if (!_.isPlainObject(obj)) {
-        return cb(new Error('initializeMiddleware throw ' + obj));
-      }
-      var middlewares = obj;
-      app.use(middlewares.swaggerMetadata());
-      app.use(middlewares.swaggerSecurity({
-        securityHandlers: securityHandlers,
-      }));
-      app.use(middlewares.swaggerValidator());
-      app.use(middlewares.swaggerRouter({
-        controllers: controllers,
-        useStubs: true
-      }));
-      if (!prod) app.use(middlewares.swaggerUi());
-      cb(null);
-    })
+    options.api = api;
+    deeSwaggerize(app, options);
+    cb(null);
   })
 }
 

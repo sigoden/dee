@@ -1,5 +1,5 @@
 function hello(req, res, next) {
-  var name = req.swagger.params.name.value || 'stranger';
+  var name = req.query.name || 'stranger';
   res.json(name);
   next();
 }

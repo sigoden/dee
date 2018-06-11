@@ -1,10 +1,11 @@
-var Swag = require('../../src');
+var Dee = require('../../src');
 var path = require('path');
 
-
-Swag({
-  swaggerFile: path.resolve(__dirname, './swagger.yaml'),
-  controllers: require('./controllers'),
+Dee({
+  swaggerize: {
+    swaggerFile: path.resolve(__dirname, './swagger.yaml'),
+    handlers: require('./handlers'),
+  },
   services: {
     logger: {
       constructor: require('../../src/services/logger'),
