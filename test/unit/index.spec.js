@@ -61,9 +61,9 @@ describe('Dee', function() {
         swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
         handlers: {
           hello: function(req, res, next) {
-            expect(req.dee.srvs).toBeDefined();
-            expect(req.dee.srvs.srv).toBeDefined();
-            expect(req.dee.srvs.$config).toEqual(config);
+            expect(req.srvs).toBeDefined();
+            expect(req.srvs.srv).toBeDefined();
+            expect(req.srvs.$config).toEqual(config);
             handlerFunc();
             res.end();
             next();

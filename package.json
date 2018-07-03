@@ -1,6 +1,6 @@
 {
   "name": "@sigodenh/dee",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "Dee 框架",
   "main": "./src/index.js",
   "directories": {

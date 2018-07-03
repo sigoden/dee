@@ -12,7 +12,7 @@ function Dee(options, cb) {
   createSrvs(options.config, options.services, function(err, srvs) {
     if (err) return cb(err);
     app.use(function(req, res, next) {
-      req.dee = { srvs: srvs }
+      req.srvs = srvs;
       next();
     });
     try {
