@@ -20,15 +20,17 @@ function loadSwaggerObject(file, cb) {
   var swaggerFile = path.resolve(file);
   fs.readFile(swaggerFile, 'utf8', function(err, data) {
     if (err) return cb(err);
+    var result;
     try {
       if (path.extname(swaggerFile) === '.json') {
-        return cb(null, JSON.parse(data));
+        result = JSON.parse(data);
       } else {
-        return cb(null, yaml.safeLoad(data));
+        result = yaml.safeLoad(data);
       }
     } catch (err) {
       return cb(new Error('parse file ' + swaggerFile + ' failed, ' + err.message));
     };
+    return cb(null, result);
   });
 }
 
