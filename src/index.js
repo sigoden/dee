@@ -33,11 +33,7 @@ function Dee(options, cb) {
         if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
           func(req, res, next);
         } else {
-          func(req, res)
-            .then(function (v) {
-              next(null, v);
-            })
-            .catch(next);
+          func(req, res, next).then(next).catch(next);
         }
       };
     });
