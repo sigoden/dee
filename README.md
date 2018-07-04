@@ -29,11 +29,7 @@ Dee({
     // 处理解析出的 Route 对象
     routeIteratee: function(route) {
         return route;
-    },
-    // 默认处理器函数, 找不到接口处理器函数时使用
-    defaultHandler: function(req, res, next) {
-
-    },
+    }
   },
   // 在路由控制函数之前的中间件，可以是一个函数，传入一个 app 用于注册中间件。也可以是一个中间件函数组成的数组。
   beforeRoute: funtion(app) {
@@ -47,6 +43,10 @@ Dee({
       next();
     }
   ],
+  // 找不到接口处理器函数时使用
+  defaultHandler: function(req, res, next) {
+
+  },
   // 错误处理函数
   errorHandler: funtion(err, req, res, next) {
 
