@@ -43,10 +43,6 @@ Dee({
       next();
     }
   ],
-  // 找不到接口处理器函数时使用
-  defaultHandler: function(req, res, next) {
-
-  },
   // 错误处理函数
   errorHandler: funtion(err, req, res, next) {
 

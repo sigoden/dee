@@ -111,7 +111,7 @@ describe('Dee', function () {
     });
   });
   describe('errorHandler', function () {
-    test('should call default handler when route does not match', function (done) {
+    test('should call error handler when route does not match', function (done) {
       var mock = jest.fn(function (err, req, res, next) {
         res.status(500).json({ err: err.message });
       });
@@ -153,49 +153,6 @@ describe('Dee', function () {
         request(dee.express)
           .get('/hello')
           .expect(500)
-          .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(res.text).toMatch('<title>Error</title>');
-            done();
-          });
-      });
-    });
-  });
-  describe('defaultHandler', function () {
-    test('should call default handler when route does not match', function (done) {
-      var mock = jest.fn(function (req, res) {
-        res.status(404).end('not found');
-      });
-      Dee({
-        swaggerize: {
-          swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-          handlers: {}
-        },
-        defaultHandler: mock
-      }, function (err, dee) {
-        expect(err).toBeNull();
-        request(dee.express)
-          .get('/hello')
-          .expect(404)
-          .end(function (err, res) {
-            expect(err).toBeNull();
-            expect(mock).toBeCalled();
-            expect(res.text).toBe('not found');
-            done();
-          });
-      });
-    });
-    test('should call express default handler when no defaultHandler', function (done) {
-      Dee({
-        swaggerize: {
-          swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-          handlers: {}
-        }
-      }, function (err, dee) {
-        expect(err).toBeNull();
-        request(dee.express)
-          .get('/hello')
-          .expect(404)
           .end(function (err, res) {
             expect(err).toBeNull();
             expect(res.text).toMatch('<title>Error</title>');
@@ -277,12 +234,6 @@ describe('Dee', function () {
     test('options.errorHandler is not function', function (done) {
       Dee({ errorHandler: {}, swaggerize: { handlers: {} } }, function (err) {
         expect(err.message).toBe('options.errorHandler values must be a function');
-        done();
-      });
-    });
-    test('options.defaultHandler is not function', function (done) {
-      Dee({ defaultHandler: {}, swaggerize: { handlers: {} } }, function (err) {
-        expect(err.message).toBe('options.defaultHandler values must be a function');
         done();
       });
     });

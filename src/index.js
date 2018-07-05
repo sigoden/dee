@@ -46,21 +46,12 @@ function Dee(options, cb) {
       return cb(new Error('options.errorHandler values must be a function'));
     }
 
-    var defaultHandler = _.get(options, 'defaultHandler');
-    if (defaultHandler && !_.isFunction(defaultHandler)) {
-      return cb(new Error('options.defaultHandler values must be a function'));
-    }
-
     swaggerize(app, options.swaggerize, function (err) {
       if (err) return cb(err);
       try {
         useMiddlewares(app, options.afterRoute);
       } catch (err) {
         return cb(new Error('options.afterRoute is not valid, ' + err.message));
-      }
-
-      if (defaultHandler) {
-        app.use(defaultHandler);
       }
 
       if (errorHandler) {
