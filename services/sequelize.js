@@ -5,7 +5,7 @@ var _ = require('lodash');
  * @params {object} options
  * @params {object} options.constructorArgs - see http://docs.sequelizejs.com/class/lib/sequelize.js~Sequelize.html#instance-constructor-constructor
  */
-module.exports = function (options, cb) {
+module.exports = function(options, cb) {
   var srv;
   var constructorArgs = _.get(options, 'constructorArgs');
   if (!_.isPlainObject(constructorArgs)) return cb(new Error('constructorArgs must be an object'));

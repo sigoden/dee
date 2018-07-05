@@ -19,9 +19,9 @@ describe('swaggerize', function() {
     });
     test('swaggerFile is json but content is not valid', function(done) {
       var app = require('express')();
-      var file = path.resolve(__dirname, '../fixtures/swagger/wrong.json')
+      var file = path.resolve(__dirname, '../fixtures/swagger/wrong.json');
       var options = {
-        swaggerFile: file,
+        swaggerFile: file
       };
       swaggerize(app, options, function(err) {
         expect(err.message).toMatch('parse file ' + file + ' failed');
@@ -30,9 +30,9 @@ describe('swaggerize', function() {
     });
     test('swaggerFile is yaml but content is not valid', function(done) {
       var app = require('express')();
-      var file = path.resolve(__dirname, '../fixtures/swagger/wrong.yaml')
+      var file = path.resolve(__dirname, '../fixtures/swagger/wrong.yaml');
       var options = {
-        swaggerFile: file,
+        swaggerFile: file
       };
       swaggerize(app, options, function(err) {
         expect(err.message).toMatch('parse file ' + file + ' failed');
@@ -44,7 +44,7 @@ describe('swaggerize', function() {
     var app = require('express')();
     var options = {
       swaggerFile: path.resolve(__dirname, '../fixtures/swagger/hello.yaml'),
-      handlers: { hello:  function() {} }
+      handlers: { hello: function() {} }
     };
     swaggerize(app, options, function(err) {
       expect(err).toBeNull();

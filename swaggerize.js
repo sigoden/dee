@@ -13,7 +13,7 @@ function swaggerize(app, options, cb) {
     options.api = api;
     deeSwaggerize(app, options);
     cb(null);
-  })
+  });
 }
 
 function loadSwaggerObject(file, cb) {
@@ -29,7 +29,7 @@ function loadSwaggerObject(file, cb) {
       }
     } catch (err) {
       return cb(new Error('parse file ' + swaggerFile + ' failed, ' + err.message));
-    };
+    }
     return cb(null, result);
   });
 }
