@@ -1,4 +1,4 @@
-var Dee = require('../../src');
+var Dee = require('../../');
 var path = require('path');
 
 Dee({
@@ -8,19 +8,19 @@ Dee({
   },
   services: {
     logger: {
-      constructor: require('../../src/services/logger'),
+      constructor: require('../../services/logger'),
     },
     redis: {
-      constructor: require('../../src/services/redis'),
+      constructor: require('../../services/redis'),
     },
     mongoose: {
-      constructor: require('../../src/services/mongoose'),
+      constructor: require('../../services/mongoose'),
       constructorArgs: {
         uri: 'mongodb://localhost/test'
       }
     },
     sequelize: {
-      constructor: require('../../src/services/sequelize'),
+      constructor: require('../../services/sequelize'),
       constructorArgs: {
         database: 'test',
         username: 'root',

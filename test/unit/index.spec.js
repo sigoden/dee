@@ -1,4 +1,4 @@
-var Dee = require('../../src');
+var Dee = require('../../');
 var request = require('supertest');
 var path = require('path');
 

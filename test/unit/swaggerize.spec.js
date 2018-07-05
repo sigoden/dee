@@ -1,4 +1,4 @@
-var swaggerize = require('../../src/swaggerize');
+var swaggerize = require('../../swaggerize');
 var path = require('path');
 
 describe('swaggerize', function() {

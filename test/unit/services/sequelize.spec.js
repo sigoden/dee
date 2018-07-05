@@ -1,4 +1,4 @@
-var initSequelize = require('../../../src/services/sequelize');
+var initSequelize = require('../../../services/sequelize');
 
 describe('sequelize', function() {
   test('valid options', function(done) {

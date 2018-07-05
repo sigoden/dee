@@ -1,4 +1,4 @@
-var initMongoose = require('../../../src/services/mongoose');
+var initMongoose = require('../../../services/mongoose');
 
 describe('mongoose', function() {
   test('valid options', function(done) {

@@ -2,7 +2,7 @@
   "name": "@sigodenh/dee",
   "version": "0.5.0",
   "description": "Dee 框架",
-  "main": "./src/index.js",
+  "main": "index.js",
   "directories": {
     "example": "examples",
     "test": "test"
@@ -40,7 +40,9 @@
     "winston": "^3.0.0-rc5"
   },
   "files": [
-    "src"
+    "index.js",
+    "swaggerize.js",
+    "services"
   ],
   "engines": {
     "node": ">=4"
@@ -53,9 +55,8 @@
       "/dist/"
     ],
     "testEnvironment": "node",
-    "rootDir": "./src",
     "roots": [
-      "../test"
+      "test"
     ]
   }
 }

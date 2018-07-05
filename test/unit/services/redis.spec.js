@@ -1,4 +1,4 @@
-var initRedis = require('../../../src/services/redis');
+var initRedis = require('../../../services/redis');
 
 describe('redis', function() {
   test('valid options', function(done) {

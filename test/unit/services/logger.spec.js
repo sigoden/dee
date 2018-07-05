@@ -1,4 +1,4 @@
-var initLogger = require('../../../src/services/logger');
+var initLogger = require('../../../services/logger');
 var path = require('path');
 
 describe('logger', function() {
