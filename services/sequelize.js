@@ -15,10 +15,8 @@ module.exports = function (options, cb) {
     constructorArgs.password,
     constructorArgs.options
   );
-  return srv.authenticate().then(function() {
+  return srv.authenticate().nodeify(function(err) {
+    if (err) return cb(err, srv);
     cb(null, srv);
-    return srv
-  }).catch(function(err) {
-    cb(err, srv);
   });
 };

@@ -10,11 +10,8 @@ module.exports = function (options, cb) {
   var constructorArgs = _.get(options, 'constructorArgs');
   if (!_.isPlainObject(constructorArgs)) return cb(new Error('constructorArgs must be an object'));
   mongoose
-    .connect(constructorArgs.uri, constructorArgs.options)
-    .then(function() {
-      return cb(null, mongoose);
+    .connect(constructorArgs.uri, constructorArgs.options, function(err) {
+      if (err) return cb(err, mongoose);
+      cb(null, mongoose);
     })
-    .catch(function(err) {
-      return cb(err, mongoose);
-    });
 };
