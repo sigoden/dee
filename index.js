@@ -11,6 +11,7 @@ function Dee(options, cb) {
   if (!_.isPlainObject(options.services || {})) return cb(new Error('options.services must be an object'));
   createSrvs(options.config, options.services, function(err, srvs) {
     if (err) return cb(err);
+    app.srvs = srvs;
     app.use(function(req, res, next) {
       req.srvs = srvs;
       next();
