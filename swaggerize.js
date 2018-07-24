@@ -2,7 +2,7 @@ var path = require('path');
 var fs = require('fs');
 var yaml = require('js-yaml');
 var _ = require('lodash');
-var deeSwaggerize = require('@sigodenh/dee-swaggerize');
+var deeSwaggerize = require('@sigodenjs/dee-swaggerize');
 
 function swaggerize(app, options, cb) {
   let swaggerFile = _.get(options, 'swaggerFile', 'swagger.yaml');

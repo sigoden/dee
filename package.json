@@ -1,5 +1,5 @@
 {
-  "name": "@sigodenh/dee",
+  "name": "@sigodenjs/dee",
   "version": "0.6.2",
   "description": "Dee 框架",
   "main": "index.js",
@@ -25,7 +25,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenh/dee-swaggerize": "^0.1.2",
+    "@sigodenjs/dee-swaggerize": "^0.1.2",
     "express": "^4.16.3"
   },
   "devDependencies": {
