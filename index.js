@@ -2,6 +2,7 @@ var express = require('express');
 var _ = require('lodash');
 var asy = require('async');
 var swaggerize = require('./swaggerize');
+var asyncHandler = require('express-async-handler');
 
 function Dee(options, cb) {
   var app = express();
@@ -31,15 +32,11 @@ function Dee(options, cb) {
       if (!_.isFunction(func)) {
         invalidControllers.push(operationId);
       }
-      handlers[operationId] = function(req, res, next) {
-        if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
-          func(req, res, next);
-        } else {
-          func(req, res, next)
-            .then(next)
-            .catch(next);
-        }
-      };
+      if (Object.prototype.toString.call(func) !== '[object AsyncFunction]') {
+        handlers[operationId] = func;
+      } else {
+        handlers[operationId] = asyncHandler(func);
+      }
     });
     if (invalidControllers.length > 0) {
       return cb(new Error('options.handlers.' + invalidControllers.join(',') + ' value must be a function'));
@@ -64,7 +61,6 @@ function Dee(options, cb) {
 
       var instance = {
         srvs: srvs,
-        handlers: handlers,
         express: app
       };
       instance.start = function() {

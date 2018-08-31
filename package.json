@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee",
-  "version": "0.6.2",
+  "version": "0.6.4",
   "description": "Dee 框架",
   "main": "index.js",
   "directories": {
@@ -25,8 +25,14 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee-swaggerize": "^0.1.2",
-    "express": "^4.16.3"
+    "@sigodenjs/dee-swaggerize": "^0.1.10",
+    "@types/express-serve-static-core": "^4.16.0",
+    "@types/ioredis": "^4.0.1",
+    "@types/mongoose": "^5.2.9",
+    "@types/node": "^10.9.4",
+    "@types/sequelize": "^4.27.25",
+    "express": "^4.16.3",
+    "express-async-handler": "^1.1.4"
   },
   "devDependencies": {
     "ioredis": "^3.2.2",
@@ -48,7 +54,9 @@
   "files": [
     "index.js",
     "swaggerize.js",
-    "services"
+    "services",
+    "index.d.ts",
+    "tsconfig.json"
   ],
   "engines": {
     "node": ">=4"
