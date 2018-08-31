@@ -29,7 +29,7 @@ interface SwaggerizeOptions {
   // path to swagger file, yaml or json
   swaggerFile: string;
   // handler funcs
-  handlers: HandlerFunc;
+  handlers: Map<HandlerFunc>;
   // security funcs
   security: Map<HandlerFunc>;
   // map routes
