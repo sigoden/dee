@@ -1,0 +1,32 @@
+{
+  "name": "@sigodenjs/dee",
+  "version": "0.8.0",
+  "description": "A framework focus on document driven design",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "format": "prettier --write \"src/**/*.ts\"",
+    "prestart": "rimraf dist && tsc",
+    "start": "node dist/main.js",
+    "lint": "tslint -p tsconfig.json -c tslint.json",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
+    "build": "tsc",
+    "prepublish": "npm run -s build"
+  },
+  "keywords": [],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "license": "MIT",
+  "dependencies": {
+    "@sigodenjs/dee-swaggerize": "^0.2.0",
+    "@types/express": "^4.16.0",
+    "@types/lodash": "^4.14.116",
+    "express": "^4.16.3",
+    "lodash": "^4.17.10",
+    "typescript": "^3.0.3"
+  },
+  "devDependencies": {
+    "prettier": "^1.14.2"
+  }
+}
