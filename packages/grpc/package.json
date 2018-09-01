@@ -13,6 +13,10 @@
     "fmt:ts": "prettier --single-quote --trailing-comma all --parser typescript --print-width 100 --write \"{lib,test}/**/*.ts\"",
     "prepublish": "npm run -s build"
   },
+  "files": [
+    "dist",
+    "tsconfig.json"
+  ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",

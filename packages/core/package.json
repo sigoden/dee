@@ -15,6 +15,10 @@
     "build": "tsc",
     "prepublish": "npm run -s build"
   },
+  "files": [
+    "dist",
+    "tsconfig.json"
+  ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
