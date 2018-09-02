@@ -1,9 +1,15 @@
-import swaggerize, { SwaggerizeOptions } from "@sigodenjs/dee-swaggerize";
+import swaggerize, {
+  HandlerFuncMap,
+  SwaggerizeOptions
+} from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import { ErrorRequestHandler, Express, RequestHandler } from "express";
 import { Server } from "http";
 import * as _ from "lodash";
 import { tryWrapRequestHandler } from "./utils";
+
+export { HandlerFuncMap } from "@sigodenjs/dee-swaggerize";
+export { Request, Response, NextFunction, RequestHandler } from "express";
 
 declare global {
   namespace Express {
@@ -31,7 +37,7 @@ export interface DeeOptions {
   // run when app is ready
   ready?: (app: App) => void;
   // options to init external services
-  services: ServicesOptionsMap;
+  services?: ServicesOptionsMap;
 }
 
 export interface ServiceOptions extends ServiceOptionsBase {
@@ -56,10 +62,6 @@ interface ServiceOptionsBase {
   args?: any;
 }
 
-interface HandlerFuncMap {
-  [k: string]: RequestHandler;
-}
-
 interface ServicesOptionsMap {
   [k: string]: ServiceOptionsBase;
 }
@@ -77,17 +79,17 @@ interface Config {
   // name of app
   name: string;
   // listenning host
-  host: string;
+  host?: string;
   // listenning port
-  port: number;
+  port?: number;
   // whether production mode
-  prod: boolean;
+  prod?: boolean;
 }
 
 type RouteHooks = (app: Express) => void | RequestHandler[];
 
 async function createSrvs(options: DeeOptions): Promise<ServiceGroup> {
-  const { services: servicesOpts, config } = options;
+  const { services: servicesOpts = {}, config } = options;
   const srvs: ServiceGroup = { $config: config };
   const promises = Object.keys(servicesOpts).map(srvName => {
     const srvOptions = servicesOpts[srvName];
@@ -173,5 +175,3 @@ export default async function Dee(options: DeeOptions): Promise<App> {
   }
   return deeApp;
 }
-
-module.exports = Dee;

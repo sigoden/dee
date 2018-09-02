@@ -18,7 +18,7 @@
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
-    "@sigodenjs/dee-swaggerize": "^0.2.0",
+    "@sigodenjs/dee-swaggerize": "^0.2.3",
     "express": "^4.16.3",
     "lodash": "^4.17.10"
   },
