@@ -1,5 +1,5 @@
-import * as Sequelize from "sequelize";
 import { Service, ServiceOptions } from "@sigodenjs/dee";
+import * as Sequelize from "sequelize";
 
 export interface SequelizeService extends Service, Sequelize.Sequelize {}
 
@@ -17,8 +17,8 @@ interface SequelizeArgs {
 export default async function init(
   options: SequelizeServiceOptions
 ): Promise<SequelizeService> {
-  let { database, username, password, options: connectOptions } = options.args;
-  let srv = new Sequelize(database, username, password, connectOptions);
+  const { database, username, password, options: connectOptions } = options.args;
+  const srv = new Sequelize(database, username, password, connectOptions);
   await srv.authenticate();
   return srv;
 }

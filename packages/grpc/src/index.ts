@@ -1,6 +1,6 @@
-import * as grpc from "grpc";
-import { Service, ServiceOptions, ServiceGroup } from "@sigodenjs/dee";
 import * as grpcLoader from "@grpc/proto-loader";
+import { Service, ServiceGroup, ServiceOptions } from "@sigodenjs/dee";
+import * as grpc from "grpc";
 
 export interface GrpcService extends Service {
   server?: grpc.Server;
@@ -10,7 +10,6 @@ export interface GrpcService extends Service {
 export interface GrpcServiceOptions extends ServiceOptions {
   args: GrpcArgs;
 }
-
 
 interface GrpcClientMap {
   [k: string]: GrpcClient;
@@ -66,8 +65,8 @@ interface Metadata {
 export default async function init(
   options: GrpcServiceOptions
 ): Promise<GrpcService> {
-  let { serverProtoFile, clientProtoFile } = options.args;
-  let srv: GrpcService = {};
+  const { serverProtoFile, clientProtoFile } = options.args;
+  const srv: GrpcService = {};
   if (serverProtoFile) {
     srv.server = await createServer(options);
   }
@@ -78,15 +77,15 @@ export default async function init(
 }
 
 async function createServer(options: GrpcServiceOptions): Promise<grpc.Server> {
-  let {
+  const {
     serverProtoFile,
     serverHandlers,
     havePermision = () => true,
     serverHost = "127.0.0.1",
     serverPort = "4444"
   } = options.args;
-  let { ns, name } = options.srvs.$config;
-  let protoRoot = loadProtoFile(serverProtoFile);
+  const { ns, name } = options.srvs.$config;
+  const protoRoot = loadProtoFile(serverProtoFile);
   let proto: grpc.GrpcObject;
   try {
     proto = protoRoot[ns][name];
@@ -94,7 +93,7 @@ async function createServer(options: GrpcServiceOptions): Promise<grpc.Server> {
     throw new Error(`no grpc service at ${ns}.${name}`);
   }
   shimHandlers(serverHandlers, havePermision);
-  let server = new grpc.Server();
+  const server = new grpc.Server();
   server.addService(proto.service, serverHandlers);
   // TODO support more credential
   server.bind(
@@ -109,8 +108,8 @@ function shimHandlers(
   handlers: HandlerFuncMap,
   havePermision: CheckPermisionFunc
 ): void {
-  for (let id in handlers) {
-    let fn = handlers[id];
+  Object.keys(handlers).forEach(id => {
+    const fn = handlers[id];
     handlers[id] = (ctx: Context, callback?: (result: any) => void) => {
       if (!havePermision(ctx.metadata.origin, id)) {
         callback({
@@ -121,23 +120,23 @@ function shimHandlers(
       }
       tryWrapHandler(fn)(ctx, callback);
     };
-  }
+  });
 }
 
 async function createClients(
   options: GrpcServiceOptions
 ): Promise<GrpcClientMap> {
-  let clients: GrpcClientMap = {};
-  let { clientProtoFile, getClientUri = name => name } = options.args;
-  let { ns, name } = options.srvs.$config;
-  let protoRoot = loadProtoFile(clientProtoFile);
-  let proto = protoRoot[ns];
-  for (let serviceName in proto) {
-    let Client = proto[serviceName];
+  const clients: GrpcClientMap = {};
+  const { clientProtoFile, getClientUri = v => v } = options.args;
+  const { ns, name } = options.srvs.$config;
+  const protoRoot = loadProtoFile(clientProtoFile);
+  const proto = protoRoot[ns];
+  Object.keys(proto).forEach(serviceName => {
+    const Client = proto[serviceName];
     if (Client.name !== "ServiceClient") {
-      continue;
+      return;
     }
-    let client = new Client(
+    const client = new Client(
       getClientUri(serviceName),
       grpc.credentials.createInsecure()
     );
@@ -148,10 +147,10 @@ async function createClients(
       callback?: (data: any) => void
     ) => {
       metadata.origin = name;
-      let fn = client[funcName];
-      let unSupportedRes = {
-        status: grpc.status.UNIMPLEMENTED,
-        message: serviceName + "." + funcName + " is not supported"
+      const fn = client[funcName];
+      const unSupportedRes = {
+        message: serviceName + "." + funcName + " is not supported",
+        status: grpc.status.UNIMPLEMENTED
       };
       if (callback) {
         if (!fn) {
@@ -170,7 +169,7 @@ async function createClients(
       });
     };
     clients[serviceName] = client;
-  }
+  });
   return clients;
 }
 
@@ -179,7 +178,7 @@ function loadProtoFile(filename: string): grpc.GrpcObject {
 }
 
 export function tryWrapHandler(fn: HandlerFunc): HandlerFunc {
-  let type = Object.prototype.toString.call(fn);
+  const type = Object.prototype.toString.call(fn);
   if (type === "[object AsyncFunction]") {
     return (ctx: Context, callback?: (result: any) => void) => {
       const fnReturn = fn(ctx, callback);

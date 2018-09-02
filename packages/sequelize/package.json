@@ -5,25 +5,25 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "lint": "tslint --project tsconfig.json \"{lib,test}/**/*.ts\"",
-    "test:unit": "jest",
-    "test": "npm-run-all --parallel lint test:unit",
+    "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
-    "fmt": "npm-run-all --parallel fmt:ts && npm run -s lint -- --fix",
-    "fmt:ts": "prettier --single-quote --trailing-comma all --parser typescript --print-width 100 --write \"{lib,test}/**/*.ts\"",
-    "prepublish": "npm run -s build"
+    "build:prod": "tsc -p tsconfig.prod.json",
+    "clean": "rimraf dist",
+    "prepublish": "npm run -s clean && npm run -s build:prod"
   },
   "files": [
-    "dist",
-    "tsconfig.json"
+    "dist"
   ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
+    "sequelize": "^4.38.0"
+  },
+  "devDependencies": {
     "@sigodenjs/dee": "^0.8.0",
     "@types/sequelize": "^4.27.25",
-    "sequelize": "^4.38.0",
+    "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }
 }

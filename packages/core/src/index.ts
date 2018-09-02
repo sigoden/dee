@@ -1,8 +1,8 @@
-import * as express from "express";
-import { Express, RequestHandler, ErrorRequestHandler } from "express";
-import * as _ from "lodash";
 import swaggerize, { SwaggerizeOptions } from "@sigodenjs/dee-swaggerize";
+import * as express from "express";
+import { ErrorRequestHandler, Express, RequestHandler } from "express";
 import { Server } from "http";
+import * as _ from "lodash";
 import { tryWrapRequestHandler } from "./utils";
 
 declare global {
@@ -84,15 +84,15 @@ interface Config {
   prod: boolean;
 }
 
-type RouteHooks = (app: Express) => void | Array<RequestHandler>;
+type RouteHooks = (app: Express) => void | RequestHandler[];
 
 async function createSrvs(options: DeeOptions): Promise<ServiceGroup> {
-  let { services: servicesOpts, config } = options;
-  let srvs: ServiceGroup = { $config: config };
-  let promises = Object.keys(servicesOpts).map(srvName => {
-    let srvOptions = servicesOpts[srvName];
-    let options: ServiceOptions = _.extend(srvOptions, { srvs });
-    return createSrv(srvName, options);
+  const { services: servicesOpts, config } = options;
+  const srvs: ServiceGroup = { $config: config };
+  const promises = Object.keys(servicesOpts).map(srvName => {
+    const srvOptions = servicesOpts[srvName];
+    const extendSrvoptions: ServiceOptions = _.extend(srvOptions, { srvs });
+    return createSrv(srvName, extendSrvoptions);
   });
   await Promise.all(promises);
   return srvs;
@@ -113,7 +113,7 @@ async function createSrv(
     srvInitialize = options.initialize;
   }
   return new Promise<void>((resolve, reject) => {
-    let promise = srvInitialize(options, (err, srv) => {
+    const promise = srvInitialize(options, (err, srv) => {
       if (err) {
         reject(new Error(`service.${srvName} has error, ${err.message}`));
       }
@@ -131,21 +131,21 @@ function useMiddlewares(app: express.Express, hooks: RouteHooks) {
     hooks(app);
     return;
   }
-  for (let mid of Array<express.RequestHandler>(hooks)) {
+  for (const mid of Array<express.RequestHandler>(hooks)) {
     app.use(mid);
   }
 }
 
 function shimHandlers(handlers: HandlerFuncMap): void {
-  for (let operationId in handlers) {
+  Object.keys(handlers).forEach(operationId => {
     handlers[operationId] = tryWrapRequestHandler(handlers[operationId]);
-  }
+  });
 }
 
 export default async function Dee(options: DeeOptions): Promise<App> {
-  let app = express();
-  let srvs = await createSrvs(options);
-  app.use(function(req, _, next) {
+  const app = express();
+  const srvs = await createSrvs(options);
+  app.use((req, res, next) => {
     req.srvs = srvs;
     next();
   });
@@ -161,13 +161,13 @@ export default async function Dee(options: DeeOptions): Promise<App> {
     app.use(options.errorHandler);
   }
 
-  let start = function() {
-    let port = _.get(options, "config.port", 3000);
-    let host = _.get(options, "config.host");
-    let server = app.listen(port, host);
+  const start = () => {
+    const port = _.get(options, "config.port", 3000);
+    const host = _.get(options, "config.host");
+    const server = app.listen(port, host);
     return server;
   };
-  let deeApp = { srvs: srvs, express: app, start };
+  const deeApp = { srvs, express: app, start };
   if (options.ready) {
     options.ready(deeApp);
   }

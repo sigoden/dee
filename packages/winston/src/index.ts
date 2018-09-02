@@ -1,5 +1,5 @@
-import * as winston from "winston";
 import { Service, ServiceOptions } from "@sigodenjs/dee";
+import * as winston from "winston";
 
 export interface WinstonService extends Service, winston.Logger {}
 
@@ -20,22 +20,22 @@ interface TransporterMap {
 export default async function init(
   options: WinstonServiceOptions
 ): Promise<WinstonService> {
-  let {
-    transporters = { Console: {} },
+  const {
     format = "simple",
-    level = "warning"
+    level = "warning",
+    transporters = { Console: {} }
   } = options.args;
-  let transports = [];
-  let unsupportTransportNames = [];
-  for (let name in transporters) {
+  const transports = [];
+  const unsupportTransportNames = [];
+  Object.keys(transporters).forEach(name => {
     const Transporter = winston.transports[name];
     if (!Transporter) {
       unsupportTransportNames.push(name);
-      continue;
+      return;
     }
     const transportOptions = transporters[name];
-    transporters.push(new Transporter(transportOptions));
-  }
+    transports.push(new Transporter(transportOptions));
+  });
   if (unsupportTransportNames.length > 0) {
     throw new Error(
       "transporter " + unsupportTransportNames.join(",") + " is not supported"
@@ -46,8 +46,8 @@ export default async function init(
   }
 
   return winston.createLogger({
-    level,
     format: winston.format[format],
+    level,
     transports
   });
 }
