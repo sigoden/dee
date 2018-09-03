@@ -8,20 +8,22 @@ declare namespace DeeMongoose {
     args: Args;
   }
 
-  export interface Args {
+  export interface Args extends Dee.Args {
     uris: string;
-    options: mongoose.ConnectionOptions;
+    options?: mongoose.ConnectionOptions;
   }
 }
 
 async function DeeMongoose(
-  options: DeeMongoose.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeMongoose.Args
 ): Promise<DeeMongoose.Service> {
-  const { uris, options: connectOptions } = options.args;
-  return mongoose.connect(
+  const { uris, options: connectOptions } = args;
+  await mongoose.connect(
     uris,
     connectOptions
   );
+  return mongoose;
 }
 
 export = DeeMongoose;
