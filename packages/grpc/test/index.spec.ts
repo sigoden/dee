@@ -1,4 +1,3 @@
-import * as Dee from "@sigodenjs/dee";
 import * as path from "path";
 import * as DeeGRPC from "../src";
 import { initApp, HANDLERS, delay } from "@sigodenjs/dee-test-utils";

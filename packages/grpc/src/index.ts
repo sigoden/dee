@@ -2,6 +2,12 @@ import * as grpcLoader from "@grpc/proto-loader";
 import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
+declare global {
+  namespace DeeGRPC {
+    interface ClientMap {}
+  }
+}
+
 declare namespace DeeGRPC {
   export interface Service extends Dee.Service {
     server?: grpc.Server;

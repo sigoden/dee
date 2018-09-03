@@ -27,15 +27,16 @@ export const HANDLERS = {
     res.json(name);
   },
   hey: async (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
-    const name = await delay(1, req.params.name);
+    await delay(1);
+    const name = req.params.name;
     res.json(name);
   }
 };
 
-export function delay<T>(time: number, data: T) {
-  return new Promise<T>(resolve => {
+export function delay(time: number) {
+  return new Promise<void>(resolve => {
     setTimeout(() => {
-      resolve(data);
+      resolve();
     }, time);
   });
 }

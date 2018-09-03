@@ -2,8 +2,16 @@ import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
 import * as FastestValidator from "fastest-validator";
 import * as nats from "node-nats-streaming";
+import { NatsError } from "nats";
 
 const validator = new FastestValidator();
+
+declare global {
+  namespace DeeGRPC {
+    interface ProducerMap {}
+    interface SubscriberMap {}
+  }
+}
 
 declare namespace DeeNatstreaming {
   export interface Service extends Dee.Service {
@@ -20,17 +28,19 @@ declare namespace DeeNatstreaming {
     [k: string]: ProduceFunc;
   }
 
-  export interface SubscriberMap {}
+  export interface SubscriberMap {
+    [k: string]: nats.Subscription;
+  }
 
   export interface SubscriberOptions {
     group?: string | boolean;
     durable?: string | boolean;
-    noAutoAck: boolean;
-    ackWait: number;
-    maxInFlight: number;
+    noAutoAck?: boolean;
+    ackWait?: number;
+    maxInFlight?: number;
   }
 
-  export interface Args {
+  export interface Args extends Dee.Args {
     client: ClientOptions;
     handlers?: HandlerFuncMap;
     producers?: ProducerOptionsMap;
@@ -60,25 +70,24 @@ declare namespace DeeNatstreaming {
 
   type HandlerFunc = (ctx: Context) => void;
 
-  type ProduceFunc = (
-    msg: any,
-    callback?: (err: Error, result?: any) => void
-  ) => Promise<any> | void;
+  type ProduceFunc = (msg: any) => Promise<any>;
 
   interface Context {
     srvs: Dee.ServiceGroup;
+    msg: nats.Message;
   }
 }
 
 async function DeeNatstreaming(
-  options: DeeNatstreaming.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeNatstreaming.Args
 ): Promise<DeeNatstreaming.Service> {
-  const { name } = options.srvs.$config;
+  const { name } = ctx.srvs.$config;
   const {
     client: clientConfig,
     producers: producersConfig,
     subscribers: subscribersConfig
-  } = options.args;
+  } = args;
   const clientId = name + "-" + crypto.randomBytes(6).toString("hex");
   const stan = nats.connect(
     clientConfig.clusterId,
@@ -92,10 +101,10 @@ async function DeeNatstreaming(
       let subscribers;
       errorBeforeConnect = false;
       if (producersConfig) {
-        producers = createProducers(options, stan);
+        producers = createProducers(ctx, args, stan);
       }
       if (subscribersConfig) {
-        subscribers = createSubscribers(options, stan);
+        subscribers = createSubscribers(ctx, args, stan);
       }
       const srv: DeeNatstreaming.Service = { stan, producers, subscribers };
       resolve(srv);
@@ -111,11 +120,12 @@ async function DeeNatstreaming(
 }
 
 function createProducers(
-  options: DeeNatstreaming.ServiceOptions,
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeNatstreaming.Args,
   stan: nats.Stan
 ): DeeNatstreaming.ProducerMap {
-  const { producers: producersConfig } = options.args;
-  const { name } = options.srvs.$config;
+  const { producers: producersConfig } = args;
+  const { name } = ctx.srvs.$config;
   const producers = {};
   Object.keys(producersConfig).forEach(producerName => {
     const topic = name + "." + producerName;
@@ -128,23 +138,13 @@ function createProducers(
         throw new Error("producers." + topic + ".schema is invalid");
       }
     }
-    const fn = (msg: any, callback?: (err: Error, result?: any) => void) => {
-      const ok = check(msg);
-      if (!ok) {
+    const fn = (msg: any) => {
+      return new Promise((resolve, reject) => {
+        const ok = check(msg);
         const checkFailError = new Error(
           "validate failed: " + JSON.stringify(msg)
         );
-        if (callback) {
-          callback(checkFailError);
-          return;
-        }
-        return Promise.reject(checkFailError);
-      }
-      if (callback) {
-        stan.publish(topic, JSON.stringify(msg), check);
-        return;
-      }
-      return new Promise((resolve, reject) => {
+        if (!ok) return reject(checkFailError);
         stan.publish(topic, JSON.stringify(msg), (err, data) => {
           if (err) {
             return reject(err);
@@ -159,11 +159,12 @@ function createProducers(
 }
 
 function createSubscribers(
-  options: DeeNatstreaming.ServiceOptions,
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeNatstreaming.Args,
   stan: nats.Stan
 ): DeeNatstreaming.SubscriberMap {
-  const { name } = options.srvs.$config;
-  const { subscribers: subscribersConfig, handlers } = options.args;
+  const { name } = ctx.srvs.$config;
+  const { subscribers: subscribersConfig, handlers } = args;
   const subscribers = {};
   Object.keys(subscribersConfig).forEach(subscriberName => {
     const subscriberOptions = subscribersConfig[subscriberName];
@@ -172,7 +173,7 @@ function createSubscribers(
       throw new Error("subscribers." + subscriberName + " have no handler");
     }
     const opts = stan.subscriptionOptions();
-    createSubscribeStanOptions(options, opts, subscriberOptions);
+    createSubscribeStanOptions(ctx, opts, subscriberOptions);
     let group = null;
     if (subscriberOptions.group) {
       if (typeof subscriberOptions.group === "boolean") {
@@ -183,8 +184,8 @@ function createSubscribers(
     }
     const subscription = stan.subscribe(subscriberName, group, opts);
     subscription.on("message", msg => {
-      msg.srvs = options.srvs;
-      handler(msg);
+      const c = { msg, srvs: ctx.srvs };
+      handler(c);
     });
     subscribers[subscriberName] = subscription;
   });
@@ -192,11 +193,11 @@ function createSubscribers(
 }
 
 function createSubscribeStanOptions(
-  options: DeeNatstreaming.ServiceOptions,
+  ctx: Dee.ServiceInitializeContext,
   subOpts: nats.SubscriptionOptions,
   config: DeeNatstreaming.SubscriberOptions
 ): void {
-  const { name } = options.srvs.$config;
+  const { name } = ctx.srvs.$config;
   const { noAutoAck, ackWait, maxInFlight } = config;
   let { durable } = config;
   subOpts.setStartWithLastReceived();
