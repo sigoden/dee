@@ -1,26 +1,7 @@
 import * as Dee from "../src/index";
-import * as path from "path";
 import * as DeeSimple from "./fixtures/service";
 import * as supertest from "supertest";
-
-const SWAGGER_FILE = path.resolve(__dirname, "../../../examples/simple/swagger.yaml");
-
-function initApp(
-  handlers: Dee.HandlerFuncMap,
-  services?: Dee.ServicesOptionsMap
-): Promise<Dee.App> {
-  return Dee({
-    config: {
-      ns: "proj",
-      name: "App"
-    },
-    swaggerize: {
-      api: SWAGGER_FILE,
-      handlers
-    },
-    services
-  });
-}
+import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
 
 test("should create app instance", async () => {
   const app = await initApp({});
@@ -42,20 +23,7 @@ test("should init and bind service", async () => {
 });
 
 test("should autobind route", async () => {
-  const app = await initApp({
-    hello: (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
-      const name = req.query.name || "stranger";
-      res.json(name);
-    },
-    hey: async (
-      req: Dee.Request,
-      res: Dee.Response,
-      next: Dee.NextFunction
-    ) => {
-      const name = await delay(1, req.params.name);
-      res.json(name);
-    }
-  });
+  const app = await initApp(HANDLERS);
   const name = "trump";
   const request = supertest(app.express);
   const resHello = await request.get("/hello?name=" + name).expect(200);
@@ -75,11 +43,3 @@ describe("handler func", () => {
     });
   });
 });
-
-function delay<T>(time: number, data: T) {
-  return new Promise<T>(resolve => {
-    setTimeout(() => {
-      resolve(data);
-    }, time);
-  });
-}
