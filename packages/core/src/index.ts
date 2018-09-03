@@ -31,9 +31,11 @@ declare namespace Dee {
     services?: ServicesOptionsMap;
   }
 
-  export interface ServiceOptions extends ServiceOptionsBase {
+  export interface ServiceInitializeContext {
     srvs: ServiceGroup;
   }
+
+  export interface Args {}
 
   export interface App {
     srvs: ServiceGroup;
@@ -49,7 +51,8 @@ declare namespace Dee {
   export interface Service {}
 
   export type ServiceInitializeFunc = (
-    options: ServiceOptions,
+    ctx: ServiceInitializeContext,
+    args?: Args,
     callback?: (err: Error, srv?: Service) => void
   ) => Promise<Service> | void;
 
@@ -71,15 +74,15 @@ declare namespace Dee {
   ) => void | express.RequestHandler[];
 
   export interface ServicesOptionsMap {
-    [k: string]: ServiceOptionsBase;
+    [k: string]: ServiceOptions;
   }
-  
-  type ServiceInitializeModule = string;
 
-  interface ServiceOptionsBase {
+  export interface ServiceOptions {
     initialize: ServiceInitializeFunc | ServiceInitializeModule;
-    args?: any;
+    args?: Args;
   }
+
+  type ServiceInitializeModule = string;
 }
 
 async function createSrvs(options: Dee.Options): Promise<Dee.ServiceGroup> {
@@ -87,14 +90,15 @@ async function createSrvs(options: Dee.Options): Promise<Dee.ServiceGroup> {
   const srvs: Dee.ServiceGroup = { $config: config };
   const promises = Object.keys(servicesOpts).map(srvName => {
     const srvOptions = servicesOpts[srvName];
-    const extendSrvoptions: Dee.ServiceOptions = _.extend(srvOptions, { srvs });
-    return createSrv(srvName, extendSrvoptions);
+    const ctx = <Dee.ServiceInitializeContext>{ srvs };
+    return createSrv(ctx, srvName, srvOptions);
   });
   await Promise.all(promises);
   return srvs;
 }
 
 async function createSrv(
+  ctx: Dee.ServiceInitializeContext,
   srvName: string,
   options: Dee.ServiceOptions
 ): Promise<void> {
@@ -109,17 +113,17 @@ async function createSrv(
     srvInitialize = options.initialize;
   }
   return new Promise<void>((resolve, reject) => {
-    const promise = srvInitialize(options, (err, srv) => {
+    const promise = srvInitialize(ctx, options.args, (err, srv) => {
       if (err) {
         reject(new Error(`service.${srvName} has error, ${err.message}`));
         return;
       }
-      options.srvs[srvName] = srv;
+      ctx.srvs[srvName] = srv;
       resolve();
     });
     if (promise instanceof Promise) {
       return promise.then(srv => {
-        options.srvs[srvName] = srv;
+        ctx.srvs[srvName] = srv;
         resolve();
       });
     }

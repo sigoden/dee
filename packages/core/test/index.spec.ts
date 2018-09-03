@@ -1,5 +1,5 @@
-import * as Dee from "../src/index";
-import * as DeeSimple from "./fixtures/service";
+import * as Dee from "../src";
+import * as DeeSimple from "./fixtures/simple";
 import * as supertest from "supertest";
 import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
 

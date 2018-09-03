@@ -2,18 +2,20 @@ import * as Dee from "../../src/index";
 
 declare namespace DeeSimple {
   export interface Service extends Dee.Service {
-    args: any;
+    args: Args;
+  }
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: Args;
   }
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
-    args: any;
-  }
+  export interface Args extends Dee.Args {}
 }
 
 async function DeeSimple(
-  options: DeeSimple.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeSimple.Args
 ): Promise<DeeSimple.Service> {
-  const srv = { args: options.args };
+  const srv = { args };
   return srv;
 }
 
