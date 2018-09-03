@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
+    "test": "jest",
     "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
     "build:prod": "tsc -p tsconfig.prod.json",
@@ -23,6 +24,8 @@
     "grpc": "^1.14.1"
   },
   "devDependencies": {
+    "@sigodenjs/dee-test-utils": "^0.8.0",
+    "jest": "^23.5.0",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }
