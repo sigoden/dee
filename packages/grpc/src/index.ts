@@ -1,72 +1,74 @@
 import * as grpcLoader from "@grpc/proto-loader";
-import { Service, ServiceGroup, ServiceOptions } from "@sigodenjs/dee";
+import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
-export interface GrpcService extends Service {
-  server?: grpc.Server;
-  clients?: GrpcClientMap;
+declare namespace DeeGRPC {
+  export interface Service extends Dee.Service {
+    server?: grpc.Server;
+    clients?: GrpcClientMap;
+  }
+
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: Args;
+  }
+
+  export interface GrpcClientMap {
+    [k: string]: GrpcClient;
+  }
+
+  interface GrpcClient extends grpc.Client {
+    call: (
+      name: string,
+      args: any,
+      metdata?: Metadata,
+      callback?: (data: any) => void
+    ) => Promise<any> | any;
+  }
+
+  interface Args {
+    // path to server proto file
+    serverProtoFile?: string;
+    // listenning host of server
+    serverHost?: string;
+    // listenning port of server
+    serverPort?: number;
+    // handler func for service
+    serverHandlers: HandlerFuncMap;
+    // path to client Proto file
+    clientProtoFile?: string;
+    // get uri for client service
+    getClientUri?: (serviceName: string) => string;
+    // check whether the client have permision to call the rpc
+    havePermision?: CheckPermisionFunc;
+  }
+
+  export type CheckPermisionFunc = (serviceName: string, id: string) => boolean;
+
+  export interface HandlerFuncMap {
+    [k: string]: HandlerFunc;
+  }
+
+  export type HandlerFunc = (
+    ctx: Context,
+    callback?: (result: any) => void
+  ) => Promise<void> | void;
+
+  export interface Context {
+    request: any;
+    metadata: Metadata;
+    srvs: Dee.ServiceGroup;
+  }
+
+  export interface Metadata {
+    origin: string;
+  }
 }
 
-export interface GrpcServiceOptions extends ServiceOptions {
-  args: GrpcArgs;
-}
-
-interface GrpcClientMap {
-  [k: string]: GrpcClient;
-}
-
-interface GrpcClient extends grpc.Client {
-  call: (
-    name: string,
-    args: any,
-    metdata?: Metadata,
-    callback?: (data: any) => void
-  ) => Promise<any> | any;
-}
-
-interface GrpcArgs {
-  // path to server proto file
-  serverProtoFile?: string;
-  // listenning host of server
-  serverHost?: string;
-  // listenning port of server
-  serverPort?: number;
-  // handler func for service
-  serverHandlers: HandlerFuncMap;
-  // path to client Proto file
-  clientProtoFile?: string;
-  // get uri for client service
-  getClientUri?: (serviceName: string) => string;
-  // check whether the client have permision to call the rpc
-  havePermision?: CheckPermisionFunc;
-}
-
-type CheckPermisionFunc = (serviceName: string, id: string) => boolean;
-
-interface HandlerFuncMap {
-  [k: string]: HandlerFunc;
-}
-
-type HandlerFunc = (
-  ctx: Context,
-  callback?: (result: any) => void
-) => Promise<void> | void;
-
-interface Context {
-  request: any;
-  metadata: Metadata;
-  srvs: ServiceGroup;
-}
-
-interface Metadata {
-  origin: string;
-}
-
-export default async function init(
-  options: GrpcServiceOptions
-): Promise<GrpcService> {
+async function DeeGRPC(
+  options: DeeGRPC.ServiceOptions
+): Promise<DeeGRPC.Service> {
   const { serverProtoFile, clientProtoFile } = options.args;
-  const srv: GrpcService = {};
+  const srv: DeeGRPC.Service = {};
   if (serverProtoFile) {
     srv.server = await createServer(options);
   }
@@ -76,7 +78,9 @@ export default async function init(
   return srv;
 }
 
-async function createServer(options: GrpcServiceOptions): Promise<grpc.Server> {
+async function createServer(
+  options: DeeGRPC.ServiceOptions
+): Promise<grpc.Server> {
   const {
     serverProtoFile,
     serverHandlers,
@@ -105,12 +109,12 @@ async function createServer(options: GrpcServiceOptions): Promise<grpc.Server> {
 }
 
 function shimHandlers(
-  handlers: HandlerFuncMap,
-  havePermision: CheckPermisionFunc
+  handlers: DeeGRPC.HandlerFuncMap,
+  havePermision: DeeGRPC.CheckPermisionFunc
 ): void {
   Object.keys(handlers).forEach(id => {
     const fn = handlers[id];
-    handlers[id] = (ctx: Context, callback?: (result: any) => void) => {
+    handlers[id] = (ctx: DeeGRPC.Context, callback?: (result: any) => void) => {
       if (!havePermision(ctx.metadata.origin, id)) {
         callback({
           code: grpc.status.PERMISSION_DENIED,
@@ -124,9 +128,9 @@ function shimHandlers(
 }
 
 async function createClients(
-  options: GrpcServiceOptions
-): Promise<GrpcClientMap> {
-  const clients: GrpcClientMap = {};
+  options: DeeGRPC.ServiceOptions
+): Promise<DeeGRPC.GrpcClientMap> {
+  const clients: DeeGRPC.GrpcClientMap = {};
   const { clientProtoFile, getClientUri = v => v } = options.args;
   const { ns, name } = options.srvs.$config;
   const protoRoot = loadProtoFile(clientProtoFile);
@@ -143,7 +147,7 @@ async function createClients(
     client.call = (
       funcName: string,
       args: any,
-      metadata?: Metadata,
+      metadata?: DeeGRPC.Metadata,
       callback?: (data: any) => void
     ) => {
       metadata.origin = name;
@@ -177,13 +181,15 @@ function loadProtoFile(filename: string): grpc.GrpcObject {
   return grpc.loadPackageDefinition(grpcLoader.loadSync(filename));
 }
 
-export function tryWrapHandler(fn: HandlerFunc): HandlerFunc {
+function tryWrapHandler(fn: DeeGRPC.HandlerFunc): DeeGRPC.HandlerFunc {
   const type = Object.prototype.toString.call(fn);
   if (type === "[object AsyncFunction]") {
-    return (ctx: Context, callback?: (result: any) => void) => {
+    return (ctx: DeeGRPC.Context, callback?: (result: any) => void) => {
       const fnReturn = fn(ctx, callback);
       Promise.resolve(fnReturn).catch(callback);
     };
   }
   return fn;
 }
+
+export = DeeGRPC;

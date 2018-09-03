@@ -1,25 +1,27 @@
-import { Service, ServiceOptions } from "@sigodenjs/dee";
+import * as Dee from "@sigodenjs/dee";
 import * as winston from "winston";
 
-export interface WinstonService extends Service, winston.Logger {}
+declare namespace DeeWinston {
+  export interface Service extends Dee.Service, winston.Logger {}
 
-export interface WinstonServiceOptions extends ServiceOptions {
-  args: WinstonArgs;
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: Args;
+  }
+
+  export interface Args {
+    level?: string;
+    format?: string;
+    transporters?: TransporterMap;
+  }
+
+  export interface TransporterMap {
+    [k: string]: any;
+  }
 }
 
-interface WinstonArgs {
-  level?: string;
-  format?: string;
-  transporters?: TransporterMap;
-}
-
-interface TransporterMap {
-  [k: string]: any;
-}
-
-export default async function init(
-  options: WinstonServiceOptions
-): Promise<WinstonService> {
+async function DeeWinston(
+  options: DeeWinston.ServiceOptions
+): Promise<DeeWinston.Service> {
   const {
     format = "simple",
     level = "warning",
@@ -51,3 +53,5 @@ export default async function init(
     transports
   });
 }
+
+export = DeeWinston;

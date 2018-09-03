@@ -19,6 +19,7 @@
   "license": "MIT",
   "dependencies": {
     "@sigodenjs/dee": "^0.8.0",
+    "@types/node": "^10.9.4",
     "fastest-validator": "^0.6.9",
     "node-nats-streaming": "0.0.40"
   },

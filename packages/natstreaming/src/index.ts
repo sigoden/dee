@@ -1,76 +1,78 @@
-import { Service, ServiceGroup, ServiceOptions } from "@sigodenjs/dee";
+import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
 import * as FastestValidator from "fastest-validator";
 import * as nats from "node-nats-streaming";
 
 const validator = new FastestValidator();
 
-export interface NatstreamingService extends Service {
-  stan: nats.Stan;
-  producers: ProducerMap;
-  subscribers: SubscriberMap;
+declare namespace DeeNatstreaming {
+  export interface Service extends Dee.Service {
+    stan: nats.Stan;
+    producers: ProducerMap;
+    subscribers: SubscriberMap;
+  }
+
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: Args;
+  }
+
+  export interface ProducerMap {
+    [k: string]: ProduceFunc;
+  }
+
+  export interface SubscriberMap {}
+
+  export interface SubscriberOptions {
+    group?: string | boolean;
+    durable?: string | boolean;
+    noAutoAck: boolean;
+    ackWait: number;
+    maxInFlight: number;
+  }
+
+  export interface Args {
+    client: ClientOptions;
+    handlers?: HandlerFuncMap;
+    producers?: ProducerOptionsMap;
+    subscribers?: SubscriberOptionsMap;
+  }
+
+  interface ClientOptions {
+    clusterId: string;
+    stanOptions: nats.StanOptions;
+  }
+
+  interface ProducerOptionsMap {
+    [k: string]: ProducerOptions;
+  }
+
+  interface ProducerOptions {
+    schema?: any;
+  }
+
+  interface SubscriberOptionsMap {
+    [k: string]: SubscriberOptions;
+  }
+
+  interface HandlerFuncMap {
+    [k: string]: HandlerFunc;
+  }
+
+  type HandlerFunc = (ctx: Context) => void;
+
+  type ProduceFunc = (
+    msg: any,
+    callback?: (err: Error, result?: any) => void
+  ) => Promise<any> | void;
+
+  interface Context {
+    srvs: Dee.ServiceGroup;
+  }
 }
 
-export interface NatstreamingServiceOptions extends ServiceOptions {
-  args: NatstreamingArgs;
-}
-
-interface NatstreamingArgs {
-  client: ClientOptions;
-  handlers?: HandlerFuncMap;
-  producers?: ProducerOptionsMap;
-  subscribers?: SubscriberOptionsMap;
-}
-
-interface ClientOptions {
-  clusterId: string;
-  stanOptions: nats.StanOptions;
-}
-
-interface ProducerOptionsMap {
-  [k: string]: ProducerOptions;
-}
-
-interface ProducerOptions {
-  schema?: any;
-}
-
-interface SubscriberOptionsMap {
-  [k: string]: SubscriberOptions;
-}
-
-interface SubscriberOptions {
-  group?: string | boolean;
-  durable?: string | boolean;
-  noAutoAck: boolean;
-  ackWait: number;
-  maxInFlight: number;
-}
-
-interface HandlerFuncMap {
-  [k: string]: HandlerFunc;
-}
-
-type HandlerFunc = (ctx: Context) => void;
-
-interface ProducerMap {
-  [k: string]: ProduceFunc;
-}
-
-type ProduceFunc = (
-  msg: any,
-  callback?: (err: Error, result?: any) => void
-) => Promise<any> | void;
-
-interface SubscriberMap {}
-
-interface Context {
-  srvs: ServiceGroup;
-}
-
-export default async function init(
-  options: NatstreamingServiceOptions
-): Promise<NatstreamingService> {
+async function DeeNatstreaming(
+  options: DeeNatstreaming.ServiceOptions
+): Promise<DeeNatstreaming.Service> {
   const { name } = options.srvs.$config;
   const {
     client: clientConfig,
@@ -83,7 +85,7 @@ export default async function init(
     clientId,
     clientConfig.stanOptions
   );
-  return new Promise<NatstreamingService>((resolve, reject) => {
+  return new Promise<DeeNatstreaming.Service>((resolve, reject) => {
     let errorBeforeConnect = true;
     stan.once("connect", () => {
       let producers;
@@ -95,7 +97,7 @@ export default async function init(
       if (subscribersConfig) {
         subscribers = createSubscribers(options, stan);
       }
-      const srv: NatstreamingService = { stan, producers, subscribers };
+      const srv: DeeNatstreaming.Service = { stan, producers, subscribers };
       resolve(srv);
       return;
     });
@@ -109,9 +111,9 @@ export default async function init(
 }
 
 function createProducers(
-  options: NatstreamingServiceOptions,
+  options: DeeNatstreaming.ServiceOptions,
   stan: nats.Stan
-): ProducerMap {
+): DeeNatstreaming.ProducerMap {
   const { producers: producersConfig } = options.args;
   const { name } = options.srvs.$config;
   const producers = {};
@@ -157,9 +159,9 @@ function createProducers(
 }
 
 function createSubscribers(
-  options: NatstreamingServiceOptions,
+  options: DeeNatstreaming.ServiceOptions,
   stan: nats.Stan
-): SubscriberMap {
+): DeeNatstreaming.SubscriberMap {
   const { name } = options.srvs.$config;
   const { subscribers: subscribersConfig, handlers } = options.args;
   const subscribers = {};
@@ -190,9 +192,9 @@ function createSubscribers(
 }
 
 function createSubscribeStanOptions(
-  options: NatstreamingServiceOptions,
+  options: DeeNatstreaming.ServiceOptions,
   subOpts: nats.SubscriptionOptions,
-  config: SubscriberOptions
+  config: DeeNatstreaming.SubscriberOptions
 ): void {
   const { name } = options.srvs.$config;
   const { noAutoAck, ackWait, maxInFlight } = config;
@@ -214,3 +216,5 @@ function createSubscribeStanOptions(
     subOpts.setMaxInFlight(maxInFlight);
   }
 }
+
+export = DeeNatstreaming;

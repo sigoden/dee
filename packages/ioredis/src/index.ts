@@ -1,16 +1,20 @@
-import { Service, ServiceOptions } from "@sigodenjs/dee";
+import * as Dee from "@sigodenjs/dee";
 import * as Redis from "ioredis";
 
-export interface IORedisService extends Service, Redis.Redis {}
+declare namespace DeeIORedis {
+  export interface Service extends Dee.Service, Redis.Redis {}
 
-export interface IORedisServiceOptions extends ServiceOptions {
-  args: Redis.RedisOptions;
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: Redis.RedisOptions;
+  }
 }
 
-export default async function init(
-  options: IORedisServiceOptions
-): Promise<IORedisService> {
+async function DeeIORedis(
+  options: DeeIORedis.ServiceOptions
+): Promise<DeeIORedis.Service> {
   const srv = new Redis(options.args);
   await srv.connect();
   return srv;
 }
+
+export = DeeIORedis;
