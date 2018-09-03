@@ -8,7 +8,7 @@ declare namespace DeeWinston {
     args: Args;
   }
 
-  export interface Args {
+  export interface Args extends Dee.Args {
     level?: string;
     format?: string;
     transporters?: TransporterMap;
@@ -20,13 +20,14 @@ declare namespace DeeWinston {
 }
 
 async function DeeWinston(
-  options: DeeWinston.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeWinston.Args
 ): Promise<DeeWinston.Service> {
   const {
     format = "simple",
     level = "warning",
     transporters = { Console: {} }
-  } = options.args;
+  } = args;
   const transports = [];
   const unsupportTransportNames = [];
   Object.keys(transporters).forEach(name => {
@@ -48,7 +49,7 @@ async function DeeWinston(
   }
 
   return winston.createLogger({
-    format: winston.format[format],
+    format: winston.format[format](),
     level,
     transports
   });
