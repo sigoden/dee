@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   version: "0.0.1"
-  title: Hello World App
+  title: Simple App
 host: localhost:3000
 basePath: /
 schemes:
@@ -26,9 +26,23 @@ paths:
         "200":
           description: Success
           schema:
-            $ref: "#/definitions/HelloWorldResponse"
+            $ref: "#/definitions/MessageResponse"
+  /hey/{name}:
+    get:
+      description: Returns 'Hey' to the caller
+      operationId: hey
+      parameters:
+        - name: name
+          in: path
+          description: The name of the person to whom to say hello
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MessageResponse"
 definitions:
-  HelloWorldResponse:
+  MessageResponse:
     required:
       - message
     properties:

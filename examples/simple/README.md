@@ -5,7 +5,7 @@ A demo of how to use dee framework
 ## Run
 
 ```
-ts-node example/simple
+ ts-node -P examples/simple/tsconfig.json examples/simple/index.ts
 ```
 
 ## Try 

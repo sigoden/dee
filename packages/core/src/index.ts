@@ -1,5 +1,4 @@
 import * as swaggerize from "@sigodenjs/dee-swaggerize";
-import { HandlerFuncMap, SwaggerizeOptions } from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import { ErrorRequestHandler, Express, RequestHandler } from "express";
 import { Server } from "http";
@@ -16,16 +15,16 @@ declare global {
     }
   }
   namespace Dee {
-    export interface ServiceGroup {}
+    interface ServiceGroup {}
   }
 }
 
 // options to init dee app
-export interface DeeOptions {
+export interface Options {
   // general config
   config: Config;
   // options to init swaggerize service
-  swaggerize: SwaggerizeOptions;
+  swaggerize: swaggerize.Options;
   // hook to run before bind route handlers
   beforeRoute?: RouteHooks;
   // hook to run after bind route handlers
@@ -45,7 +44,7 @@ export interface ServiceOptions extends ServiceOptionsBase {
 export interface App {
   srvs: ServiceGroup;
   express: express.Express;
-  start: () => Server;
+  start: () => Promise<Server>;
 }
 
 export interface ServiceGroup {
@@ -54,6 +53,8 @@ export interface ServiceGroup {
 }
 
 export interface Service {}
+
+export interface ServiceGroup {}
 
 interface ServiceOptionsBase {
   initialize: ServiceInitializeFunc | ServiceInitializeModule;
@@ -86,7 +87,7 @@ interface Config {
 
 type RouteHooks = (app: Express) => void | RequestHandler[];
 
-async function createSrvs(options: DeeOptions): Promise<ServiceGroup> {
+async function createSrvs(options: Options): Promise<ServiceGroup> {
   const { services: servicesOpts = {}, config } = options;
   const srvs: ServiceGroup = { $config: config };
   const promises = Object.keys(servicesOpts).map(srvName => {
@@ -105,7 +106,10 @@ async function createSrv(
   let srvInitialize: ServiceInitializeFunc;
   if (typeof options.initialize === "string") {
     try {
-      srvInitialize = require(options.initialize);
+      const requiredModule = require(options.initialize);
+      srvInitialize = requiredModule.default
+        ? requiredModule.default
+        : requiredModule;
     } catch (err) {
       throw new Error(`servcie.${srvName}.initialize is a invalid module`);
     }
@@ -136,13 +140,13 @@ function useMiddlewares(app: express.Express, hooks: RouteHooks) {
   }
 }
 
-function shimHandlers(handlers: HandlerFuncMap): void {
+function shimHandlers(handlers: swaggerize.HandlerFuncMap): void {
   Object.keys(handlers).forEach(operationId => {
     handlers[operationId] = tryWrapRequestHandler(handlers[operationId]);
   });
 }
 
-export default async function Dee(options: DeeOptions): Promise<App> {
+export default async function DeeInit(options: Options): Promise<App> {
   const app = express();
   const srvs = await createSrvs(options);
   app.use((req, res, next) => {
@@ -164,8 +168,15 @@ export default async function Dee(options: DeeOptions): Promise<App> {
   const start = () => {
     const port = _.get(options, "config.port", 3000);
     const host = _.get(options, "config.host");
-    const server = app.listen(port, host);
-    return server;
+    return new Promise<Server>((resolve, reject) => {
+      const server = app.listen(port, host, err => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(server);
+      });
+    });
   };
   const deeApp = { srvs, express: app, start };
   if (options.ready) {
