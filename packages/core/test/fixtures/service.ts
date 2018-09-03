@@ -1,15 +1,20 @@
-import { Service, ServiceOptions } from "../../src/index";
+import * as Dee from "../../src/index";
 
-export interface SimpleService extends Service {}
+declare namespace DeeSimple {
+  export interface Service extends Dee.Service {
+    args: any;
+  }
 
-export interface SimpleServiceOptions extends ServiceOptions {
-  args: any;
+  export interface ServiceOptions extends Dee.ServiceOptions {
+    args: any;
+  }
 }
 
-export default async function initSimple(
-  options: SimpleServiceOptions
-): Promise<SimpleService> {
-  const srv = {}
+async function DeeSimple(
+  options: DeeSimple.ServiceOptions
+): Promise<DeeSimple.Service> {
+  const srv = { args: options.args };
   return srv;
 }
 
+export = DeeSimple;

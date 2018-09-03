@@ -4,13 +4,13 @@ import { Server } from "http";
 import * as _ from "lodash";
 import { tryWrapRequestHandler } from "./utils";
 import * as expressCore from "express-serve-static-core";
-
 import "./global";
 
 declare namespace Dee {
   export interface Request extends expressCore.Request {}
   export interface Response extends expressCore.Response {}
   export interface NextFunction extends expressCore.NextFunction {}
+  export interface RequestHandler extends expressCore.RequestHandler {}
   export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
 
   // options to init dee app
@@ -70,15 +70,15 @@ declare namespace Dee {
     app: express.Express
   ) => void | express.RequestHandler[];
 
+  export interface ServicesOptionsMap {
+    [k: string]: ServiceOptionsBase;
+  }
+  
   type ServiceInitializeModule = string;
 
   interface ServiceOptionsBase {
     initialize: ServiceInitializeFunc | ServiceInitializeModule;
     args?: any;
-  }
-
-  interface ServicesOptionsMap {
-    [k: string]: ServiceOptionsBase;
   }
 }
 
@@ -112,12 +112,16 @@ async function createSrv(
     const promise = srvInitialize(options, (err, srv) => {
       if (err) {
         reject(new Error(`service.${srvName} has error, ${err.message}`));
+        return;
       }
       options.srvs[srvName] = srv;
       resolve();
     });
     if (promise instanceof Promise) {
-      promise.then(() => resolve());
+      return promise.then(srv => {
+        options.srvs[srvName] = srv;
+        resolve();
+      });
     }
   });
 }
