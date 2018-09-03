@@ -5,15 +5,17 @@ declare namespace DeeIORedis {
   export interface Service extends Dee.Service, Redis.Redis {}
 
   export interface ServiceOptions extends Dee.ServiceOptions {
-    args: Redis.RedisOptions;
+    args: Args;
   }
+
+  export interface Args extends Dee.Args, Redis.RedisOptions {}
 }
 
 async function DeeIORedis(
-  options: DeeIORedis.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeIORedis.Args
 ): Promise<DeeIORedis.Service> {
-  const srv = new Redis(options.args);
-  await srv.connect();
+  const srv = new Redis(args);
   return srv;
 }
 
