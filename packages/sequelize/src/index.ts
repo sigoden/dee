@@ -8,7 +8,7 @@ declare namespace DeeSequelize {
     args: Args;
   }
 
-  export interface Args {
+  export interface Args extends Dee.Args {
     database: string;
     username: string;
     password: string;
@@ -17,18 +17,13 @@ declare namespace DeeSequelize {
 }
 
 async function DeeSequelize(
-  options: DeeSequelize.ServiceOptions
+  ctx: Dee.ServiceInitializeContext,
+  args: DeeSequelize.Args
 ): Promise<DeeSequelize.Service> {
-  const {
-    database,
-    username,
-    password,
-    options: connectOptions
-  } = options.args;
+  const { database, username, password, options: connectOptions } = args;
   const srv = new Sequelize(database, username, password, connectOptions);
   await srv.authenticate();
   return srv;
 }
-
 
 export = DeeSequelize;
