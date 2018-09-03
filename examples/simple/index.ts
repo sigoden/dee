@@ -1,4 +1,4 @@
-import Dee, { HandlerFuncMap } from "../../packages/core";
+import * as Dee from "../../packages/core";
 import * as path from "path";
 import * as handlers from "./handlers";
 
