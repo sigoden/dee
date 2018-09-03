@@ -18,13 +18,13 @@
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
-    "@sigodenjs/dee-swaggerize": "^0.2.3",
+    "@sigodenjs/dee-swaggerize": "^0.2.5",
+    "@types/express": "^4.16.0",
+    "@types/lodash": "^4.14.116",
     "express": "^4.16.3",
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "@types/express": "^4.16.0",
-    "@types/lodash": "^4.14.116",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }

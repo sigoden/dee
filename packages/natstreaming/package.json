@@ -18,11 +18,11 @@
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
+    "@sigodenjs/dee": "^0.8.0",
     "fastest-validator": "^0.6.9",
     "node-nats-streaming": "0.0.40"
   },
   "devDependencies": {
-    "@sigodenjs/dee": "^0.8.0",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }

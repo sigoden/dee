@@ -1,7 +1,5 @@
-import swaggerize, {
-  HandlerFuncMap,
-  SwaggerizeOptions
-} from "@sigodenjs/dee-swaggerize";
+import * as swaggerize from "@sigodenjs/dee-swaggerize";
+import { HandlerFuncMap, SwaggerizeOptions } from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import { ErrorRequestHandler, Express, RequestHandler } from "express";
 import { Server } from "http";

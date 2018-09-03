@@ -18,11 +18,11 @@
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
+    "@sigodenjs/dee": "^0.8.0",
+    "@types/ioredis": "^4.0.1",
     "ioredis": "^4.0.0"
   },
   "devDependencies": {
-    "@sigodenjs/dee": "^0.8.0",
-    "@types/ioredis": "^4.0.1",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }

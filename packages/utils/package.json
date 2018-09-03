@@ -17,9 +17,10 @@
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "@types/node": "^10.9.4"
+  },
   "devDependencies": {
-    "@types/node": "^10.9.4",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }

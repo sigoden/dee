@@ -18,11 +18,11 @@
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
+    "@sigodenjs/dee": "^0.8.0",
+    "@types/mongoose": "^5.2.9",
     "mongoose": "^5.2.12"
   },
   "devDependencies": {
-    "@sigodenjs/dee": "^0.8.0",
-    "@types/mongoose": "^5.2.9",
     "rimraf": "^2.6.2",
     "typescript": "^3.0.3"
   }
