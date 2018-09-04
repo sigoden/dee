@@ -11,6 +11,9 @@
     "clean": "rimraf dist",
     "prepublish": "npm run -s clean && npm run -s build:prod"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "files": [
     "dist",
     "swagger.yaml"
