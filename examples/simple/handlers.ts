@@ -6,14 +6,15 @@ export function hello(req: Request, res: Response, next: NextFunction) {
 }
 
 export async function hey(req: Request, res: Response, next: NextFunction) {
-  const name = await delay(10, req.params.name)
-  await res.json(name);
+  await delay(10);
+  const name = req.params.name;
+  res.json(name);
 }
 
-function delay<T>(time: number, data: T) {
-  return new Promise<T>(resolve => {
+function delay(time: number) {
+  return new Promise(resolve => {
     setTimeout(() => {
-      resolve(data);
+      resolve();
     }, time);
   });
 }
