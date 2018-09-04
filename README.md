@@ -1,21 +1,20 @@
-# Dee - 框架
+# Dee - Powered by express and swagger
 
-## 特点
+## Features
 
-- 设计驱动开发
-- 使用 swagger 注册路由，解析并校验请求，提高开发效率
-- 预置精选第三方服务，可以使用配置初始化并绑定
-- 路由支持 promsie
+- Document driven development
+- Use swagger to autobind router, auto parse and verify request.
+- Easy to use 3-party service, could be bond through config
 
-## 入门
+## Get started
 
-安装 Dee 框架
+Install Dee web framework
 
 ```
 npm i @sigodenjs/dee -S
 ```
 
-初始化 Dee
+Init Dee App
 
 ```js
 import * as Dee from "@sigodenjs/dee";
@@ -29,10 +28,10 @@ Dee({
     name: "App"
   },
   swaggerize: {
-    api: path.resolve(__dirname, "./swagger.yaml"), // 指向 Swagger 文档文件
+    api: path.resolve(__dirname, "./swagger.yaml"), //  Swagger doc file
     handlers
   },
-  services: { // 自动初始化并绑定服务，可以在 app.srvs 和 req.srvs 中获取
+  services: { // auto init and bind service, could be access through app.srvs and req.srvs
     redis: {
       initialize: DeeRedis,
       args: {
@@ -46,13 +45,13 @@ Dee({
 
 ```
 
-路由函数
+Write route handlers
 
 ```js
 export async function hello(req: Request, res: Response, next: NextFunction) {
   await sleep(1);
   const name = req.query.name;
-  req.srvs.redis // 可以获取 redis 服务
+  req.srvs.redis // access redis service
   res.json(name);
 }
 ```
