@@ -39,8 +39,11 @@
   },
   "devDependencies": {
     "@sigodenjs/dee-test-utils": "^0.8.0",
+    "@types/jest": "^23.3.1",
+    "jest": "^23.5.0",
     "mysql2": "^1.6.1",
     "rimraf": "^2.6.2",
+    "ts-jest": "^23.1.4",
     "typescript": "^3.0.3"
   }
 }
