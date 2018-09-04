@@ -26,7 +26,7 @@
     "swagger"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/dee/tree/master/packages/httperror",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/httperr",
   "license": "MIT",
   "repository": {
     "type": "git",
