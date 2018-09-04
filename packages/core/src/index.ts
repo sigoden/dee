@@ -1,10 +1,12 @@
 import * as swaggerize from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import { Server } from "http";
-import * as _ from "lodash";
 import { tryWrapRequestHandler } from "./utils";
 import * as expressCore from "express-serve-static-core";
 import "./global";
+
+const DEFAULT_HOST = "localhost";
+const DEFAULT_PORT = 3000;
 
 declare namespace Dee {
   export interface Request extends expressCore.Request {}
@@ -172,8 +174,8 @@ async function Dee(options: Dee.Options): Promise<Dee.App> {
   }
 
   const start = () => {
-    const port = _.get(options, "config.port", 3000);
-    const host = _.get(options, "config.host");
+    const port = options.config.port || DEFAULT_PORT;
+    const host = options.config.host || DEFAULT_HOST;
     return new Promise<Server>((resolve, reject) => {
       const server = app.listen(port, host, err => {
         if (err) {
