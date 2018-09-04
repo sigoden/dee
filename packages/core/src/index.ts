@@ -12,6 +12,7 @@ declare namespace Dee {
   export interface NextFunction extends expressCore.NextFunction {}
   export interface RequestHandler extends expressCore.RequestHandler {}
   export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
+  export interface Express extends expressCore.Express {}
 
   // options to init dee app
   export interface Options {
@@ -39,7 +40,7 @@ declare namespace Dee {
 
   export interface App {
     srvs: ServiceGroup;
-    express: express.Express;
+    express: Dee.Express;
     start: () => Promise<Server>;
   }
 
@@ -70,7 +71,8 @@ declare namespace Dee {
   }
 
   export type RouteHooks = (
-    app: express.Express
+    srvs: Dee.ServiceGroup,
+    app: Dee.Express
   ) => void | express.RequestHandler[];
 
   export interface ServicesOptionsMap {
@@ -130,9 +132,13 @@ async function createSrv(
   });
 }
 
-function useMiddlewares(app: express.Express, hooks: Dee.RouteHooks) {
+function useMiddlewares(
+  srvs: Dee.ServiceGroup,
+  app: Dee.Express,
+  hooks: Dee.RouteHooks
+) {
   if (typeof hooks === "function") {
-    hooks(app);
+    hooks(srvs, app);
     return;
   }
   for (const mid of Array<express.RequestHandler>(hooks)) {
@@ -154,12 +160,12 @@ async function Dee(options: Dee.Options): Promise<Dee.App> {
     next();
   });
   if (options.beforeRoute) {
-    useMiddlewares(app, options.beforeRoute);
+    useMiddlewares(srvs, app, options.beforeRoute);
   }
   shimHandlers(options.swaggerize.handlers);
   swaggerize(app, options.swaggerize);
   if (options.afterRoute) {
-    useMiddlewares(app, options.afterRoute);
+    useMiddlewares(srvs, app, options.afterRoute);
   }
   if (options.errorHandler) {
     app.use(options.errorHandler);
