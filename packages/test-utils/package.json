@@ -1,7 +1,7 @@
 {
   "name": "@sigodenjs/dee-test-utils",
   "version": "0.8.0",
-  "description": "Test utility functions for dee framework",
+  "description": "Utility functions for test dee framework and service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -17,7 +17,12 @@
   ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
   "dependencies": {
     "@sigodenjs/dee": "^0.8.0",
     "@types/node": "^10.9.4"

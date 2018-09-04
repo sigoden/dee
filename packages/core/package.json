@@ -15,9 +15,21 @@
   "files": [
     "dist"
   ],
-  "keywords": ["dee", "framework", "http", "api", "web", "swagger"],
+  "keywords": [
+    "dee",
+    "framework",
+    "http",
+    "api",
+    "web",
+    "swagger"
+  ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
   "dependencies": {
     "@sigodenjs/dee-swaggerize": "^0.2.6",
     "@types/express": "^4.16.0",

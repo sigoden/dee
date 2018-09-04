@@ -15,9 +15,23 @@
   "files": [
     "dist"
   ],
-  "keywords": ["mongo", "mongodb", "dee", "service", "http", "api", "web", "swagger"],
+  "keywords": [
+    "mongo",
+    "mongodb",
+    "dee",
+    "service",
+    "http",
+    "api",
+    "web",
+    "swagger"
+  ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/mongoose",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
   "dependencies": {
     "@sigodenjs/dee": "^0.8.0",
     "@types/mongoose": "^5.2.9",

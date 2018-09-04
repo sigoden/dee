@@ -15,9 +15,22 @@
   "files": [
     "dist"
   ],
-  "keywords": ["grpc", "dee", "service", "http", "api", "web", "swagger"],
+  "keywords": [
+    "grpc",
+    "dee",
+    "service",
+    "http",
+    "api",
+    "web",
+    "swagger"
+  ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/grpc",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
   "dependencies": {
     "@grpc/proto-loader": "^0.3.0",
     "@sigodenjs/dee": "^0.8.0",
