@@ -1,7 +1,7 @@
 import * as DeeWinston from "../src";
 import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
 
-test("should create grpc service", async () => {
+test("should create winston service", async () => {
   const serviceOptions = <DeeWinston.ServiceOptions>{
     initialize: DeeWinston,
     args: {

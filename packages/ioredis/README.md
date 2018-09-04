@@ -5,12 +5,12 @@ A redis service for dee framework, powered by ioredis
 ## Usage
 
 ```ts
-import * as DeeRedis from "@sigodenjs/dee-ioredis";
+import * as DeeIORedis from "@sigodenjs/dee-ioredis";
 
 Dee({
   services: {
     redis: {
-        initialize: DeeRedis,
+        initialize: DeeIORedis,
         args: {
             port: 6379
         }

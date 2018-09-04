@@ -1,7 +1,7 @@
 import * as DeeSequelize from "../src";
 import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
 
-test("should create grpc service", async () => {
+test("should create sequelize service", async () => {
   const serviceOptions = <DeeSequelize.ServiceOptions>{
     initialize: DeeSequelize,
     args: {

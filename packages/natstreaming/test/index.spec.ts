@@ -1,7 +1,7 @@
 import * as DeeNatstreaming from "../src";
 import { initApp, HANDLERS, delay } from "@sigodenjs/dee-test-utils";
 
-test("should create grpc service", async () => {
+test("should create natstreaming service", async () => {
   const serviceOptions = <DeeNatstreaming.ServiceOptions>{
     initialize: DeeNatstreaming,
     args: {
