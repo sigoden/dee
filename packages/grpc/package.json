@@ -1,0 +1,45 @@
+{
+  "name": "@sigodenjs/dee-grpc",
+  "version": "0.8.0",
+  "description": "A rpc service for dee framework, powered by grpc",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "test": "jest",
+    "lint": "tslint -p tsconfig.json --fix",
+    "build": "tsc",
+    "build:prod": "tsc -p tsconfig.prod.json",
+    "clean": "rimraf dist",
+    "prepublish": "npm run -s clean && npm run -s build:prod"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "grpc",
+    "dee",
+    "service",
+    "http",
+    "api",
+    "web",
+    "swagger"
+  ],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/grpc",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
+  "dependencies": {
+    "@grpc/proto-loader": "^0.3.0",
+    "@sigodenjs/dee": "^0.8.0",
+    "grpc": "^1.14.1"
+  },
+  "devDependencies": {
+    "@sigodenjs/dee-test-utils": "^0.8.0",
+    "jest": "^23.5.0",
+    "rimraf": "^2.6.2",
+    "typescript": "^3.0.3"
+  }
+}

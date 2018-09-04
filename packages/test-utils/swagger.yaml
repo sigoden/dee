@@ -1,0 +1,50 @@
+swagger: "2.0"
+info:
+  version: "0.0.1"
+  title: Simple App
+host: localhost:3000
+basePath: /
+schemes:
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /hello:
+    get:
+      description: Returns 'Hello' to the caller
+      operationId: hello
+      parameters:
+        - name: name
+          in: query
+          description: The name of the person to whom to say hello
+          required: false
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MessageResponse"
+  /hey/{name}:
+    get:
+      description: Returns 'Hey' to the caller
+      operationId: hey
+      parameters:
+        - name: name
+          in: path
+          description: The name of the person to whom to say hello
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/MessageResponse"
+definitions:
+  MessageResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string

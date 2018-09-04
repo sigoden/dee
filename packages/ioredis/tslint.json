@@ -1,0 +1,13 @@
+{
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended"],
+  "jsRules": {
+    "no-unused-expression": true
+  },
+  "rules": {
+    "no-empty-interface": false,
+    "interface-name": [false],
+    "arrow-parens": false,
+    "trailing-comma": false
+  }
+}

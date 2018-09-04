@@ -1,7 +1,4 @@
 node_modules
-
-.tern-*
+dist
 *.log
-package-lock.json
-/coverage
-/dist
+.vscode
