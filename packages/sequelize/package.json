@@ -15,7 +15,7 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
+  "keywords": ["sql", "sequelize", "dee", "service", "http", "api", "web", "swagger"],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {

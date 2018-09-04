@@ -15,7 +15,7 @@
   "files": [
     "dist"
   ],
-  "keywords": [],
+  "keywords": ["redis", "dee", "service", "http", "api", "web", "swagger"],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "license": "MIT",
   "dependencies": {
