@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-sequelize",
-  "version": "0.8.2",
+  "version": "0.8.4",
   "description": "A sql service for dee framework, powered by sequelize",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -36,12 +36,12 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.8.2",
+    "@sigodenjs/dee": "^0.8.4",
     "@types/sequelize": "^4.27.25",
     "sequelize": "^4.38.0"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.2",
+    "@sigodenjs/dee-test-utils": "^0.8.4",
     "@types/jest": "^23.3.1",
     "jest": "^23.5.0",
     "mysql2": "^1.6.1",
