@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-test-utils",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Utility functions for test dee framework and service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -24,7 +24,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.8.0",
+    "@sigodenjs/dee": "^0.8.1",
     "@types/node": "^10.9.4"
   },
   "devDependencies": {

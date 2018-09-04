@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "A framework focus on document driven design",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -38,7 +38,7 @@
     "lodash": "^4.17.10"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.0",
+    "@sigodenjs/dee-test-utils": "^0.8.1",
     "@types/jest": "^23.3.1",
     "@types/supertest": "^2.0.5",
     "jest": "^23.5.0",
