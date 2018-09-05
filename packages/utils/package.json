@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-utils",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Utility functions for dee framework",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -26,6 +26,5 @@
   },
   "dependencies": {
     "@types/node": "^10.9.4"
-  },
-  "devDependencies": {}
+  }
 }
