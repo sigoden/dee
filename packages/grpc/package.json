@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "build:prod": "tsc -p tsconfig.prod.json",
-    "clean": "rimraf dist",
+    "build": "../../node_modules/.bin/tsc",
+    "build:prod": "../../node_modules/.bin/tsc -p tsconfig.prod.json",
+    "clean": "../../node_modules/.bin/rimraf dist",
     "prepublish": "npm run -s clean && npm run -s build:prod"
   },
   "files": [
@@ -38,8 +38,6 @@
     "grpc": "^1.14.1"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4",
-    "rimraf": "^2.6.2",
-    "typescript": "^3.0.3"
+    "@sigodenjs/dee-test-utils": "^0.8.4"
   }
 }
