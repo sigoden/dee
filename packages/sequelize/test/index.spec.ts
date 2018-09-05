@@ -3,7 +3,7 @@ import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create sequelize service", async () => {
   const serviceOptions = <DeeSequelize.ServiceOptions>{
-    initialize: DeeSequelize,
+    initialize: DeeSequelize.init,
     args: {
       database: "mysql",
       username: "root",

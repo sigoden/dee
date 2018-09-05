@@ -13,75 +13,73 @@ declare global {
   }
 }
 
-declare namespace DeeNatstreaming {
-  interface Service extends Dee.Service {
-    stan: nats.Stan;
-    producers: ProducerMap;
-    subscribers: SubscriberMap;
-  }
-
-  interface ServiceOptions extends Dee.ServiceOptions {
-    args: Args;
-  }
-
-  interface ProducerMap extends DeeShare.ProducerMap {
-    [k: string]: ProduceFunc;
-  }
-
-  interface SubscriberMap extends DeeShare.SubscriberMap {
-    [k: string]: nats.Subscription;
-  }
-
-  interface SubscriberOptions {
-    group?: string | boolean;
-    durable?: string | boolean;
-    noAutoAck?: boolean;
-    ackWait?: number;
-    maxInFlight?: number;
-  }
-
-  interface Args extends Dee.Args {
-    client: ClientOptions;
-    handlers?: HandlerFuncMap;
-    producers?: ProducerOptionsMap;
-    subscribers?: SubscriberOptionsMap;
-  }
-
-  interface ClientOptions {
-    clusterId: string;
-    stanOptions: nats.StanOptions;
-  }
-
-  interface ProducerOptionsMap {
-    [k: string]: ProducerOptions;
-  }
-
-  interface ProducerOptions {
-    schema?: any;
-  }
-
-  interface SubscriberOptionsMap {
-    [k: string]: SubscriberOptions;
-  }
-
-  interface HandlerFuncMap {
-    [k: string]: HandlerFunc;
-  }
-
-  type HandlerFunc = (ctx: Context) => void;
-
-  type ProduceFunc = (msg: any) => Promise<any>;
-
-  interface Context {
-    srvs: Dee.ServiceGroup;
-    msg: nats.Message;
-  }
+export interface Service extends Dee.Service {
+  stan: nats.Stan;
+  producers: ProducerMap;
+  subscribers: SubscriberMap;
 }
 
-async function DeeNatstreaming(
+export interface ServiceOptions extends Dee.ServiceOptions {
+  args: Args;
+}
+
+export interface ProducerMap extends DeeShare.ProducerMap {
+  [k: string]: ProduceFunc;
+}
+
+export interface SubscriberMap extends DeeShare.SubscriberMap {
+  [k: string]: nats.Subscription;
+}
+
+export interface SubscriberOptions {
+  group?: string | boolean;
+  durable?: string | boolean;
+  noAutoAck?: boolean;
+  ackWait?: number;
+  maxInFlight?: number;
+}
+
+export interface Args extends Dee.Args {
+  client: ClientOptions;
+  handlers?: HandlerFuncMap;
+  producers?: ProducerOptionsMap;
+  subscribers?: SubscriberOptionsMap;
+}
+
+export interface ClientOptions {
+  clusterId: string;
+  stanOptions: nats.StanOptions;
+}
+
+export interface ProducerOptionsMap {
+  [k: string]: ProducerOptions;
+}
+
+export interface ProducerOptions {
+  schema?: any;
+}
+
+export interface SubscriberOptionsMap {
+  [k: string]: SubscriberOptions;
+}
+
+export interface HandlerFuncMap {
+  [k: string]: HandlerFunc;
+}
+
+export type HandlerFunc = (ctx: Context) => void;
+
+export type ProduceFunc = (msg: any) => Promise<any>;
+
+export interface Context {
+  srvs: Dee.ServiceGroup;
+  msg: nats.Message;
+}
+
+export async function init(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeNatstreaming.Args
-): Promise<DeeNatstreaming.Service> {
+  args: Args
+): Promise<Service> {
   const { name } = ctx.srvs.$config;
   const {
     client: clientConfig,
@@ -94,7 +92,7 @@ async function DeeNatstreaming(
     clientId,
     clientConfig.stanOptions
   );
-  return new Promise<DeeNatstreaming.Service>((resolve, reject) => {
+  return new Promise<Service>((resolve, reject) => {
     let errorBeforeConnect = true;
     stan.once("connect", () => {
       let producers;
@@ -106,7 +104,7 @@ async function DeeNatstreaming(
       if (subscribersConfig) {
         subscribers = createSubscribers(ctx, args, stan);
       }
-      const srv: DeeNatstreaming.Service = { stan, producers, subscribers };
+      const srv: Service = { stan, producers, subscribers };
       resolve(srv);
       return;
     });
@@ -121,9 +119,9 @@ async function DeeNatstreaming(
 
 function createProducers(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeNatstreaming.Args,
+  args: Args,
   stan: nats.Stan
-): DeeNatstreaming.ProducerMap {
+): ProducerMap {
   const { producers: producersConfig } = args;
   const { name } = ctx.srvs.$config;
   const producers = {};
@@ -162,9 +160,9 @@ function createProducers(
 
 function createSubscribers(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeNatstreaming.Args,
+  args: Args,
   stan: nats.Stan
-): DeeNatstreaming.SubscriberMap {
+): SubscriberMap {
   const { name } = ctx.srvs.$config;
   const { subscribers: subscribersConfig, handlers } = args;
   const subscribers = {};
@@ -197,7 +195,7 @@ function createSubscribers(
 function createSubscribeStanOptions(
   ctx: Dee.ServiceInitializeContext,
   subOpts: nats.SubscriptionOptions,
-  config: DeeNatstreaming.SubscriberOptions
+  config: SubscriberOptions
 ): void {
   const { name } = ctx.srvs.$config;
   const { noAutoAck, ackWait, maxInFlight } = config;
@@ -219,5 +217,3 @@ function createSubscribeStanOptions(
     subOpts.setMaxInFlight(maxInFlight);
   }
 }
-
-export = DeeNatstreaming;

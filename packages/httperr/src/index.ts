@@ -2,49 +2,42 @@ import * as Dee from "@sigodenjs/dee";
 import * as template from "lodash.template";
 
 declare global {
-  namespace DeeShare {
-    interface HttpErrErrorMap {}
-  }
+  namespace DeeShare { interface HttpErrMap {} }
 }
 
-declare namespace DeeHttpErr {
-  interface Service extends Dee.Service, ErrorMap {}
+export interface Service extends Dee.Service, ErrorMap {}
 
-  interface ServiceOptions extends Dee.ServiceOptions {
-    args: Args;
-  }
-
-  interface Args extends Dee.Args {
-    [k: string]: ErrorParams;
-  }
-
-  interface ErrorMap extends DeeShare.HttpErrErrorMap {
-    [k: string]: DeeHttpErrFactory;
-  }
-
-  interface ErrorParams {
-    message: string;
-    status: number;
-  }
-
-  interface CallArgs {
-    [k: string]: any;
-    // extra info return
-    extra?: any;
-  }
+export interface ServiceOptions extends Dee.ServiceOptions {
+  args: Args;
 }
 
-class DeeHttpErrFactory {
+export interface Args extends Dee.Args {
+  [k: string]: ErrorParams;
+}
+
+export interface ErrorMap extends DeeShare.HttpErrMap {
+  [k: string]: Factory;
+}
+
+export interface ErrorParams {
+  message: string;
+  status: number;
+}
+
+export interface CallArgs {
+  [k: string]: any;
+  // extra info return
+  extra?: any;
+}
+
+export class Factory {
   public status: number;
   private code: string;
-  private createMessage: (
-    args: DeeHttpErr.CallArgs,
-    withExtra?: boolean
-  ) => string;
-  constructor(code: string, params: DeeHttpErr.ErrorParams) {
+  private createMessage: (args: CallArgs, withExtra?: boolean) => string;
+  constructor(code: string, params: ErrorParams) {
     this.code = code;
     this.status = params.status;
-    this.createMessage = (args: DeeHttpErr.CallArgs, withExtra = false) => {
+    this.createMessage = (args: CallArgs, withExtra = false) => {
       let ret = template(params.message)(args);
       if (withExtra && args.extra) {
         ret += ` extra: ${args.extra}`;
@@ -52,32 +45,30 @@ class DeeHttpErrFactory {
       return ret;
     };
   }
-  public json(args: DeeHttpErr.CallArgs) {
+  public json(args: CallArgs) {
     return {
       code: this.code,
       message: this.createMessage(args),
       extra: args && args.extra ? args.extra : undefined
     };
   }
-  public resJSON(res: Dee.Response, args?: DeeHttpErr.CallArgs) {
+  public resJSON(res: Dee.Response, args?: CallArgs) {
     res.status(this.status).json(this.json(args));
   }
-  public toError(args?: DeeHttpErr.CallArgs) {
+  public toError(args?: CallArgs) {
     const err = new Error(this.createMessage(args, true));
     err.name = this.code;
     return err;
   }
 }
 
-async function DeeHttpErr(
+export async function init(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeHttpErr.Args
-): Promise<DeeHttpErr.Service> {
-  const srv = {} as DeeHttpErr.Service;
+  args: Args
+): Promise<Service> {
+  const srv = {} as Service;
   Object.keys(args).forEach(code => {
-    srv[code] = new DeeHttpErrFactory(code, args[code]);
+    srv[code] = new Factory(code, args[code]);
   });
   return srv;
 }
-
-export = DeeHttpErr;

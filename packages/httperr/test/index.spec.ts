@@ -3,7 +3,7 @@ import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create httperr service", async () => {
   const serviceOptions = <DeeHttpErr.ServiceOptions>{
-    initialize: DeeHttpErr,
+    initialize: DeeHttpErr.init,
     args: {
       ErrInvalidField: {
         status: 400,

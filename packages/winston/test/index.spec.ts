@@ -3,7 +3,7 @@ import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create winston service", async () => {
   const serviceOptions = <DeeWinston.ServiceOptions>{
-    initialize: DeeWinston,
+    initialize: DeeWinston.init,
     args: {
       format: "simple",
       level: "debug",

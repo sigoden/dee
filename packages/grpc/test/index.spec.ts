@@ -6,7 +6,7 @@ const RPC_PROTO_FILE = path.resolve(__dirname, "fixtures/rpc.proto");
 
 test("should create grpc service", async () => {
   const serviceOptions = <DeeGrpc.ServiceOptions>{
-    initialize: DeeGrpc,
+    initialize: DeeGrpc.init,
     args: {
       clientProtoFile: RPC_PROTO_FILE,
       serverProtoFile: RPC_PROTO_FILE,

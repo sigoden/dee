@@ -3,7 +3,7 @@ import { initApp, HANDLERS, delay } from "../../core/test-utils";
 
 test("should create natstreaming service", async () => {
   const serviceOptions = <DeeNatstreaming.ServiceOptions>{
-    initialize: DeeNatstreaming,
+    initialize: DeeNatstreaming.init,
     args: {
       client: {
         clusterId: "test-cluster",

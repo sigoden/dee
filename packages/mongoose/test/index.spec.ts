@@ -3,7 +3,7 @@ import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create mongoose service", async () => {
   const serviceOptions = <DeeMongoose.ServiceOptions>{
-    initialize: DeeMongoose,
+    initialize: DeeMongoose.init,
     args: {
       uris: "mongodb://localhost:28017/test"
     }

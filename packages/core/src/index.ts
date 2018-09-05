@@ -13,99 +13,96 @@ declare global {
   }
   namespace Express {
     interface Request {
-      srvs: Dee.ServiceGroup;
+      srvs: ServiceGroup;
     }
   }
 }
 
+export interface Request extends expressCore.Request {}
+export interface Response extends expressCore.Response {}
+export interface NextFunction extends expressCore.NextFunction {}
+export interface RequestHandler extends expressCore.RequestHandler {}
+export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
+export interface Express extends expressCore.Express {}
 
-declare namespace Dee {
-  interface Request extends expressCore.Request {}
-  interface Response extends expressCore.Response {}
-  interface NextFunction extends expressCore.NextFunction {}
-  interface RequestHandler extends expressCore.RequestHandler {}
-  interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
-  interface Express extends expressCore.Express {}
-
-  // options to init dee app
-  interface Options {
-    // general config
-    config: Config;
-    // options to init swaggerize service
-    swaggerize: swaggerize.Options;
-    // hook to run before bind route handlers
-    beforeRoute?: RouteHooks;
-    // hook to run after bind route handlers
-    afterRoute?: RouteHooks;
-    // error handler
-    errorHandler?: express.ErrorRequestHandler;
-    // run when app is ready
-    ready?: (app: App) => void;
-    // options to init external services
-    services?: ServicesOptionsMap;
-  }
-
-  interface ServiceInitializeContext {
-    srvs: ServiceGroup;
-  }
-
-  interface Args {}
-
-  interface App {
-    srvs: ServiceGroup;
-    express: Dee.Express;
-    start: () => Promise<Server>;
-  }
-
-  interface ServiceGroup extends DeeShare.ServiceGroup {
-    $config: Config;
-    [k: string]: Service;
-  }
-
-  interface Service {}
-
-  type ServiceInitializeFunc = (
-    ctx: ServiceInitializeContext,
-    args?: Args,
-    callback?: (err: Error, srv?: Service) => void
-  ) => Promise<Service> | void;
-
-  interface Config {
-    // namespace of service
-    ns: string;
-    // name of app
-    name: string;
-    // listenning host
-    host?: string;
-    // listenning port
-    port?: number;
-    // whether production mode
-    prod?: boolean;
-  }
-
-  type RouteHooks = (
-    srvs: Dee.ServiceGroup,
-    app: Dee.Express
-  ) => void | express.RequestHandler[];
-
-  interface ServicesOptionsMap {
-    [k: string]: ServiceOptions;
-  }
-
-  interface ServiceOptions {
-    initialize: ServiceInitializeFunc | ServiceInitializeModule;
-    args?: Args;
-  }
-
-  type ServiceInitializeModule = string;
+// options to init dee app
+export interface Options {
+  // general config
+  config: Config;
+  // options to init swaggerize service
+  swaggerize: swaggerize.Options;
+  // hook to run before bind route handlers
+  beforeRoute?: RouteHooks;
+  // hook to run after bind route handlers
+  afterRoute?: RouteHooks;
+  // error handler
+  errorHandler?: express.ErrorRequestHandler;
+  // run when app is ready
+  ready?: (app: App) => void;
+  // options to init external services
+  services?: ServicesOptionsMap;
 }
 
-async function createSrvs(options: Dee.Options): Promise<Dee.ServiceGroup> {
+export interface ServiceInitializeContext {
+  srvs: ServiceGroup;
+}
+
+export interface Args {}
+
+export interface App {
+  srvs: ServiceGroup;
+  express: Express;
+  start: () => Promise<Server>;
+}
+
+export interface ServiceGroup extends DeeShare.ServiceGroup {
+  $config: Config;
+  [k: string]: Service;
+}
+
+export interface Service {}
+
+export type ServiceInitializeFunc = (
+  ctx: ServiceInitializeContext,
+  args?: Args,
+  callback?: (err: Error, srv?: Service) => void
+) => Promise<Service> | void;
+
+export interface Config {
+  // namespace of service
+  ns: string;
+  // name of app
+  name: string;
+  // listenning host
+  host?: string;
+  // listenning port
+  port?: number;
+  // whether production mode
+  prod?: boolean;
+}
+
+export type RouteHooks = (
+  srvs: ServiceGroup,
+  app: Express
+) => void | express.RequestHandler[];
+
+export interface ServicesOptionsMap {
+  [k: string]: ServiceOptions;
+}
+
+export interface ServiceOptions {
+  initialize: ServiceInitializeFunc | ServiceInitializeModule;
+  args?: Args;
+}
+
+export type ServiceInitializeModule = string;
+
+async function createSrvs(options: Options): Promise<ServiceGroup> {
   const { services: servicesOpts = {}, config } = options;
-  const srvs: Dee.ServiceGroup = { $config: config };
+  const srvs: ServiceGroup = { $config: config };
   const promises = Object.keys(servicesOpts).map(srvName => {
     const srvOptions = servicesOpts[srvName];
-    const ctx = { srvs } as Dee.ServiceInitializeContext;
+    const ctx = { srvs } as ServiceInitializeContext;
     return createSrv(ctx, srvName, srvOptions);
   });
   await Promise.all(promises);
@@ -113,14 +110,14 @@ async function createSrvs(options: Dee.Options): Promise<Dee.ServiceGroup> {
 }
 
 async function createSrv(
-  ctx: Dee.ServiceInitializeContext,
+  ctx: ServiceInitializeContext,
   srvName: string,
-  options: Dee.ServiceOptions
+  options: ServiceOptions
 ): Promise<void> {
-  let srvInitialize: Dee.ServiceInitializeFunc;
+  let srvInitialize: ServiceInitializeFunc;
   if (typeof options.initialize === "string") {
     try {
-      srvInitialize = require(options.initialize);
+      srvInitialize = require(options.initialize).init;
     } catch (err) {
       throw new Error(`servcie.${srvName}.initialize is a invalid module`);
     }
@@ -145,11 +142,7 @@ async function createSrv(
   });
 }
 
-function useMiddlewares(
-  srvs: Dee.ServiceGroup,
-  app: Dee.Express,
-  hooks: Dee.RouteHooks
-) {
+function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
   if (typeof hooks === "function") {
     hooks(srvs, app);
     return;
@@ -165,7 +158,7 @@ function shimHandlers(handlers: swaggerize.HandlerFuncMap): void {
   });
 }
 
-async function Dee(options: Dee.Options): Promise<Dee.App> {
+export async function init(options: Options): Promise<App> {
   const app = express();
   const srvs = await createSrvs(options);
   app.use((req, res, next) => {
@@ -203,5 +196,3 @@ async function Dee(options: Dee.Options): Promise<Dee.App> {
   }
   return deeApp;
 }
-
-export = Dee;

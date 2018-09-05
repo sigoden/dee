@@ -8,7 +8,7 @@ export function initApp(
   handlers: Dee.HandlerFuncMap,
   services?: Dee.ServicesOptionsMap
 ): Promise<Dee.App> {
-  return Dee({
+  return Dee.init({
     config: {
       ns: "proj",
       name: "App"

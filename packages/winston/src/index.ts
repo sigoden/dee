@@ -1,28 +1,26 @@
 import * as Dee from "@sigodenjs/dee";
 import * as winston from "winston";
 
-declare namespace DeeWinston {
-  interface Service extends Dee.Service, winston.Logger {}
+export interface Service extends Dee.Service, winston.Logger {}
 
-  interface ServiceOptions extends Dee.ServiceOptions {
-    args: Args;
-  }
-
-  interface Args extends Dee.Args {
-    level?: string;
-    format?: string;
-    transporters?: TransporterMap;
-  }
-
-  interface TransporterMap {
-    [k: string]: any;
-  }
+export interface ServiceOptions extends Dee.ServiceOptions {
+  args: Args;
 }
 
-async function DeeWinston(
+export interface Args extends Dee.Args {
+  level?: string;
+  format?: string;
+  transporters?: TransporterMap;
+}
+
+export interface TransporterMap {
+  [k: string]: any;
+}
+
+export async function init(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeWinston.Args
-): Promise<DeeWinston.Service> {
+  args: Args
+): Promise<Service> {
   const {
     format = "simple",
     level = "warning",
@@ -54,5 +52,3 @@ async function DeeWinston(
     transports
   });
 }
-
-export = DeeWinston;

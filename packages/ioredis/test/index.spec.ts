@@ -3,7 +3,7 @@ import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create ioredis service", async () => {
   const serviceOptions = <DeeIORedis.ServiceOptions>{
-    initialize: DeeIORedis,
+    initialize: DeeIORedis.init,
     args: {
       port: 6479
     } 
