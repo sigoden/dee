@@ -2,13 +2,13 @@ import * as Dee from "@sigodenjs/dee";
 import * as Redis from "ioredis";
 
 declare namespace DeeIORedis {
-  export interface Service extends Dee.Service, Redis.Redis {}
+  interface Service extends Dee.Service, Redis.Redis {}
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface Args extends Dee.Args, Redis.RedisOptions {}
+  interface Args extends Dee.Args, Redis.RedisOptions {}
 }
 
 async function DeeIORedis(

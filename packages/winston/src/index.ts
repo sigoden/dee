@@ -2,19 +2,19 @@ import * as Dee from "@sigodenjs/dee";
 import * as winston from "winston";
 
 declare namespace DeeWinston {
-  export interface Service extends Dee.Service, winston.Logger {}
+  interface Service extends Dee.Service, winston.Logger {}
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface Args extends Dee.Args {
+  interface Args extends Dee.Args {
     level?: string;
     format?: string;
     transporters?: TransporterMap;
   }
 
-  export interface TransporterMap {
+  interface TransporterMap {
     [k: string]: any;
   }
 }

@@ -2,13 +2,13 @@ import * as Dee from "@sigodenjs/dee";
 import * as Sequelize from "sequelize";
 
 declare namespace DeeSequelize {
-  export interface Service extends Dee.Service, Sequelize.Sequelize {}
+  interface Service extends Dee.Service, Sequelize.Sequelize {}
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface Args extends Dee.Args {
+  interface Args extends Dee.Args {
     database: string;
     username: string;
     password: string;

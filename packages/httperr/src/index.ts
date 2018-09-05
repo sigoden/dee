@@ -6,26 +6,26 @@ declare global {
 }
 
 declare namespace DeeHttpErr {
-  export interface Service extends Dee.Service, ErrorMap {}
+  interface Service extends Dee.Service, ErrorMap {}
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface Args extends Dee.Args {
+  interface Args extends Dee.Args {
     [k: string]: ErrorParams;
   }
 
-  export interface ErrorMap {
+  interface ErrorMap {
     [k: string]: DeeHttpErrFactory;
   }
 
-  export interface ErrorParams {
+  interface ErrorParams {
     message: string;
     status: number;
   }
 
-  export interface CallArgs {
+  interface CallArgs {
     [k: string]: any;
     // extra info return
     extra?: any;

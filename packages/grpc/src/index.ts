@@ -9,16 +9,16 @@ declare global {
 }
 
 declare namespace DeeGRPC {
-  export interface Service extends Dee.Service {
+  interface Service extends Dee.Service {
     server?: grpc.Server;
     clients?: ClientMap;
   }
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface Args extends Dee.Args {
+  interface Args extends Dee.Args {
     // path to server proto file
     serverProtoFile?: string;
     // listenning host of server
@@ -35,23 +35,23 @@ declare namespace DeeGRPC {
     havePermision?: CheckPermisionFunc;
   }
 
-  export interface ClientMap {
+  interface ClientMap {
     [k: string]: Client;
   }
 
-  export interface Client extends grpc.Client {
+  interface Client extends grpc.Client {
     call: (name: string, args: any, metdata?: grpc.Metadata) => Promise<any>;
   }
 
-  export type CheckPermisionFunc = (serviceName: string, id: string) => boolean;
+  type CheckPermisionFunc = (serviceName: string, id: string) => boolean;
 
-  export interface HandlerFuncMap {
+  interface HandlerFuncMap {
     [k: string]: HandlerFunc;
   }
 
-  export type HandlerFunc = (ctx: Context) => Promise<any>;
+  type HandlerFunc = (ctx: Context) => Promise<any>;
 
-  export interface Context {
+  interface Context {
     request: any;
     metadata: grpc.Metadata;
     srvs: Dee.ServiceGroup;

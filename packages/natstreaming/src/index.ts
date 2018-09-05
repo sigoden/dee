@@ -14,25 +14,25 @@ declare global {
 }
 
 declare namespace DeeNatstreaming {
-  export interface Service extends Dee.Service {
+  interface Service extends Dee.Service {
     stan: nats.Stan;
     producers: ProducerMap;
     subscribers: SubscriberMap;
   }
 
-  export interface ServiceOptions extends Dee.ServiceOptions {
+  interface ServiceOptions extends Dee.ServiceOptions {
     args: Args;
   }
 
-  export interface ProducerMap {
+  interface ProducerMap {
     [k: string]: ProduceFunc;
   }
 
-  export interface SubscriberMap {
+  interface SubscriberMap {
     [k: string]: nats.Subscription;
   }
 
-  export interface SubscriberOptions {
+  interface SubscriberOptions {
     group?: string | boolean;
     durable?: string | boolean;
     noAutoAck?: boolean;
@@ -40,7 +40,7 @@ declare namespace DeeNatstreaming {
     maxInFlight?: number;
   }
 
-  export interface Args extends Dee.Args {
+  interface Args extends Dee.Args {
     client: ClientOptions;
     handlers?: HandlerFuncMap;
     producers?: ProducerOptionsMap;

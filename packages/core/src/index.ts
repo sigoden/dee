@@ -9,15 +9,15 @@ const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
 
 declare namespace Dee {
-  export interface Request extends expressCore.Request {}
-  export interface Response extends expressCore.Response {}
-  export interface NextFunction extends expressCore.NextFunction {}
-  export interface RequestHandler extends expressCore.RequestHandler {}
-  export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
-  export interface Express extends expressCore.Express {}
+  interface Request extends expressCore.Request {}
+  interface Response extends expressCore.Response {}
+  interface NextFunction extends expressCore.NextFunction {}
+  interface RequestHandler extends expressCore.RequestHandler {}
+  interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
+  interface Express extends expressCore.Express {}
 
   // options to init dee app
-  export interface Options {
+  interface Options {
     // general config
     config: Config;
     // options to init swaggerize service
@@ -34,32 +34,32 @@ declare namespace Dee {
     services?: ServicesOptionsMap;
   }
 
-  export interface ServiceInitializeContext {
+  interface ServiceInitializeContext {
     srvs: ServiceGroup;
   }
 
-  export interface Args {}
+  interface Args {}
 
-  export interface App {
+  interface App {
     srvs: ServiceGroup;
     express: Dee.Express;
     start: () => Promise<Server>;
   }
 
-  export interface ServiceGroup {
+  interface ServiceGroup {
     $config: Config;
     [k: string]: Service;
   }
 
-  export interface Service {}
+  interface Service {}
 
-  export type ServiceInitializeFunc = (
+  type ServiceInitializeFunc = (
     ctx: ServiceInitializeContext,
     args?: Args,
     callback?: (err: Error, srv?: Service) => void
   ) => Promise<Service> | void;
 
-  export interface Config {
+  interface Config {
     // namespace of service
     ns: string;
     // name of app
@@ -72,16 +72,16 @@ declare namespace Dee {
     prod?: boolean;
   }
 
-  export type RouteHooks = (
+  type RouteHooks = (
     srvs: Dee.ServiceGroup,
     app: Dee.Express
   ) => void | express.RequestHandler[];
 
-  export interface ServicesOptionsMap {
+  interface ServicesOptionsMap {
     [k: string]: ServiceOptions;
   }
 
-  export interface ServiceOptions {
+  interface ServiceOptions {
     initialize: ServiceInitializeFunc | ServiceInitializeModule;
     args?: Args;
   }
