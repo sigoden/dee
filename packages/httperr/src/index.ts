@@ -2,7 +2,9 @@ import * as Dee from "@sigodenjs/dee";
 import * as template from "lodash.template";
 
 declare global {
-  namespace DeeHttpErr { interface ErrorMap {} }
+  namespace DeeShare {
+    interface HttpErrErrorMap {}
+  }
 }
 
 declare namespace DeeHttpErr {
@@ -16,7 +18,7 @@ declare namespace DeeHttpErr {
     [k: string]: ErrorParams;
   }
 
-  interface ErrorMap {
+  interface ErrorMap extends DeeShare.HttpErrErrorMap {
     [k: string]: DeeHttpErrFactory;
   }
 

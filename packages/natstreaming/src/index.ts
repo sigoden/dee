@@ -7,7 +7,7 @@ import * as nats from "node-nats-streaming";
 const validator = new FastestValidator();
 
 declare global {
-  namespace DeeGRPC {
+  namespace DeeShare {
     interface ProducerMap {}
     interface SubscriberMap {}
   }
@@ -24,11 +24,11 @@ declare namespace DeeNatstreaming {
     args: Args;
   }
 
-  interface ProducerMap {
+  interface ProducerMap extends DeeShare.ProducerMap {
     [k: string]: ProduceFunc;
   }
 
-  interface SubscriberMap {
+  interface SubscriberMap extends DeeShare.SubscriberMap {
     [k: string]: nats.Subscription;
   }
 
@@ -144,7 +144,9 @@ function createProducers(
         const checkFailError = new Error(
           "validate failed: " + JSON.stringify(msg)
         );
-        if (!ok) { return reject(checkFailError); }
+        if (!ok) {
+          return reject(checkFailError);
+        }
         stan.publish(topic, JSON.stringify(msg), (err, data) => {
           if (err) {
             return reject(err);

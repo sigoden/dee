@@ -2,11 +2,22 @@ import * as swaggerize from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import * as expressCore from "express-serve-static-core";
 import { Server } from "http";
-import "./global";
 import { tryWrapRequestHandler } from "./utils";
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
+
+declare global {
+  namespace DeeShare {
+    interface ServiceGroup {}
+  }
+  namespace Express {
+    interface Request {
+      srvs: Dee.ServiceGroup;
+    }
+  }
+}
+
 
 declare namespace Dee {
   interface Request extends expressCore.Request {}
@@ -46,7 +57,7 @@ declare namespace Dee {
     start: () => Promise<Server>;
   }
 
-  interface ServiceGroup {
+  interface ServiceGroup extends DeeShare.ServiceGroup {
     $config: Config;
     [k: string]: Service;
   }
