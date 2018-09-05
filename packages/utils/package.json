@@ -5,7 +5,6 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
     "build:prod": "tsc -p tsconfig.prod.json",
     "clean": "rimraf dist",

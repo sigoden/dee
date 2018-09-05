@@ -1,6 +1,6 @@
+import * as Dee from "@sigodenjs/dee";
 import * as fs from "fs";
 import * as path from "path";
-import * as Dee from "@sigodenjs/dee";
 
 export const SWAGGER_FILE = path.resolve(__dirname, "../swagger.yaml");
 

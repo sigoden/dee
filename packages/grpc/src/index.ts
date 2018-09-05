@@ -110,7 +110,7 @@ function shimHandlers(
   handlers: DeeGRPC.HandlerFuncMap,
   havePermision: DeeGRPC.CheckPermisionFunc
 ) {
-  let result = {};
+  const result = {};
   Object.keys(handlers).forEach(id => {
     const fn = handlers[id];
     result[id] = (ctx: DeeGRPC.Context, cb) => {
@@ -151,8 +151,8 @@ async function createClients(
       getClientUri(serviceName),
       grpc.credentials.createInsecure()
     );
-    client.call = (funcName: string, args: any, metadata?: grpc.Metadata) => {
-      if (!metadata) metadata = new grpc.Metadata();
+    client.call = (funcName: string, data: any, metadata?: grpc.Metadata) => {
+      if (!metadata) { metadata = new grpc.Metadata(); }
       metadata.add("origin", name);
       const fn = client[funcName];
       const unSupportedRes = {
@@ -160,9 +160,9 @@ async function createClients(
         status: grpc.status.UNIMPLEMENTED
       };
       return new Promise((resolve, reject) => {
-        if (!fn) return reject(unSupportedRes);
-        client[funcName](args, metadata, (err, res) => {
-          if (err) return reject(err);
+        if (!fn) { return reject(unSupportedRes); }
+        client[funcName](data, metadata, (err, res) => {
+          if (err) { return reject(err); }
           resolve(res);
         });
       });

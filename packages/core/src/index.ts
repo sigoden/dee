@@ -1,9 +1,9 @@
 import * as swaggerize from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
-import { Server } from "http";
-import { tryWrapRequestHandler } from "./utils";
 import * as expressCore from "express-serve-static-core";
+import { Server } from "http";
 import "./global";
+import { tryWrapRequestHandler } from "./utils";
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
@@ -94,7 +94,7 @@ async function createSrvs(options: Dee.Options): Promise<Dee.ServiceGroup> {
   const srvs: Dee.ServiceGroup = { $config: config };
   const promises = Object.keys(servicesOpts).map(srvName => {
     const srvOptions = servicesOpts[srvName];
-    const ctx = <Dee.ServiceInitializeContext>{ srvs };
+    const ctx = { srvs } as Dee.ServiceInitializeContext;
     return createSrv(ctx, srvName, srvOptions);
   });
   await Promise.all(promises);

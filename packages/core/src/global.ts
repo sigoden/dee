@@ -1,4 +1,4 @@
-import { ServiceGroup } from './index';
+import { ServiceGroup } from "./index";
 
 declare global {
   namespace Dee {

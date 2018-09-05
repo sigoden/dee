@@ -6,7 +6,6 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "test": "jest",
-    "lint": "tslint -p tsconfig.json --fix",
     "build": "tsc",
     "build:prod": "tsc -p tsconfig.prod.json",
     "clean": "rimraf dist",

@@ -1,8 +1,8 @@
 import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
 import * as FastestValidator from "fastest-validator";
-import * as nats from "node-nats-streaming";
 import { NatsError } from "nats";
+import * as nats from "node-nats-streaming";
 
 const validator = new FastestValidator();
 
@@ -144,7 +144,7 @@ function createProducers(
         const checkFailError = new Error(
           "validate failed: " + JSON.stringify(msg)
         );
-        if (!ok) return reject(checkFailError);
+        if (!ok) { return reject(checkFailError); }
         stan.publish(topic, JSON.stringify(msg), (err, data) => {
           if (err) {
             return reject(err);

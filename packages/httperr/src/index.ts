@@ -61,7 +61,7 @@ class DeeHttpErrFactory {
     res.status(this.status).json(this.json(args));
   }
   public toError(args?: DeeHttpErr.CallArgs) {
-    let err = new Error(this.createMessage(args, true));
+    const err = new Error(this.createMessage(args, true));
     err.name = this.code;
     return err;
   }
@@ -71,7 +71,7 @@ async function DeeHttpErr(
   ctx: Dee.ServiceInitializeContext,
   args: DeeHttpErr.Args
 ): Promise<DeeHttpErr.Service> {
-  let srv = <DeeHttpErr.Service>{};
+  const srv = {} as DeeHttpErr.Service;
   Object.keys(args).forEach(code => {
     srv[code] = new DeeHttpErrFactory(code, args[code]);
   });
