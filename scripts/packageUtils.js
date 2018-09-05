@@ -9,11 +9,12 @@ function getPackages() {
   return resolvePackages(pkgNames);
 }
 
-// Get absolute paths of package by pkgNames
 function resolvePackages(pkgNames) {
-  return pkgNames
-    .map(name => path.resolve(PACKAGES_DIR, name))
-    .filter(isDirectory);
+  return pkgNames.map(resolvePackage).filter(isDirectory);
+}
+
+function resolvePackage(name) {
+  return path.resolve(PACKAGES_DIR, name);
 }
 
 function isDirectory(file) {
@@ -22,3 +23,4 @@ function isDirectory(file) {
 
 exports.getPackages = getPackages;
 exports.resolvePackages = resolvePackages;
+exports.resolvePackage = resolvePackage;

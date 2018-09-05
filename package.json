@@ -1,9 +1,13 @@
 {
   "scripts": {
+    "test": "node ./scripts/test.js",
     "lint": "node ./scripts/lint.js"
   },
   "devDependencies": {
+    "@types/jest": "^23.3.1",
+    "jest": "^23.5.0",
     "lerna": "^2.11.0",
+    "ts-jest": "^23.1.4",
     "tslint": "^5.11.0",
     "typescript": "^3.0.3"
   }
