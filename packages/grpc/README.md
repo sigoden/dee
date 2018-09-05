@@ -1,23 +1,23 @@
-# Dee GRPC Service
+# Dee Grpc Service
 
 A rpc service for dee framework, powered by grpc
 
 ## Usage
 
 ```ts
-import * as DeeGRPC from "@sigodenjs/dee-grpc";
+import * as DeeGrpc from "@sigodenjs/dee-grpc";
 
 Dee({
   services: {
     rpc: {
-      initialize: DeeGRPC,
+      initialize: DeeGrpc,
       args: {
         clientProtoFile: CLIENT_RPC_PROTO_FILE,
         serverProtoFile: SERVER_RPC_PROTO_FILE,
         serverPort: 4444,
         getClientUri: () => "localhost:4444",
         serverHandlers: {
-          sayHello: async (ctx: DeeGRPC.Context) => {
+          sayHello: async (ctx: DeeGrpc.Context) => {
             await delay(1);
             return { message: ctx.request.name };
           }

@@ -3,12 +3,12 @@ import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
 declare global {
-  namespace DeeGRPC {
-    interface ClientMap {}
+  namespace DeeShare {
+    interface GrpcClientMap {}
   }
 }
 
-declare namespace DeeGRPC {
+declare namespace DeeGrpc {
   interface Service extends Dee.Service {
     server?: grpc.Server;
     clients?: ClientMap;
@@ -35,7 +35,7 @@ declare namespace DeeGRPC {
     havePermision?: CheckPermisionFunc;
   }
 
-  interface ClientMap {
+  interface ClientMap extends DeeShare.GrpcClientMap {
     [k: string]: Client;
   }
 
@@ -58,12 +58,12 @@ declare namespace DeeGRPC {
   }
 }
 
-async function DeeGRPC(
+async function DeeGrpc(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeGRPC.Args
-): Promise<DeeGRPC.Service> {
+  args: DeeGrpc.Args
+): Promise<DeeGrpc.Service> {
   const { serverProtoFile, clientProtoFile } = args;
-  const srv: DeeGRPC.Service = {};
+  const srv: DeeGrpc.Service = {};
   if (serverProtoFile) {
     srv.server = await createServer(ctx, args);
   }
@@ -78,7 +78,7 @@ const DEFAULT_PORT = "4444";
 
 async function createServer(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeGRPC.Args
+  args: DeeGrpc.Args
 ): Promise<grpc.Server> {
   const {
     serverProtoFile,
@@ -107,13 +107,13 @@ async function createServer(
 }
 
 function shimHandlers(
-  handlers: DeeGRPC.HandlerFuncMap,
-  havePermision: DeeGRPC.CheckPermisionFunc
+  handlers: DeeGrpc.HandlerFuncMap,
+  havePermision: DeeGrpc.CheckPermisionFunc
 ) {
   const result = {};
   Object.keys(handlers).forEach(id => {
     const fn = handlers[id];
-    result[id] = (ctx: DeeGRPC.Context, cb) => {
+    result[id] = (ctx: DeeGrpc.Context, cb) => {
       const origin = ctx.metadata.get("origin");
       if (!havePermision(String(origin[0]), id)) {
         cb({
@@ -132,9 +132,9 @@ function shimHandlers(
 
 async function createClients(
   ctx: Dee.ServiceInitializeContext,
-  args: DeeGRPC.Args
-): Promise<DeeGRPC.ClientMap> {
-  const clients: DeeGRPC.ClientMap = {};
+  args: DeeGrpc.Args
+): Promise<DeeGrpc.ClientMap> {
+  const clients: DeeGrpc.ClientMap = {};
   const {
     clientProtoFile,
     getClientUri = () => DEFAULT_HOST + ":" + DEFAULT_PORT
@@ -176,4 +176,4 @@ function loadProtoFile(filename: string): grpc.GrpcObject {
   return grpc.loadPackageDefinition(grpcLoader.loadSync(filename));
 }
 
-export = DeeGRPC;
+export = DeeGrpc;
