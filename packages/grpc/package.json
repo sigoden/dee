@@ -37,7 +37,5 @@
     "@sigodenjs/dee": "^0.8.4",
     "grpc": "^1.14.1"
   },
-  "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4"
-  }
+  "devDependencies": {}
 }

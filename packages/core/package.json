@@ -38,7 +38,6 @@
     "express": "^4.16.3"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4",
     "@types/supertest": "^2.0.5",
     "supertest": "^3.1.0"
   }

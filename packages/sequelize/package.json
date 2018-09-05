@@ -39,7 +39,6 @@
     "sequelize": "^4.38.0"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4",
     "mysql2": "^1.6.1"
   }
 }

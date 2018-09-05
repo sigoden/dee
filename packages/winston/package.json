@@ -38,7 +38,5 @@
     "@types/node": "^10.9.4",
     "winston": "^3.0.0"
   },
-  "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4"
-  }
+  "devDependencies": {}
 }

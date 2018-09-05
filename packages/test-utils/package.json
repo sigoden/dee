@@ -14,8 +14,7 @@
     "access": "public"
   },
   "files": [
-    "dist",
-    "swagger.yaml"
+    "dist"
   ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
@@ -25,9 +24,6 @@
     "type": "git",
     "url": "git+https://github.com/sigoden/dee.git"
   },
-  "dependencies": {
-    "@sigodenjs/dee": "^0.8.4",
-    "@types/node": "^10.9.4"
-  },
+  "dependencies": {},
   "devDependencies": {}
 }

@@ -1,5 +1,5 @@
 import * as DeeIORedis from "../src";
-import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
+import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create ioredis service", async () => {
   const serviceOptions = <DeeIORedis.ServiceOptions>{

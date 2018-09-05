@@ -39,7 +39,5 @@
     "fastest-validator": "^0.6.9",
     "node-nats-streaming": "0.0.40"
   },
-  "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.8.4"
-  }
+  "devDependencies": {}
 }

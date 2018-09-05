@@ -1,5 +1,5 @@
 import * as DeeNatstreaming from "../src";
-import { initApp, HANDLERS, delay } from "@sigodenjs/dee-test-utils";
+import { initApp, HANDLERS, delay } from "../../core/test-utils";
 
 test("should create natstreaming service", async () => {
   const serviceOptions = <DeeNatstreaming.ServiceOptions>{

@@ -1,5 +1,5 @@
 import * as DeeMongoose from "../src";
-import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
+import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create mongoose service", async () => {
   const serviceOptions = <DeeMongoose.ServiceOptions>{

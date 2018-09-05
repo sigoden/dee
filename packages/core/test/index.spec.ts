@@ -1,7 +1,7 @@
 import * as Dee from "../src";
 import * as DeeSimple from "./fixtures/simple";
 import * as supertest from "supertest";
-import { initApp, HANDLERS } from "@sigodenjs/dee-test-utils";
+import { initApp, HANDLERS } from "../test-utils";
 
 test("should create app instance", async () => {
   const app = await initApp({});
