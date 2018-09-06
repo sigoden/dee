@@ -1,0 +1,38 @@
+{
+  "name": "@sigodenjs/dee-echo",
+  "version": "0.10.1",
+  "description": "A echo service for dee framework which mounts data as service.",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "scripts": {
+    "build": "../../node_modules/.bin/tsc",
+    "build:prod": "../../node_modules/.bin/tsc -p tsconfig.prod.json",
+    "clean": "../../node_modules/.bin/rimraf dist",
+    "prepublish": "npm run -s clean && npm run -s build:prod"
+  },
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "redis",
+    "dee",
+    "service",
+    "http",
+    "api",
+    "web",
+    "swagger"
+  ],
+  "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/echo",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigoden/dee.git"
+  },
+  "dependencies": {
+    "@sigodenjs/dee": "^0.10.1"
+  }
+}
