@@ -31,7 +31,8 @@ Dee({
     api: path.resolve(__dirname, "./swagger.yaml"), //  Swagger doc file
     handlers
   },
-  services: { // auto init and bind service, could be access through app.srvs and req.srvs
+  services: {
+    // auto init and bind service, could be access through app.srvs and req.srvs
     redis: {
       initialize: DeeIORedis.init,
       args: {
@@ -42,16 +43,14 @@ Dee({
 }).then(app => {
   app.start();
 });
-
 ```
 
 Write route handlers
 
 ```js
-export async function hello(req: Request, res: Response, next: NextFunction) {
-  await sleep(1);
+export function hello(req: Request, res: Response, next: NextFunction) {
   const name = req.query.name;
-  req.srvs.redis // access redis service
+  req.srvs.redis; // access redis service
   res.json(name);
 }
 ```

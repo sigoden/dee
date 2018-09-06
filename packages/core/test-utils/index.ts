@@ -1,5 +1,4 @@
 import * as Dee from "../src/";
-import * as fs from "fs";
 import * as path from "path";
 
 export const SWAGGER_FILE = path.resolve(__dirname, "./swagger.yaml");
@@ -26,11 +25,13 @@ export const HANDLERS = {
     const name = req.query.name || "stranger";
     res.json(name);
   },
-  hey: async (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
-    await delay(1);
-    const name = req.params.name;
-    res.json(name);
-  }
+  hey: Dee.resolveAsynRequestHandler(
+    async (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
+      await delay(1);
+      const name = req.params.name;
+      res.json(name);
+    }
+  )
 };
 
 export function delay(time: number) {

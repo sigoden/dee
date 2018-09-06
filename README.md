@@ -20,7 +20,7 @@ Init Dee App
 import * as Dee from "@sigodenjs/dee";
 import * as path from "path";
 import * as handlers from "./handlers";
-import * as DeeRedis from "@sigodenjs/dee-ioredis";
+import * as DeeIORedis from "@sigodenjs/dee-ioredis";
 
 Dee({
   config: {
@@ -31,9 +31,10 @@ Dee({
     api: path.resolve(__dirname, "./swagger.yaml"), //  Swagger doc file
     handlers
   },
-  services: { // auto init and bind service, could be access through app.srvs and req.srvs
+  services: {
+    // auto init and bind service, could be access through app.srvs and req.srvs
     redis: {
-      initialize: DeeRedis,
+      initialize: DeeIORedis.init,
       args: {
         port: 6379
       }
@@ -42,16 +43,14 @@ Dee({
 }).then(app => {
   app.start();
 });
-
 ```
 
 Write route handlers
 
 ```js
-export async function hello(req: Request, res: Response, next: NextFunction) {
-  await sleep(1);
+export function hello(req: Request, res: Response, next: NextFunction) {
   const name = req.query.name;
-  req.srvs.redis // access redis service
+  req.srvs.redis; // access redis service
   res.json(name);
 }
 ```

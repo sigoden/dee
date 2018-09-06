@@ -2,7 +2,6 @@ import * as swaggerize from "@sigodenjs/dee-swaggerize";
 import * as express from "express";
 import * as expressCore from "express-serve-static-core";
 import { Server } from "http";
-import { tryWrapRequestHandler } from "./utils";
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
@@ -24,6 +23,7 @@ export interface NextFunction extends expressCore.NextFunction {}
 export interface RequestHandler extends expressCore.RequestHandler {}
 export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
 export interface Express extends expressCore.Express {}
+export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
 // options to init dee app
 export interface Options {
@@ -152,12 +152,6 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
   }
 }
 
-function shimHandlers(handlers: swaggerize.HandlerFuncMap): void {
-  Object.keys(handlers).forEach(operationId => {
-    handlers[operationId] = tryWrapRequestHandler(handlers[operationId]);
-  });
-}
-
 export async function init(options: Options): Promise<App> {
   const app = express();
   const srvs = await createSrvs(options);
@@ -168,7 +162,6 @@ export async function init(options: Options): Promise<App> {
   if (options.beforeRoute) {
     useMiddlewares(srvs, app, options.beforeRoute);
   }
-  shimHandlers(options.swaggerize.handlers);
   swaggerize(app, options.swaggerize);
   if (options.afterRoute) {
     useMiddlewares(srvs, app, options.afterRoute);
@@ -195,4 +188,13 @@ export async function init(options: Options): Promise<App> {
     options.ready(deeApp);
   }
   return deeApp;
+}
+
+export function resolveAsynRequestHandler(
+  fn: AsyncRequestHandler
+): RequestHandler {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const fnReturn = fn(req, res, next);
+    Promise.resolve(fnReturn).catch(next);
+  };
 }
