@@ -39,7 +39,7 @@ export class Factory {
     this.status = params.status;
     this.createMessage = (args: CallArgs, withExtra = false) => {
       let ret = template(params.message)(args);
-      if (withExtra && args.extra) {
+      if (withExtra && args && args.extra) {
         ret += ` extra: ${args.extra}`;
       }
       return ret;
