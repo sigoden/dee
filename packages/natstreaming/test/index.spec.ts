@@ -8,7 +8,7 @@ test("should create natstreaming service", async () => {
       client: {
         clusterId: "test-cluster",
         stanOptions: {
-          url: "nats://localhost:4222"
+          url: "nats://localhost:4322"
         }
       },
       producers: {

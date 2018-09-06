@@ -18,7 +18,6 @@ services:
       - 3406:3306
   natstreaming:
     image: nats-streaming
-    container_name: natstreaming
     ports:
-      - 8222:8222
-      - 4222:4222
+      - 8322:8222
+      - 4322:4222
