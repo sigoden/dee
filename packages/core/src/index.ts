@@ -10,7 +10,6 @@ const DEFAULT_PORT = 3000;
 declare global {
   namespace DeeShare {
     interface ServiceGroup {}
-    interface Config {}
   }
   namespace Express {
     interface Request {
@@ -69,7 +68,7 @@ export type ServiceInitializeFunc = (
   callback?: (err: Error, srv?: Service) => void
 ) => Promise<Service> | void;
 
-export interface Config extends DeeShare.Config {
+export interface Config {
   // namespace of service
   ns: string;
   // name of app
