@@ -63,7 +63,7 @@ export async function init(
   if (serverProtoFile) {
     srv.server = await createServer(ctx, args);
   }
-  if (serverProtoFile) {
+  if (clientProtoFile) {
     srv.clients = await createClients(ctx, args);
   }
   return srv;
@@ -92,7 +92,7 @@ async function createServer(
     throw new Error(`no grpc service at ${ns}.${name}`);
   }
   const server = new grpc.Server();
-  server.addService(proto.service, shimHandlers(serverHandlers, havePermision));
+  server.addService(proto.service, shimHandlers(serverHandlers, havePermision, ctx.srvs));
   // TODO support more credential
   server.bind(
     `${serverHost}:${serverPort}`,
@@ -104,7 +104,8 @@ async function createServer(
 
 function shimHandlers(
   handlers: HandlerFuncMap,
-  havePermision: CheckPermisionFunc
+  havePermision: CheckPermisionFunc,
+  srvs: Dee.ServiceGroup
 ) {
   const result = {};
   Object.keys(handlers).forEach(id => {
@@ -118,6 +119,7 @@ function shimHandlers(
         });
         return;
       }
+      ctx.srvs = srvs;
       fn(ctx)
         .then(res => cb(null, res))
         .catch(cb);
