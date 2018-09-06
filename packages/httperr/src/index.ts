@@ -31,9 +31,11 @@ export interface CallArgs {
 }
 
 export class HttpErr extends Error {
-  constructor(name, msg) {
+  public status: number;
+  constructor(msg: string, code: string, status: number) {
     super(msg);
-    this.name = name;
+    this.name = code;
+    this.status = status;
   }
 }
 
@@ -63,7 +65,7 @@ export class Factory {
     res.status(this.status).json(this.json(args));
   }
   public toError(args?: CallArgs) {
-    return new HttpErr(this.code, this.createMessage(args, true));
+    return new HttpErr(this.createMessage(args, true), this.code, this.status);
   }
 }
 
