@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-echo",
-  "version": "0.10.2",
+  "version": "0.10.5",
   "description": "A echo service for dee framework which mounts data as service.",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,6 +33,6 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.10.2"
+    "@sigodenjs/dee": "^0.10.5"
   }
 }

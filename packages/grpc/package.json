@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-grpc",
-  "version": "0.10.2",
+  "version": "0.10.5",
   "description": "A rpc service for dee framework, powered by grpc",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -34,7 +34,7 @@
   },
   "dependencies": {
     "@grpc/proto-loader": "^0.3.0",
-    "@sigodenjs/dee": "^0.10.2",
+    "@sigodenjs/dee": "^0.10.5",
     "grpc": "^1.14.1"
   }
 }

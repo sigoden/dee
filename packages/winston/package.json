@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-winston",
-  "version": "0.10.2",
+  "version": "0.10.5",
   "description": "A logger service for dee framework, powered by winston",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -34,7 +34,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.10.2",
+    "@sigodenjs/dee": "^0.10.5",
     "@types/node": "^10.9.4",
     "winston": "^3.0.0"
   }
