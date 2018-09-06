@@ -30,6 +30,13 @@ export interface CallArgs {
   extra?: any;
 }
 
+export class HttpErr extends Error {
+  constructor(name, msg) {
+    super(msg);
+    this.name = name;
+  }
+}
+
 export class Factory {
   public status: number;
   private code: string;
@@ -56,9 +63,7 @@ export class Factory {
     res.status(this.status).json(this.json(args));
   }
   public toError(args?: CallArgs) {
-    const err = new Error(this.createMessage(args, true));
-    err.name = this.code;
-    return err;
+    return new HttpErr(this.code, this.createMessage(args, true));
   }
 }
 
