@@ -10,7 +10,7 @@ import * as DeeWinston from "@sigodenjs/dee-winston";
 Dee({
   services: {
     logger: {
-      initialize: DeeWinston,
+      initialize: DeeWinston.init,
       args: {
         format: "simple",
         level: "debug",

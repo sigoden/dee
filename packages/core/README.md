@@ -20,7 +20,7 @@ Init Dee App
 import * as Dee from "@sigodenjs/dee";
 import * as path from "path";
 import * as handlers from "./handlers";
-import * as DeeRedis from "@sigodenjs/dee-ioredis";
+import * as DeeIORedis from "@sigodenjs/dee-ioredis";
 
 Dee({
   config: {
@@ -33,7 +33,7 @@ Dee({
   },
   services: { // auto init and bind service, could be access through app.srvs and req.srvs
     redis: {
-      initialize: DeeRedis,
+      initialize: DeeIORedis.init,
       args: {
         port: 6379
       }

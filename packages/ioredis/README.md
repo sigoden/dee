@@ -10,7 +10,7 @@ import * as DeeIORedis from "@sigodenjs/dee-ioredis";
 Dee({
   services: {
     redis: {
-        initialize: DeeIORedis,
+        initialize: DeeIORedis.init,
         args: {
             port: 6379
         }

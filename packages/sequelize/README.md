@@ -10,7 +10,7 @@ import * as DeeSequelize from "@sigodenjs/dee-sequelize";
 Dee({
   services: {
     sql: {
-      initialize: DeeSequelize,
+      initialize: DeeSequelize.init,
       args: {
         database: "mysql",
         username: "root",

@@ -10,7 +10,7 @@ import * as DeeMongoose from "@sigodenjs/dee-mongoose";
 Dee({
   services: {
     mongo: {
-      initialize: DeeMongoose,
+      initialize: DeeMongoose.init,
       args: {
         uris: "mongodb://localhost:28017/test"
       }

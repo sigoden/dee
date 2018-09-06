@@ -10,7 +10,7 @@ import * as DeeNatstreaming from "@sigodenjs/dee-natstreaming";
 Dee({
   services: {
     mq: {
-      initialize: DeeNatstreaming,
+      initialize: DeeNatstreaming.init,
       args: {
         client: {
           clusterId: "test-cluster",

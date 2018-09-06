@@ -10,7 +10,7 @@ import * as DeeGrpc from "@sigodenjs/dee-grpc";
 Dee({
   services: {
     rpc: {
-      initialize: DeeGrpc,
+      initialize: DeeGrpc.init,
       args: {
         clientProtoFile: CLIENT_RPC_PROTO_FILE,
         serverProtoFile: SERVER_RPC_PROTO_FILE,

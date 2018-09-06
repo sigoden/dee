@@ -10,7 +10,7 @@ import * as DeeHttpErr from "@sigodenjs/dee-httperr";
 Dee({
   services: {
     httperr: {
-      initialize: DeeHttpErr,
+      initialize: DeeHttpErr.init,
       args: {
         ErrInvalidField: {
           status: 400,
