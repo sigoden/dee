@@ -31,16 +31,11 @@ export interface CallArgs {
 }
 
 export class HttpErr extends Error {
-  public readonly status: number;
-  private factory: Factory;
+  public readonly factory: Factory;
   constructor(msg: string, f: Factory) {
     super(msg);
     this.factory = f;
     this.name = f.code;
-    this.status = f.status;
-  }
-  public resJSON(res: Dee.Response, args?: CallArgs) {
-    return this.factory.resJSON(res, args);
   }
 }
 
