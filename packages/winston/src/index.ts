@@ -23,7 +23,7 @@ export async function init(
 ): Promise<Service> {
   const {
     format = "simple",
-    level = "warning",
+    level = "warn",
     transporters = { Console: {} }
   } = args;
   const transports = [];
