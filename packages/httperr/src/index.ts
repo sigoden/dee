@@ -31,11 +31,19 @@ export interface CallArgs {
 }
 
 export class HttpErr extends Error {
-  public readonly factory: Factory;
-  constructor(msg: string, f: Factory) {
+  public readonly status: number;
+  private readonly args: CallArgs;
+  private readonly factory: Factory;
+  constructor(msg: string, f: Factory, args: CallArgs) {
     super(msg);
     this.factory = f;
     this.name = f.code;
+    this.status = f.status;
+    this.args = args;
+  }
+
+  resJSON(res: Dee.Response) {
+    return this.factory.resJSON(res, this.args);
   }
 }
 
@@ -65,7 +73,7 @@ export class Factory {
     res.status(this.status).json(this.json(args));
   }
   public toError(args?: CallArgs) {
-    return new HttpErr(this.createMessage(args, true), this);
+    return new HttpErr(this.createMessage(args, true), this, args);
   }
 }
 
