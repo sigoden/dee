@@ -1,5 +1,5 @@
 import * as Dee from "@sigodenjs/dee";
-import * as template from "lodash.template";
+import template = require("lodash.template");
 
 declare global {
   namespace DeeShare { interface HttpErrMap {} }
@@ -42,7 +42,7 @@ export class HttpErr extends Error {
     this.args = args;
   }
 
-  resJSON(res: Dee.Response) {
+  public resJSON(res: Dee.Response) {
     return this.factory.resJSON(res, this.args);
   }
 }
