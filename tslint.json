@@ -8,6 +8,7 @@
     "no-empty": false,
     "no-empty-interface": false,
     "no-namespace": false,
+    "max-classes-per-file": false,
     "interface-name": [false],
     "arrow-parens": false,
     "object-literal-sort-keys": false,
