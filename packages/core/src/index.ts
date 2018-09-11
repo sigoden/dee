@@ -1,4 +1,4 @@
-import * as swaggerize from "@sigodenjs/dee-swaggerize";
+import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import * as expressCore from "express-serve-static-core";
 import { Server } from "http";
@@ -17,11 +17,13 @@ declare global {
   }
 }
 
+export { SecurityError, ValidationError } from "@sigodenjs/openapize";
+
 export interface Request extends expressCore.Request {}
 export interface Response extends expressCore.Response {}
 export interface NextFunction extends expressCore.NextFunction {}
 export interface RequestHandler extends expressCore.RequestHandler {}
-export interface HandlerFuncMap extends swaggerize.HandlerFuncMap {}
+export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
 export interface Express extends expressCore.Express {}
 export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
@@ -29,8 +31,8 @@ export type AsyncRequestHandler = (req: Request, res: Response, next: NextFuncti
 export interface Options {
   // general config
   config: Config;
-  // options to init swaggerize service
-  swaggerize: swaggerize.Options;
+  // options to init openapize service
+  openapize: Openapize.Options;
   // hook to run before bind route handlers
   beforeRoute?: RouteHooks;
   // hook to run after bind route handlers
@@ -162,7 +164,7 @@ export async function init(options: Options): Promise<App> {
   if (options.beforeRoute) {
     useMiddlewares(srvs, app, options.beforeRoute);
   }
-  swaggerize(app, options.swaggerize);
+  await Openapize.openapize(app, options.openapize);
   if (options.afterRoute) {
     useMiddlewares(srvs, app, options.afterRoute);
   }

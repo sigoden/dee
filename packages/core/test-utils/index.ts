@@ -1,7 +1,7 @@
 import * as Dee from "../src/";
 import * as path from "path";
 
-export const SWAGGER_FILE = path.resolve(__dirname, "./swagger.yaml");
+export const OPENAPI_FILE = path.resolve(__dirname, "./openapi.yaml");
 
 export function initApp(
   handlers: Dee.HandlerFuncMap,
@@ -12,8 +12,8 @@ export function initApp(
       ns: "proj",
       name: "App"
     },
-    swaggerize: {
-      api: SWAGGER_FILE,
+    openapize: {
+      api: OPENAPI_FILE,
       handlers
     },
     services

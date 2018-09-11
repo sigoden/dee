@@ -37,7 +37,7 @@ describe("handler func", () => {
     const app = await initApp({
       hello: (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
         expect(req.srvs).toBeDefined();
-        expect(req.swagRoute).toBeDefined();
+        expect(req.openapi).toBeDefined();
         res.json("");
       }
     });
