@@ -1,9 +1,9 @@
-# Dee - Powered by express and swagger
+# Dee - Powered by express and openapi
 
 ## Features
 
 - Document driven development
-- Use swagger to autobind router, auto parse and verify request.
+- Use openapi to autobind router, auto parse and verify request.
 - Easy to use 3-party service, could be bond through config
 
 ## Get started
@@ -27,8 +27,8 @@ Dee({
     ns: "proj",
     name: "App"
   },
-  swaggerize: {
-    api: path.resolve(__dirname, "./swagger.yaml"), //  Swagger doc file
+  openapize: {
+    api: path.resolve(__dirname, "./openapi.yaml"), //  Openapi doc file
     handlers
   },
   services: {
