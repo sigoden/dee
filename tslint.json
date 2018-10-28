@@ -10,6 +10,7 @@
     "no-namespace": false,
     "max-classes-per-file": false,
     "interface-name": [false],
+    "no-angle-bracket-type-assertion": false,
     "arrow-parens": false,
     "object-literal-sort-keys": false,
     "trailing-comma": false

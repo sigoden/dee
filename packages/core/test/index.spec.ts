@@ -1,7 +1,7 @@
-import * as Dee from "../src";
-import * as DeeSimple from "./fixtures/simple";
 import * as supertest from "supertest";
-import { initApp, HANDLERS, OPENAPI_FILE } from "../test-utils";
+import * as Dee from "../src";
+import { HANDLERS, initApp, OPENAPI_FILE } from "../test-utils";
+import * as DeeSimple from "./fixtures/simple";
 
 test("should create app instance", async () => {
   const app = await initApp({});
@@ -17,7 +17,7 @@ test("should autobind $config service", async () => {
 test("should init and bind service", async () => {
   const args = {};
   const app = await initApp({}, { simple: { initialize: DeeSimple, args } });
-  const srv = <DeeSimple.Service>app.srvs.simple;
+  const srv = <DeeSimple.Service> app.srvs.simple;
   expect(srv).toBeDefined();
   expect(srv.args).toBe(args);
 });
@@ -38,10 +38,12 @@ test("should support array options.openapize", async () => {
       ns: "proj",
       name: "App"
     },
-    openapize: [{
-      api: OPENAPI_FILE,
-      handlers: HANDLERS
-    }],
+    openapize: [
+      {
+        api: OPENAPI_FILE,
+        handlers: HANDLERS
+      }
+    ]
   });
   expect(app.start).toBeDefined();
 });

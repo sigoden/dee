@@ -1,8 +1,8 @@
+import { delay, HANDLERS, initApp } from "../../core/test-utils";
 import * as DeeNatstreaming from "../src";
-import { initApp, HANDLERS, delay } from "../../core/test-utils";
 
 test("should create natstreaming service", async () => {
-  const serviceOptions = <DeeNatstreaming.ServiceOptions>{
+  const serviceOptions = <DeeNatstreaming.ServiceOptions> {
     initialize: DeeNatstreaming.init,
     args: {
       client: {
@@ -30,7 +30,7 @@ test("should create natstreaming service", async () => {
     }
   };
   const app = await initApp(HANDLERS, { natstreaming: serviceOptions });
-  const srv = <DeeNatstreaming.Service>app.srvs.natstreaming;
+  const srv = <DeeNatstreaming.Service> app.srvs.natstreaming;
   await delay(1);
   await srv.producers.sayHello({ name: "tom" });
   srv.stan.close();

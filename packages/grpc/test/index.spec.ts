@@ -1,11 +1,11 @@
 import * as path from "path";
+import { delay, HANDLERS, initApp } from "../../core/test-utils";
 import * as DeeGrpc from "../src";
-import { initApp, HANDLERS, delay } from "../../core/test-utils";
 
 const RPC_PROTO_FILE = path.resolve(__dirname, "fixtures/rpc.proto");
 
 test("should create grpc service", async () => {
-  const serviceOptions = <DeeGrpc.ServiceOptions>{
+  const serviceOptions = <DeeGrpc.ServiceOptions> {
     initialize: DeeGrpc.init,
     args: {
       clientProtoFile: RPC_PROTO_FILE,
@@ -21,7 +21,7 @@ test("should create grpc service", async () => {
     }
   };
   const app = await initApp(HANDLERS, { rpc: serviceOptions });
-  const srv = <DeeGrpc.Service>app.srvs.rpc;
+  const srv = <DeeGrpc.Service> app.srvs.rpc;
   const name = "trump";
   const res = await srv.clients.App.call("sayHello", { name });
   expect(res.message).toBe(name);

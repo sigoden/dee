@@ -1,5 +1,5 @@
-import { requireDir, requireSafely } from "../src";
 import * as path from "path";
+import { requireDir, requireSafely } from "../src";
 
 describe("requireDir", () => {
   test("should load modules from folder and merge", () => {

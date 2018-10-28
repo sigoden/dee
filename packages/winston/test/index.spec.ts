@@ -1,8 +1,8 @@
+import { HANDLERS, initApp } from "../../core/test-utils";
 import * as DeeWinston from "../src";
-import { initApp, HANDLERS } from "../../core/test-utils";
 
 test("should create winston service", async () => {
-  const serviceOptions = <DeeWinston.ServiceOptions>{
+  const serviceOptions = <DeeWinston.ServiceOptions> {
     initialize: DeeWinston.init,
     args: {
       format: "simple",
@@ -13,7 +13,7 @@ test("should create winston service", async () => {
     }
   };
   const app = await initApp(HANDLERS, { winston: serviceOptions });
-  const srv = <DeeWinston.Service>app.srvs.winston;
+  const srv = <DeeWinston.Service> app.srvs.winston;
   srv.debug("hello");
   expect(srv.log).toBeDefined();
 });

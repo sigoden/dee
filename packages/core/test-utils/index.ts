@@ -1,5 +1,5 @@
-import * as Dee from "../src/";
 import * as path from "path";
+import * as Dee from "../src/";
 
 export const OPENAPI_FILE = path.resolve(__dirname, "./openapi.yaml");
 
