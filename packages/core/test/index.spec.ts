@@ -1,7 +1,7 @@
 import * as Dee from "../src";
 import * as DeeSimple from "./fixtures/simple";
 import * as supertest from "supertest";
-import { initApp, HANDLERS } from "../test-utils";
+import { initApp, HANDLERS, OPENAPI_FILE } from "../test-utils";
 
 test("should create app instance", async () => {
   const app = await initApp({});
@@ -30,6 +30,20 @@ test("should autobind route", async () => {
   expect(resHello.body).toBe(name);
   const resHey = await request.get("/hey/" + name).expect(200);
   expect(resHey.body).toBe(name);
+});
+
+test("should support array options.openapize", async () => {
+  const app = await Dee.init({
+    config: {
+      ns: "proj",
+      name: "App"
+    },
+    openapize: [{
+      api: OPENAPI_FILE,
+      handlers: HANDLERS
+    }],
+  });
+  expect(app.start).toBeDefined();
 });
 
 describe("handler func", () => {
