@@ -25,7 +25,11 @@ export interface NextFunction extends expressCore.NextFunction {}
 export interface RequestHandler extends expressCore.RequestHandler {}
 export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
 export interface Express extends expressCore.Express {}
-export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
+export type AsyncRequestHandler = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<any>;
 
 // options to init dee app
 export interface Options {
@@ -81,6 +85,7 @@ export interface Config {
   port?: number;
   // whether production mode
   prod?: boolean;
+  [k: string]: any;
 }
 
 export type RouteHooks = (
