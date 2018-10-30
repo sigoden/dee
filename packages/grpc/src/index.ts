@@ -19,16 +19,18 @@ export interface Args extends Dee.Args {
   // path to server proto file
   serverProtoFile?: string;
   // handler func for service
-  serverHandlers: HandlerFuncMap;
+  serverHandlers?: HandlerFuncMap;
   // path to client Proto file
   clientProtoFile?: string;
   // check whether the client have permision to call the rpc
   havePermision?: CheckPermisionFunc;
-  getServerBindOptions(ctx: Dee.ServiceInitializeContext): ServerBindOptions;
-  getClientConstructOptions(
+  getServerBindOptions?: (
+    ctx: Dee.ServiceInitializeContext
+  ) => ServerBindOptions;
+  getClientConstructOptions?: (
     serviceName: string,
     ctx: Dee.ServiceInitializeContext
-  ): ClientConstructOptions;
+  ) => ClientConstructOptions;
 }
 
 export interface ServerBindOptions {
@@ -103,6 +105,9 @@ async function createServer(
     proto.service,
     shimHandlers(serverHandlers, havePermision, ctx.srvs)
   );
+  if (typeof getServerBindOptions !== "function") {
+    throw new Error(`getServerBindOptions is required`);
+  }
   const bindOptions = getServerBindOptions(ctx);
   server.bind(bindOptions.address, bindOptions.credentials);
   server.start();
@@ -150,6 +155,9 @@ async function createClients(
       return;
     }
     const GrpcClient: typeof grpc.Client = GrpcClientObj;
+    if (typeof getClientConstructOptions !== "function") {
+      throw new Error(`getClientConstructOptions is required`);
+    }
     const constructOptions = getClientConstructOptions(serviceName, ctx);
     const grpcClient = new GrpcClient(
       constructOptions.address,
