@@ -18,26 +18,37 @@ export interface ServiceOptions extends Dee.ServiceOptions {
 export interface Args extends Dee.Args {
   // path to server proto file
   serverProtoFile?: string;
-  // listenning host of server
-  serverHost?: string;
-  // listenning port of server
-  serverPort?: number;
   // handler func for service
   serverHandlers: HandlerFuncMap;
   // path to client Proto file
   clientProtoFile?: string;
-  // get uri for client service
-  getClientUri?: (serviceName: string) => string;
   // check whether the client have permision to call the rpc
   havePermision?: CheckPermisionFunc;
+  getServerBindOptions(ctx: Dee.ServiceInitializeContext): ServerBindOptions;
+  getClientConstructOptions(
+    serviceName: string,
+    ctx: Dee.ServiceInitializeContext
+  ): ClientConstructOptions;
+}
+
+export interface ServerBindOptions {
+  address: string;
+  credentials: grpc.ServerCredentials;
+}
+
+export interface ClientConstructOptions {
+  address: string;
+  credentials: grpc.ChannelCredentials;
+  options?: object;
 }
 
 export interface ClientMap extends DeeShare.GrpcClientMap {
   [k: string]: Client;
 }
 
-export interface Client extends grpc.Client {
+export interface Client {
   call: (name: string, args: any, metdata?: grpc.Metadata) => Promise<any>;
+  grpcClient: grpc.Client;
 }
 
 export type CheckPermisionFunc = (serviceName: string, id: string) => boolean;
@@ -69,9 +80,6 @@ export async function init(
   return srv;
 }
 
-const DEFAULT_HOST = "127.0.0.1";
-const DEFAULT_PORT = "4444";
-
 async function createServer(
   ctx: Dee.ServiceInitializeContext,
   args: Args
@@ -80,8 +88,7 @@ async function createServer(
     serverProtoFile,
     serverHandlers,
     havePermision = () => true,
-    serverHost = "127.0.0.1",
-    serverPort = "4444"
+    getServerBindOptions
   } = args;
   const { ns, name } = ctx.srvs.$config;
   const protoRoot = loadProtoFile(serverProtoFile);
@@ -92,12 +99,12 @@ async function createServer(
     throw new Error(`no grpc service at ${ns}.${name}`);
   }
   const server = new grpc.Server();
-  server.addService(proto.service, shimHandlers(serverHandlers, havePermision, ctx.srvs));
-  // TODO support more credential
-  server.bind(
-    `${serverHost}:${serverPort}`,
-    grpc.ServerCredentials.createInsecure()
+  server.addService(
+    proto.service,
+    shimHandlers(serverHandlers, havePermision, ctx.srvs)
   );
+  const bindOptions = getServerBindOptions(ctx);
+  server.bind(bindOptions.address, bindOptions.credentials);
   server.start();
   return server;
 }
@@ -133,43 +140,46 @@ async function createClients(
   args: Args
 ): Promise<ClientMap> {
   const clients: ClientMap = {};
-  const {
-    clientProtoFile,
-    getClientUri = () => DEFAULT_HOST + ":" + DEFAULT_PORT
-  } = args;
+  const { clientProtoFile, getClientConstructOptions } = args;
   const { ns, name } = ctx.srvs.$config;
   const protoRoot = loadProtoFile(clientProtoFile);
   const proto = protoRoot[ns];
   Object.keys(proto).forEach(serviceName => {
-    const GrpcClient = proto[serviceName];
-    if (GrpcClient.name !== "ServiceClient") {
+    const GrpcClientObj = proto[serviceName];
+    if (GrpcClientObj.name !== "ServiceClient") {
       return;
     }
-    const client = new GrpcClient(
-      getClientUri(serviceName),
-      grpc.credentials.createInsecure()
+    const GrpcClient: typeof grpc.Client = GrpcClientObj;
+    const constructOptions = getClientConstructOptions(serviceName, ctx);
+    const grpcClient = new GrpcClient(
+      constructOptions.address,
+      constructOptions.credentials,
+      constructOptions.options
     );
-    client.call = (funcName: string, data: any, metadata?: grpc.Metadata) => {
-      if (!metadata) {
-        metadata = new grpc.Metadata();
-      }
-      metadata.add("origin", name);
-      const fn = client[funcName];
-      const unSupportedRes = {
-        message: serviceName + "." + funcName + " is not supported",
-        status: grpc.status.UNIMPLEMENTED
-      };
-      return new Promise((resolve, reject) => {
-        if (!fn) {
-          return reject(unSupportedRes);
+    const client: Client = {
+      grpcClient,
+      call: (funcName: string, data: any, metadata?: grpc.Metadata) => {
+        if (!metadata) {
+          metadata = new grpc.Metadata();
         }
-        client[funcName](data, metadata, (err, res) => {
-          if (err) {
-            return reject(err);
+        metadata.add("origin", name);
+        const fn = grpcClient[funcName];
+        const unSupportedRes = {
+          message: serviceName + "." + funcName + " is not supported",
+          status: grpc.status.UNIMPLEMENTED
+        };
+        return new Promise((resolve, reject) => {
+          if (!fn) {
+            return reject(unSupportedRes);
           }
-          resolve(res);
+          grpcClient[funcName](data, metadata, (err, res) => {
+            if (err) {
+              return reject(err);
+            }
+            resolve(res);
+          });
         });
-      });
+      }
     };
     clients[serviceName] = client;
   });

@@ -1,3 +1,4 @@
+import * as grpc from "grpc";
 import * as path from "path";
 import { delay, HANDLERS, initApp } from "../../core/test-utils";
 import * as DeeGrpc from "../src";
@@ -10,8 +11,18 @@ test("should create grpc service", async () => {
     args: {
       clientProtoFile: RPC_PROTO_FILE,
       serverProtoFile: RPC_PROTO_FILE,
-      serverPort: 4444,
-      getClientUri: () => "localhost:4444",
+      getClientConstructOptions: serviceName => {
+        return {
+          address: "127.0.0.1:4444",
+          credentials: grpc.credentials.createInsecure()
+        };
+      },
+      getServerBindOptions: () => {
+        return {
+          address: "127.0.0.1:4444",
+          credentials: grpc.ServerCredentials.createInsecure()
+        };
+      },
       serverHandlers: {
         sayHello: async (ctx: DeeGrpc.Context) => {
           await delay(1);

@@ -6,6 +6,7 @@ A rpc service for dee framework, powered by grpc
 
 ```ts
 import * as DeeGrpc from "@sigodenjs/dee-grpc";
+import * as grpc from "grpc";
 
 Dee({
   services: {
@@ -14,8 +15,18 @@ Dee({
       args: {
         clientProtoFile: CLIENT_RPC_PROTO_FILE,
         serverProtoFile: SERVER_RPC_PROTO_FILE,
-        serverPort: 4444,
-        getClientUri: () => "localhost:4444",
+        getServerBindOptions: () => {
+          return {
+            address: '127.0.0.1:4444',
+            credentials: grpc.ServerCredentials.createInsecure()
+          }
+        }
+        getClientConstructOptions: (serviceName => {
+          return {
+            address: '127.0.0.1:4444',
+            credentials: grpc.credentials.createInsecure()
+          }
+        })
         serverHandlers: {
           sayHello: async (ctx: DeeGrpc.Context) => {
             await delay(1);
