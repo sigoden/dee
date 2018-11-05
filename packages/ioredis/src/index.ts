@@ -14,5 +14,8 @@ export async function init(
   args: Args
 ): Promise<Service> {
   const srv = new Redis(args);
-  return srv;
+  return new Promise<Service>((resolve, reject) => {
+    srv.once("connect", () => resolve(srv));
+    srv.once("error", err => reject(err));
+  });
 }
