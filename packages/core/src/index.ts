@@ -141,9 +141,11 @@ async function createSrv(
       resolve();
     });
     if (promise instanceof Promise) {
-      return promise.then(srv => {
+      promise.then(srv => {
         ctx.srvs[srvName] = srv;
         resolve();
+      }).catch(err => {
+        reject(err);
       });
     }
   });
