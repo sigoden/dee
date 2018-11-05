@@ -6,9 +6,8 @@
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "../../node_modules/.bin/tsc",
-    "build:prod": "../../node_modules/.bin/tsc -p tsconfig.prod.json",
     "clean": "../../node_modules/.bin/rimraf dist",
-    "prepublish": "npm run -s clean && npm run -s build:prod"
+    "prepublish": "npm run -s clean && npm run -s build"
   },
   "publishConfig": {
     "access": "public"
