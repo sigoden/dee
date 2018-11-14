@@ -11,10 +11,6 @@ export interface Service extends Dee.Service {
   clients?: ClientMap;
 }
 
-export interface ServiceOptions extends Dee.ServiceOptions {
-  args: Args;
-}
-
 export interface Args extends Dee.Args {
   // path to server proto file
   serverProtoFile?: string;

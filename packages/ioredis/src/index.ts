@@ -3,10 +3,6 @@ import * as Redis from "ioredis";
 
 export interface Service extends Dee.Service, Redis.Redis {}
 
-export interface ServiceOptions extends Dee.ServiceOptions {
-  args: Args;
-}
-
 export interface Args extends Dee.Args, Redis.RedisOptions {}
 
 export async function init(

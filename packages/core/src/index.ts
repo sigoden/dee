@@ -102,6 +102,10 @@ export interface ServiceOptions {
   args?: Args;
 }
 
+export interface ServiceOptionsT<T> extends ServiceOptions {
+  args: T;
+}
+
 export type ServiceInitializeModule = string;
 
 async function createSrvs(options: Options): Promise<ServiceGroup> {
@@ -141,12 +145,14 @@ async function createSrv(
       resolve();
     });
     if (promise instanceof Promise) {
-      promise.then(srv => {
-        ctx.srvs[srvName] = srv;
-        resolve();
-      }).catch(err => {
-        reject(err);
-      });
+      promise
+        .then(srv => {
+          ctx.srvs[srvName] = srv;
+          resolve();
+        })
+        .catch(err => {
+          reject(err);
+        });
     }
   });
 }

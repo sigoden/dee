@@ -7,10 +7,6 @@ declare global {
 
 export interface Service extends Dee.Service, ErrorMap {}
 
-export interface ServiceOptions extends Dee.ServiceOptions {
-  args: Args;
-}
-
 export interface Args extends Dee.Args {
   [k: string]: ErrorParams;
 }

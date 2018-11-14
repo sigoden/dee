@@ -19,10 +19,6 @@ export interface Service extends Dee.Service {
   subscribers: SubscriberMap;
 }
 
-export interface ServiceOptions extends Dee.ServiceOptions {
-  args: Args;
-}
-
 export interface ProducerMap extends DeeShare.ProducerMap {
   [k: string]: ProduceFunc;
 }

@@ -4,10 +4,6 @@ export interface Service<T> extends Dee.Service {
   data: T;
 }
 
-export interface ServiceOptions extends Dee.ServiceOptions {
-  args: Args;
-}
-
 export interface Args extends Dee.Args {
   [k: string]: any;
 }
