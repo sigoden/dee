@@ -85,6 +85,7 @@ export interface Config {
   port?: number;
   // whether production mode
   prod?: boolean;
+  $services?: ServicesOptionsMap;
   [k: string]: any;
 }
 
@@ -208,6 +209,7 @@ export async function init(options: Options): Promise<App> {
   if (options.ready) {
     options.ready(deeApp);
   }
+  options.config.$services = options.services;
   return deeApp;
 }
 
