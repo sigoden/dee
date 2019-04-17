@@ -4,12 +4,12 @@
     "lint": "node ./scripts/lint.js"
   },
   "devDependencies": {
-    "@types/jest": "^23.3.1",
-    "jest": "^23.5.0",
-    "lerna": "^2.11.0",
-    "rimraf": "^2.6.2",
-    "ts-jest": "^23.1.4",
-    "tslint": "^5.11.0",
-    "typescript": "^3.0.3"
+    "@types/jest": "^24.0.11",
+    "jest": "^24.7.1",
+    "lerna": "^3.13.3",
+    "rimraf": "^2.6.3",
+    "ts-jest": "^24.0.2",
+    "tslint": "^5.16.0",
+    "typescript": "^3.4.3"
   }
 }
