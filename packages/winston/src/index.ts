@@ -3,6 +3,8 @@ import * as winston from "winston";
 
 export interface Service extends Dee.Service, winston.Logger {}
 
+export type ServiceOptions = Dee.ServiceOptionsT<Args>
+
 export interface Args extends Dee.Args {
   level?: string;
   format?: string;

@@ -3,6 +3,8 @@ import * as Sequelize from "sequelize";
 
 export interface Service extends Dee.Service, Sequelize.Sequelize {}
 
+export type ServiceOptions = Dee.ServiceOptionsT<Args>
+
 export interface Args extends Dee.Args {
   database: string;
   username: string;

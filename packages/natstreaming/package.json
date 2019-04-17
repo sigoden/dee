@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-natstreaming",
-  "version": "0.11.6",
+  "version": "0.11.7",
   "description": "A mq service for dee framework, powered by nats-streaming",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

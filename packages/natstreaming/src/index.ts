@@ -1,7 +1,6 @@
 import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
-import * as FastestValidator from "fastest-validator";
-import { NatsError } from "nats";
+import FastestValidator, { ValidationError } from "fastest-validator";
 import * as nats from "node-nats-streaming";
 
 const validator = new FastestValidator();
@@ -34,6 +33,8 @@ export interface SubscriberOptions {
   ackWait?: number;
   maxInFlight?: number;
 }
+
+export type ServiceOptions = Dee.ServiceOptionsT<Args>
 
 export interface Args extends Dee.Args {
   client: ClientOptions;
@@ -124,7 +125,7 @@ function createProducers(
   Object.keys(producersConfig).forEach(producerName => {
     const topic = name + "." + producerName;
     const producerOptions = producersConfig[producerName];
-    let check: (data: any) => boolean = () => true;
+    let check: (data: any) => boolean | ValidationError[]  = () => true;
     if (producerOptions.schema) {
       try {
         check = validator.compile(producerOptions.schema);
