@@ -8,6 +8,9 @@ declare module "express" {
       srvs: ServiceGroup;
   }
 }
+import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
+
+export {  Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler };
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
@@ -20,12 +23,7 @@ declare global {
 
 export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
-export interface Request extends express.Request {}
-export interface Response extends express.Response {}
-export interface NextFunction extends express.NextFunction {};
-export interface RequestHandler extends express.RequestHandler {} ;
 export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
-export interface Express extends express.Express {};
 
 export type AsyncRequestHandler = (
   req: Request,
@@ -44,7 +42,7 @@ export interface Options {
   // hook to run after bind route handlers
   afterRoute?: RouteHooks;
   // error handler
-  errorHandler?: RequestHandler;
+  errorHandler?: ErrorRequestHandler;
   // run when app is ready
   ready?: (app: App) => void;
   // options to init external services
@@ -171,7 +169,7 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 }
 
 export async function init(options: Options): Promise<App> {
-  const app = express() as Express;
+  const app = express();
   const srvs = await createSrvs(options);
   app.use((req: Request, res, next) => {
     req.srvs = srvs;
