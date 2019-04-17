@@ -2,6 +2,13 @@ import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import { Server } from "http";
 
+declare module "express" {
+  interface Request {
+      openapi: Openapize.API;
+      srvs: ServiceGroup;
+  }
+}
+
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
 
@@ -13,24 +20,13 @@ declare global {
 
 export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
-export interface Request extends Openapize.RequestExt {
-  srvs: ServiceGroup;
-}
+export interface Request extends express.Request {}
 export interface Response extends express.Response {}
-export interface NextFunction {
-    // tslint:disable-next-line callable-types (In ts2.1 it thinks the type alias has no call signatures)
-    (err?: any): void;
-}
-export interface RequestHandler {
-    // tslint:disable-next-line callable-types (This is extended from and can't extend from a type alias in ts<2.2
-    (req: Request, res: Response, next: NextFunction): any;
-}
-
+export interface NextFunction extends express.NextFunction {};
+export interface RequestHandler extends express.RequestHandler {} ;
 export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
-export interface Express extends express.Application {
-    request: Request;
-    response: Response;
-}
+export interface Express extends express.Express {};
+
 export type AsyncRequestHandler = (
   req: Request,
   res: Response,
