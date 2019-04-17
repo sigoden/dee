@@ -1,6 +1,5 @@
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
-import * as expressCore from "express-serve-static-core";
 import { Server } from "http";
 
 const DEFAULT_HOST = "localhost";
@@ -10,21 +9,28 @@ declare global {
   namespace DeeShare {
     interface ServiceGroup {}
   }
-  namespace Express {
-    interface Request {
-      srvs: ServiceGroup;
-    }
-  }
 }
 
 export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
-export interface Request extends expressCore.Request {}
-export interface Response extends expressCore.Response {}
-export interface NextFunction extends expressCore.NextFunction {}
-export interface RequestHandler extends expressCore.RequestHandler {}
+export interface Request extends Openapize.RequestExt {
+  srvs: ServiceGroup;
+}
+export interface Response extends express.Response {}
+export interface NextFunction {
+    // tslint:disable-next-line callable-types (In ts2.1 it thinks the type alias has no call signatures)
+    (err?: any): void;
+}
+export interface RequestHandler {
+    // tslint:disable-next-line callable-types (This is extended from and can't extend from a type alias in ts<2.2
+    (req: Request, res: Response, next: NextFunction): any;
+}
+
 export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
-export interface Express extends expressCore.Express {}
+export interface Express extends express.Application {
+    request: Request;
+    response: Response;
+}
 export type AsyncRequestHandler = (
   req: Request,
   res: Response,
@@ -42,7 +48,7 @@ export interface Options {
   // hook to run after bind route handlers
   afterRoute?: RouteHooks;
   // error handler
-  errorHandler?: express.ErrorRequestHandler;
+  errorHandler?: RequestHandler;
   // run when app is ready
   ready?: (app: App) => void;
   // options to init external services
@@ -92,7 +98,7 @@ export interface Config {
 export type RouteHooks = (
   srvs: ServiceGroup,
   app: Express
-) => void | express.RequestHandler[];
+) => void | RequestHandler[];
 
 export interface ServicesOptionsMap {
   [k: string]: ServiceOptions;
@@ -163,15 +169,15 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
     hooks(srvs, app);
     return;
   }
-  for (const mid of Array<express.RequestHandler>(hooks)) {
+  for (const mid of Array<RequestHandler>(hooks)) {
     app.use(mid);
   }
 }
 
 export async function init(options: Options): Promise<App> {
-  const app = express();
+  const app = express() as Express;
   const srvs = await createSrvs(options);
-  app.use((req, res, next) => {
+  app.use((req: Request, res, next) => {
     req.srvs = srvs;
     next();
   });
