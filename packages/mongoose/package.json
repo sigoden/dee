@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-mongoose",
-  "version": "0.11.8",
+  "version": "0.12.0",
   "description": "A mongo service for dee framework, powered by mongoose",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,7 +33,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.11.13",
+    "@sigodenjs/dee": "^0.12.0",
     "@types/mongoose": "^5.3.26",
     "mongoose": "^5.5.2"
   }
