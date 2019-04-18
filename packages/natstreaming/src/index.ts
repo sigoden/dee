@@ -1,6 +1,7 @@
 import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
-import FastestValidator, { ValidationError } from "fastest-validator";
+import { ValidationError } from "fastest-validator";
+const FastestValidator = require("fastest-validator");
 import * as nats from "node-nats-streaming";
 
 const validator = new FastestValidator();

@@ -1,15 +1,15 @@
 import * as Dee from "@sigodenjs/dee";
-import * as Sequelize from "sequelize";
+import { Sequelize, Options } from "sequelize";
 
-export interface Service extends Dee.Service, Sequelize.Sequelize {}
+export interface Service extends Dee.Service, Sequelize {}
 
-export type ServiceOptions = Dee.ServiceOptionsT<Args>
+export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
 export interface Args extends Dee.Args {
   database: string;
   username: string;
   password: string;
-  options?: Sequelize.Options;
+  options?: Options;
 }
 
 export async function init(

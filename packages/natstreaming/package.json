@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-natstreaming",
-  "version": "0.11.7",
+  "version": "0.11.8",
   "description": "A mq service for dee framework, powered by nats-streaming",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,9 +33,9 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.11.6",
-    "@types/node": "^10.9.4",
-    "fastest-validator": "^0.6.9",
+    "@types/node": "^11.13.5",
+    "@sigodenjs/dee": "^0.11.13",
+    "fastest-validator": "0.6.9",
     "node-nats-streaming": "0.0.40"
   }
 }

@@ -5,7 +5,10 @@ test("should create mongoose service", async () => {
   const serviceOptions = <DeeMongoose.ServiceOptions> {
     initialize: DeeMongoose.init,
     args: {
-      uris: "mongodb://localhost:28017/test"
+      uris: "mongodb://localhost:28017/test",
+      options: {
+        useNewUrlParser: true
+      }
     }
   };
   const app = await initApp(HANDLERS, { mongo: serviceOptions });

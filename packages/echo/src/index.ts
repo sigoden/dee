@@ -4,7 +4,7 @@ export interface Service<T> extends Dee.Service {
   data: T;
 }
 
-export type ServiceOptions = Dee.ServiceOptionsT<Args>
+export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
 export interface Args extends Dee.Args {
   [k: string]: any;
