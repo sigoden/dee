@@ -1,0 +1,33 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: rbac
+servers:
+  - url: "http://localhost:3000/"
+paths:
+  /hello:
+    get:
+      description: Returns 'Hello' to the caller
+      operationId: hello
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+            format: int64
+      responses:
+        "200":
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+components:
+  schemas:
+    MessageResponse:
+      type: object
+      properties:
+        message:
+          type: string
+      required:
+        - message
