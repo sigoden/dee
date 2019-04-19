@@ -1,7 +1,6 @@
 import * as Dee from "@sigodenjs/dee";
 import * as path from "path";
 import * as handlers from "./handlers";
-import * as DeeIORedis from "@sigodenjs/dee-ioredis";
 
 Dee.init({
   config: {
@@ -11,12 +10,6 @@ Dee.init({
   openapize: {
     api: path.resolve(__dirname, "./openapi.yaml"), //  Openapi doc file
     handlers
-  },
-  services: {
-    // auto init and bind service, could be access through app.srvs and req.srvs
-    redis: {
-      initialize: DeeIORedis.init
-    }
   },
   errorHandler(
     err: Error,
