@@ -6,7 +6,7 @@ interface ModelMap {
 }
 
 export interface Service<T extends ModelMap> extends Dee.Service, Sequelize {
-  getModel<TObject extends T, TKey extends keyof TObject>(name: TKey): TObject[TKey]
+  model<TObject extends T, TKey extends keyof TObject>(name: TKey): TObject[TKey]
   models: T;
 }
 
@@ -26,9 +26,5 @@ export async function init<T extends ModelMap>(
   const { database, username, password, options: connectOptions } = args;
   const srv = new Sequelize(database, username, password, connectOptions);
   await srv.authenticate();
-  return Object.assign(srv, {
-    getModel<TObject extends T, TKey extends keyof TObject>(name: TKey): TObject[TKey] {
-      return (srv.models as any)[name];
-    }
-  });
+  return srv as any;
 }
