@@ -1,7 +1,7 @@
 import * as Dee from "@sigodenjs/dee";
 import { Sequelize, Options, Model } from "sequelize";
 
-interface ModelMap {
+export interface ModelMap {
   [key: string]: typeof Model;
 }
 
