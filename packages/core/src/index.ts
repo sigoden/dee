@@ -36,7 +36,7 @@ export interface Options {
   // general config
   config: Config;
   // options to init openapize service
-  openapize: Openapize.Options | Openapize.Options[];
+  openapize?: Openapize.Options | Openapize.Options[];
   // hook to run before bind route handlers
   beforeRoute?: RouteHooks;
   // hook to run after bind route handlers
@@ -182,7 +182,7 @@ export async function init(options: Options): Promise<App> {
     for (const openapizeOptions of options.openapize) {
       await Openapize.openapize(app, openapizeOptions);
     }
-  } else {
+  } else if (options.openapize) {
     await Openapize.openapize(app, options.openapize);
   }
   if (options.afterRoute) {
