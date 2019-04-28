@@ -14,3 +14,16 @@ test("should create ioredis service", async () => {
   expect(result).toEqual("PONG");
   await srv.quit();
 });
+
+
+test("extend method: deeKey", async () => {
+  const serviceOptions = <DeeIORedis.ServiceOptions> {
+    initialize: DeeIORedis.init,
+    args: {
+      port: 6479
+    }
+  };
+  const app = await initApp(HANDLERS, { redis: serviceOptions });
+  const srv = <DeeIORedis.Service> app.srvs.redis;
+  expect(srv.deeKey("key", "subKey")).toEqual("App:key:subKey");
+});

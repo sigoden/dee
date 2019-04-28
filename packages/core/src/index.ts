@@ -188,14 +188,14 @@ export async function init(options: Options): Promise<App> {
   if (options.afterRoute) {
     useMiddlewares(srvs, app, options.afterRoute);
   }
-  if (options.errorHandler) {
-    app.use(options.errorHandler);
-  }
 
   const start = () => {
     const port = options.config.port || DEFAULT_PORT;
     const host = options.config.host || DEFAULT_HOST;
     return new Promise<Server>((resolve, reject) => {
+      if (options.errorHandler) {
+        app.use(options.errorHandler);
+      }
       const server = app.listen(port, host, err => {
         if (err) {
           reject(err);
