@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee",
-  "version": "0.12.2",
+  "version": "0.12.3",
   "description": "A framework focus on document driven design",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

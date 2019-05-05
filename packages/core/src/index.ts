@@ -145,14 +145,14 @@ async function createSrv(
       ctx.srvs[srvName] = srv;
       resolve();
     });
-    if (promise instanceof Promise) {
+    if (promise && promise.then) {
       promise
         .then(srv => {
           ctx.srvs[srvName] = srv;
           resolve();
         })
         .catch(err => {
-          reject(err);
+          reject(new Error(`service.${srvName} has error, ${err.message}`));
         });
     }
   });
