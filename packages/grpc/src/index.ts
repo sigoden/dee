@@ -2,12 +2,12 @@ import * as grpcLoader from "@grpc/proto-loader";
 import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
-interface ServiceExt<T = { [k: string]: any }> {
+interface ServiceExt<T> {
   server?: grpc.Server;
   clients?: T;
 }
 
-export type Service<T> = Dee.Service & ServiceExt<ClientsMapT<T>>;
+export type Service<T = { [k: string]: any }> = Dee.Service & ServiceExt<ClientsMapT<T>>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
