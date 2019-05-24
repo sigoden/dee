@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
-    "build": "../../node_modules/.bin/tsc",
-    "clean": "../../node_modules/.bin/rimraf dist",
+    "build": "tsc",
+    "clean": "rimraf dist",
     "prepublish": "npm run -s clean && npm run -s build"
   },
   "files": [
@@ -34,7 +34,11 @@
   },
   "dependencies": {
     "@sigodenjs/dee": "^0.12.0",
-    "@types/mongoose": "^5.3.26",
-    "mongoose": "^5.5.2"
+    "@types/mongoose": "^5.5.1",
+    "mongoose": "^5.5.11"
+  },
+  "devDependencies": {
+    "rimraf": "^2.6.3",
+    "typescript": "^3.4.5"
   }
 }

@@ -1,31 +1,29 @@
 import * as Dee from "@sigodenjs/dee";
 import * as crypto from "crypto";
 import { ValidationError } from "fastest-validator";
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const FastestValidator = require("fastest-validator");
 import * as nats from "node-nats-streaming";
 
 const validator = new FastestValidator();
 
-declare global {
-  namespace DeeShare {
-    interface ProducerMap {}
-    interface SubscriberMap {}
-  }
-}
-
-export interface Service extends Dee.Service {
+interface ServiceExt<P, S> {
   stan: nats.Stan;
-  producers: ProducerMap;
-  subscribers: SubscriberMap;
+  producers: P;
+  subscribers: S;
 }
 
-export interface ProducerMap extends DeeShare.ProducerMap {
+export type Service<P, S> = Dee.Service & ServiceExt<ProducerMapT<P>, SubscriberMapT<S>>;
+
+export interface ProducerMap {
   [k: string]: ProduceFunc;
 }
+export type ProducerMapT<T> = { [k in keyof T]: ProduceFunc };
 
-export interface SubscriberMap extends DeeShare.SubscriberMap {
+export interface SubscriberMap {
   [k: string]: nats.Subscription;
 }
+export type SubscriberMapT<T> = { [k in keyof T]: nats.Subscription };
 
 export interface SubscriberOptions {
   group?: string | boolean;
@@ -35,9 +33,9 @@ export interface SubscriberOptions {
   maxInFlight?: number;
 }
 
-export type ServiceOptions = Dee.ServiceOptionsT<Args>
+export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
-export interface Args extends Dee.Args {
+export interface Args {
   client: ClientOptions;
   handlers?: HandlerFuncMap;
   producers?: ProducerOptionsMap;
@@ -74,23 +72,12 @@ export interface Context {
   msg: nats.Message;
 }
 
-export async function init(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args
-): Promise<Service> {
+export async function init<P, S>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<P, S>> {
   const { name } = ctx.srvs.$config;
-  const {
-    client: clientConfig,
-    producers: producersConfig,
-    subscribers: subscribersConfig
-  } = args;
+  const { client: clientConfig, producers: producersConfig, subscribers: subscribersConfig } = args;
   const clientId = name + "-" + crypto.randomBytes(6).toString("hex");
-  const stan = nats.connect(
-    clientConfig.clusterId,
-    clientId,
-    clientConfig.stanOptions
-  );
-  return new Promise<Service>((resolve, reject) => {
+  const stan = nats.connect(clientConfig.clusterId, clientId, clientConfig.stanOptions);
+  return new Promise<Service<P, S>>((resolve, reject) => {
     let errorBeforeConnect = true;
     stan.once("connect", () => {
       let producers;
@@ -102,7 +89,7 @@ export async function init(
       if (subscribersConfig) {
         subscribers = createSubscribers(ctx, args, stan);
       }
-      const srv: Service = { stan, producers, subscribers };
+      const srv: Service<P, S> = { stan, producers, subscribers };
       resolve(srv);
       return;
     });
@@ -115,18 +102,14 @@ export async function init(
   });
 }
 
-function createProducers(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args,
-  stan: nats.Stan
-): ProducerMap {
+function createProducers(ctx: Dee.ServiceInitializeContext, args: Args, stan: nats.Stan): ProducerMap {
   const { producers: producersConfig } = args;
   const { name } = ctx.srvs.$config;
   const producers = {};
   Object.keys(producersConfig).forEach(producerName => {
     const topic = name + "." + producerName;
     const producerOptions = producersConfig[producerName];
-    let check: (data: any) => boolean | ValidationError[]  = () => true;
+    let check: (data: any) => boolean | ValidationError[] = () => true;
     if (producerOptions.schema) {
       try {
         check = validator.compile(producerOptions.schema);
@@ -137,9 +120,7 @@ function createProducers(
     const fn = (msg: any) => {
       return new Promise((resolve, reject) => {
         const ok = check(msg);
-        const checkFailError = new Error(
-          "validate failed: " + JSON.stringify(msg)
-        );
+        const checkFailError = new Error("validate failed: " + JSON.stringify(msg));
         if (!ok) {
           return reject(checkFailError);
         }
@@ -156,11 +137,7 @@ function createProducers(
   return producers;
 }
 
-function createSubscribers(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args,
-  stan: nats.Stan
-): SubscriberMap {
+function createSubscribers(ctx: Dee.ServiceInitializeContext, args: Args, stan: nats.Stan): SubscriberMap {
   const { name } = ctx.srvs.$config;
   const { subscribers: subscribersConfig, handlers } = args;
   const subscribers = {};

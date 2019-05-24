@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import * as Dee from "../../src/index";
 
 declare namespace DeeSimple {
@@ -8,13 +9,10 @@ declare namespace DeeSimple {
     args: Args;
   }
 
-  export interface Args extends Dee.Args {}
+  export interface Args {}
 }
 
-async function DeeSimple(
-  ctx: Dee.ServiceInitializeContext,
-  args: DeeSimple.Args
-): Promise<DeeSimple.Service> {
+async function DeeSimple(ctx: Dee.ServiceInitializeContext, args: DeeSimple.Args): Promise<DeeSimple.Service> {
   const srv = { args };
   return srv;
 }

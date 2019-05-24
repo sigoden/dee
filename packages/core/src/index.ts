@@ -1,16 +1,17 @@
+/* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import { Server } from "http";
 
 declare module "express" {
   interface Request {
-      openapi: Openapize.API;
-      srvs: ServiceGroup;
+    openapi: Openapize.API;
+    srvs: ServiceGroup;
   }
 }
 import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
 
-export {  Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler };
+export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler };
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
@@ -25,11 +26,7 @@ export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
 export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
 
-export type AsyncRequestHandler = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => Promise<any>;
+export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
 // options to init dee app
 export interface Options {
@@ -53,8 +50,6 @@ export interface ServiceInitializeContext {
   srvs: ServiceGroup;
 }
 
-export interface Args {}
-
 export interface App {
   srvs: ServiceGroup;
   express: Express;
@@ -70,7 +65,7 @@ export interface Service {}
 
 export type ServiceInitializeFunc = (
   ctx: ServiceInitializeContext,
-  args?: Args,
+  args?: any,
   callback?: (err: Error, srv?: Service) => void
 ) => Promise<Service> | void;
 
@@ -89,10 +84,7 @@ export interface Config {
   [k: string]: any;
 }
 
-export type RouteHooks = (
-  srvs: ServiceGroup,
-  app: Express
-) => void | RequestHandler[];
+export type RouteHooks = (srvs: ServiceGroup, app: Express) => void | RequestHandler[];
 
 export interface ServicesOptionsMap {
   [k: string]: ServiceOptions;
@@ -100,7 +92,7 @@ export interface ServicesOptionsMap {
 
 export interface ServiceOptions {
   initialize: ServiceInitializeFunc | ServiceInitializeModule;
-  args?: Args;
+  args?: any;
 }
 
 export interface ServiceOptionsT<T> extends ServiceOptions {
@@ -121,11 +113,7 @@ async function createSrvs(options: Options): Promise<ServiceGroup> {
   return srvs;
 }
 
-async function createSrv(
-  ctx: ServiceInitializeContext,
-  srvName: string,
-  options: ServiceOptions
-): Promise<void> {
+async function createSrv(ctx: ServiceInitializeContext, srvName: string, options: ServiceOptions): Promise<void> {
   let srvInitialize: ServiceInitializeFunc;
   if (typeof options.initialize === "string") {
     try {
@@ -196,11 +184,7 @@ export async function init(options: Options): Promise<App> {
       if (options.errorHandler) {
         app.use(options.errorHandler);
       }
-      const server = app.listen(port, host, err => {
-        if (err) {
-          reject(err);
-          return;
-        }
+      const server = app.listen(port, host, () => {
         resolve(server);
       });
     });
@@ -213,9 +197,7 @@ export async function init(options: Options): Promise<App> {
   return deeApp;
 }
 
-export function resolveAsynRequestHandler(
-  fn: AsyncRequestHandler
-): RequestHandler {
+export function resolveAsynRequestHandler(fn: AsyncRequestHandler): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
     const fnReturn = fn(req, res, next);
     Promise.resolve(fnReturn).catch(next);

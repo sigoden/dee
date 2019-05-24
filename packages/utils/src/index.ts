@@ -13,18 +13,15 @@ export function requireDir(moduleDir: string): ModuleMap {
     const stat = fs.statSync(fp);
     if (stat.isDirectory()) {
       if (result[name]) {
-        throw new Error(
-          `fail to require module directory ${fp}, properity conflict`
-        );
+        throw new Error(`fail to require module directory ${fp}, properity conflict`);
       }
       result[name] = requireDir(fp);
     } else if (stat.isFile()) {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const fm = require(fp);
       Object.keys(fm).forEach(k => {
         if (result[k]) {
-          throw new Error(
-            `fail to require mdoule file ${fp}, properity conflict`
-          );
+          throw new Error(`fail to require mdoule file ${fp}, properity conflict`);
         }
         result[k] = fm[k];
       });

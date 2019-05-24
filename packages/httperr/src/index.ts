@@ -1,19 +1,17 @@
 import * as Dee from "@sigodenjs/dee";
 import template = require("lodash.template");
 
-declare global {
-  namespace DeeShare { interface HttpErrMap {} }
-}
-
-export interface Service extends Dee.Service, ErrorMap {}
+export type Service<T extends Args> = Dee.Service & ErrorMapT<T>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
-export interface Args extends Dee.Args {
+export type ErrorMapT<T extends Args> = { [K in keyof T]: Factory };
+
+export interface Args {
   [k: string]: ErrorParams;
 }
 
-export interface ErrorMap extends DeeShare.HttpErrMap {
+export interface ErrorMap {
   [k: string]: Factory;
 }
 
@@ -75,11 +73,8 @@ export class Factory {
   }
 }
 
-export async function init(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args
-): Promise<Service> {
-  const srv = {} as Service;
+export async function init(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<Args>> {
+  const srv = {} as Service<Args>;
   Object.keys(args).forEach(code => {
     srv[code] = new Factory(code, args[code]);
   });

@@ -2,18 +2,16 @@ import * as grpcLoader from "@grpc/proto-loader";
 import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
-declare global {
-  namespace DeeShare { interface GrpcClientMap {} }
+interface ServiceExt<T> {
+  server?: grpc.Server;
+  clients?: T;
 }
 
-export interface Service extends Dee.Service {
-  server?: grpc.Server;
-  clients?: ClientMap;
-}
+export type Service<T> = Dee.Service & ServiceExt<ClientsMapT<T>>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
-export interface Args extends Dee.Args {
+export interface Args {
   // path to server proto file
   serverProtoFile?: string;
   // handler func for service
@@ -22,13 +20,8 @@ export interface Args extends Dee.Args {
   clientProtoFile?: string;
   // check whether the client have permision to call the rpc
   havePermision?: CheckPermisionFunc;
-  getServerBindOptions?: (
-    ctx: Dee.ServiceInitializeContext
-  ) => ServerBindOptions;
-  getClientConstructOptions?: (
-    serviceName: string,
-    ctx: Dee.ServiceInitializeContext
-  ) => ClientConstructOptions;
+  getServerBindOptions?: (ctx: Dee.ServiceInitializeContext) => ServerBindOptions;
+  getClientConstructOptions?: (serviceName: string, ctx: Dee.ServiceInitializeContext) => ClientConstructOptions;
 }
 
 export interface ServerBindOptions {
@@ -42,9 +35,11 @@ export interface ClientConstructOptions {
   options?: object;
 }
 
-export interface ClientMap extends DeeShare.GrpcClientMap {
+export interface ClientMap {
   [k: string]: Client;
 }
+
+export type ClientsMapT<T> = { [k in keyof T]: Client };
 
 export interface Client {
   call: (name: string, args: any, metdata?: grpc.Metadata) => Promise<any>;
@@ -65,12 +60,9 @@ export interface Context {
   srvs: Dee.ServiceGroup;
 }
 
-export async function init(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args
-): Promise<Service> {
+export async function init<T extends ClientMap>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<T>> {
   const { serverProtoFile, clientProtoFile } = args;
-  const srv: Service = {};
+  const srv: Service<T> = {};
   if (serverProtoFile) {
     srv.server = await createServer(ctx, args);
   }
@@ -80,16 +72,8 @@ export async function init(
   return srv;
 }
 
-async function createServer(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args
-): Promise<grpc.Server> {
-  const {
-    serverProtoFile,
-    serverHandlers,
-    havePermision = () => true,
-    getServerBindOptions
-  } = args;
+async function createServer(ctx: Dee.ServiceInitializeContext, args: Args): Promise<grpc.Server> {
+  const { serverProtoFile, serverHandlers, havePermision = () => true, getServerBindOptions } = args;
   const { ns, name } = ctx.srvs.$config;
   const protoRoot = loadProtoFile(serverProtoFile);
   let proto: grpc.GrpcObject;
@@ -99,10 +83,7 @@ async function createServer(
     throw new Error(`no grpc service at ${ns}.${name}`);
   }
   const server = new grpc.Server();
-  server.addService(
-    proto.service,
-    shimHandlers(serverHandlers, havePermision, ctx.srvs)
-  );
+  server.addService(proto.service, shimHandlers(serverHandlers, havePermision, ctx.srvs));
   if (typeof getServerBindOptions !== "function") {
     throw new Error(`getServerBindOptions is required`);
   }
@@ -112,11 +93,7 @@ async function createServer(
   return server;
 }
 
-function shimHandlers(
-  handlers: HandlerFuncMap,
-  havePermision: CheckPermisionFunc,
-  srvs: Dee.ServiceGroup
-) {
+function shimHandlers(handlers: HandlerFuncMap, havePermision: CheckPermisionFunc, srvs: Dee.ServiceGroup) {
   const result = {};
   Object.keys(handlers).forEach(id => {
     const fn = handlers[id];
@@ -138,11 +115,8 @@ function shimHandlers(
   return result;
 }
 
-async function createClients(
-  ctx: Dee.ServiceInitializeContext,
-  args: Args
-): Promise<ClientMap> {
-  const clients: ClientMap = {};
+async function createClients<T>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<T> {
+  const clients = {} as T;
   const { clientProtoFile, getClientConstructOptions } = args;
   const { ns, name } = ctx.srvs.$config;
   const protoRoot = loadProtoFile(clientProtoFile);
@@ -157,11 +131,7 @@ async function createClients(
       throw new Error(`getClientConstructOptions is required`);
     }
     const constructOptions = getClientConstructOptions(serviceName, ctx);
-    const grpcClient = new GrpcClient(
-      constructOptions.address,
-      constructOptions.credentials,
-      constructOptions.options
-    );
+    const grpcClient = new GrpcClient(constructOptions.address, constructOptions.credentials, constructOptions.options);
     const client: Client = {
       grpcClient,
       call: (funcName: string, data: any, metadata?: grpc.Metadata) => {

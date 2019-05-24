@@ -1,8 +1,19 @@
 import { delay, HANDLERS, initApp } from "../../core/test-utils";
 import * as DeeNatstreaming from "../src";
 
+const producers = {
+  sayHello: {
+    schema: {
+      name: { type: "string" }
+    }
+  }
+};
+const subscribers = {
+  "App.sayHello": {}
+};
+
 test("should create natstreaming service", async () => {
-  const serviceOptions = <DeeNatstreaming.ServiceOptions> {
+  const serviceOptions = <DeeNatstreaming.ServiceOptions>{
     initialize: DeeNatstreaming.init,
     args: {
       client: {
@@ -11,16 +22,8 @@ test("should create natstreaming service", async () => {
           url: "nats://localhost:4322"
         }
       },
-      producers: {
-        sayHello: {
-          schema: {
-            name: { type: "string" }
-          }
-        }
-      },
-      subscribers: {
-        "App.sayHello": {}
-      },
+      producers,
+      subscribers,
       handlers: {
         "App.sayHello": (ctx: DeeNatstreaming.Context) => {
           expect(ctx.srvs).toBeDefined();
@@ -30,7 +33,7 @@ test("should create natstreaming service", async () => {
     }
   };
   const app = await initApp(HANDLERS, { natstreaming: serviceOptions });
-  const srv = <DeeNatstreaming.Service> app.srvs.natstreaming;
+  const srv = <DeeNatstreaming.Service<typeof producers, typeof subscribers>>app.srvs.natstreaming;
   await delay(1);
   await srv.producers.sayHello({ name: "tom" });
   srv.stan.close();

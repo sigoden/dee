@@ -17,7 +17,7 @@ test("should autobind $config service", async () => {
 test("should init and bind service", async () => {
   const args = {};
   const app = await initApp({}, { simple: { initialize: DeeSimple, args } });
-  const srv = <DeeSimple.Service> app.srvs.simple;
+  const srv = <DeeSimple.Service>app.srvs.simple;
   expect(srv).toBeDefined();
   expect(srv.args).toBe(args);
 });
@@ -50,8 +50,8 @@ test("should support array options.openapize", async () => {
 
 describe("handler func", () => {
   test("should bind route to req", async () => {
-    const app = await initApp({
-      hello: (req: Dee.Request, res: Dee.Response, next: Dee.NextFunction) => {
+    await initApp({
+      hello: (req: Dee.Request, res: Dee.Response) => {
         expect(req.srvs).toBeDefined();
         expect(req.openapi).toBeDefined();
         res.json("");
