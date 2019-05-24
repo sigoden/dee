@@ -180,7 +180,7 @@ export async function init(options: Options): Promise<App> {
   const start = () => {
     const port = options.config.port || DEFAULT_PORT;
     const host = options.config.host || DEFAULT_HOST;
-    return new Promise<Server>((resolve, reject) => {
+    return new Promise<Server>(resolve => {
       if (options.errorHandler) {
         app.use(options.errorHandler);
       }
