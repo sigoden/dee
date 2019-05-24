@@ -1,7 +1,7 @@
 import * as Dee from "@sigodenjs/dee";
 import * as winston from "winston";
 
-export type Service<T> = Dee.Service & winston.Logger & T;
+export type Service<T = {}> = Dee.Service & winston.Logger & T;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 

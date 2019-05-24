@@ -8,7 +8,7 @@ interface ServiceExt {
   deeKey(...names: string[]): string;
 }
 
-export type Service<T> = Dee.Service & Redis.Redis & ServiceExt & T;
+export type Service<T = {}> = Dee.Service & Redis.Redis & ServiceExt & T;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 

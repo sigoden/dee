@@ -2,7 +2,7 @@ import * as grpcLoader from "@grpc/proto-loader";
 import * as Dee from "@sigodenjs/dee";
 import * as grpc from "grpc";
 
-interface ServiceExt<T> {
+interface ServiceExt<T = { [k: string]: any }> {
   server?: grpc.Server;
   clients?: T;
 }

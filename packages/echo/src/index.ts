@@ -1,6 +1,6 @@
 import * as Dee from "@sigodenjs/dee";
 
-export type Service<T> = Dee.Service & T;
+export type Service<T = {}> = Dee.Service & T;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 

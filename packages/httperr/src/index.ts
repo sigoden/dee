@@ -5,7 +5,7 @@ export type Service<T extends Args> = Dee.Service & ErrorMapT<T>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
-export type ErrorMapT<T extends Args> = { [K in keyof T]: Factory };
+export type ErrorMapT<T> = { [k in keyof T]: Factory };
 
 export interface Args {
   [k: string]: ErrorParams;

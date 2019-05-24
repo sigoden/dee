@@ -1,7 +1,7 @@
 import * as Dee from "@sigodenjs/dee";
 import * as mongoose from "mongoose";
 
-export type Service<T> = Dee.Service & mongoose.Mongoose & T;
+export type Service<T = {}> = Dee.Service & mongoose.Mongoose & T;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 

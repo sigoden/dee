@@ -12,8 +12,10 @@ interface ServiceExt<P, S> {
   producers: P;
   subscribers: S;
 }
-
-export type Service<P, S> = Dee.Service & ServiceExt<ProducerMapT<P>, SubscriberMapT<S>>;
+interface Map {
+  [k: string]: any;
+}
+export type Service<P = Map, S = Map> = Dee.Service & ServiceExt<ProducerMapT<P>, SubscriberMapT<S>>;
 
 export interface ProducerMap {
   [k: string]: ProduceFunc;
