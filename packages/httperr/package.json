@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-httperr",
-  "version": "0.12.0",
+  "version": "0.13.0",
   "description": "A service to handle http error for dee framework",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -30,7 +30,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.12.0",
+    "@sigodenjs/dee": "^0.13.0",
     "lodash.template": "^4.4.0"
   },
   "devDependencies": {
