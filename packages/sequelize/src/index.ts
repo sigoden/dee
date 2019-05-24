@@ -1,12 +1,12 @@
 import * as Dee from "@sigodenjs/dee";
 import { Sequelize, Options, Model } from "sequelize";
 
-interface ServiceExt<T = {}> {
+interface ServiceExt<T> {
   getModel<TKey extends keyof T>(name: TKey): T[TKey];
   models: T;
 }
 
-export type Service<T> = Dee.Service & Sequelize & ServiceExt<T>;
+export type Service<T = {}> = Dee.Service & Sequelize & ServiceExt<T>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 

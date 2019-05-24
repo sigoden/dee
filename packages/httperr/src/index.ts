@@ -1,7 +1,7 @@
 import * as Dee from "@sigodenjs/dee";
 import template = require("lodash.template");
 
-export type Service<T extends Args> = Dee.Service & ErrorMapT<T>;
+export type Service<T extends Args = {}> = Dee.Service & ErrorMapT<T>;
 
 export type ServiceOptions = Dee.ServiceOptionsT<Args>;
 
