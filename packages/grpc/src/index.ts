@@ -79,6 +79,7 @@ async function createServer(ctx: Dee.ServiceInitializeContext, args: Args): Prom
   let proto: grpc.GrpcObject;
   try {
     proto = protoRoot[ns][name];
+    proto.service;
   } catch (err) {
     throw new Error(`no grpc service at ${ns}.${name}`);
   }
