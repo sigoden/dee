@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-test-utils",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Utility functions for test dee framework and service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
