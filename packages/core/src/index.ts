@@ -58,6 +58,7 @@ export interface App {
 
 export interface ServiceGroup extends DeeShare.ServiceGroup {
   $config: Config;
+  $services?: ServicesOptionsMap;
   [k: string]: Service;
 }
 
@@ -102,8 +103,8 @@ export interface ServiceOptionsT<T> extends ServiceOptions {
 export type ServiceInitializeModule = string;
 
 async function createSrvs(options: Options): Promise<ServiceGroup> {
-  const { services: servicesOpts = {}, config } = options;
-  const srvs: ServiceGroup = { $config: config };
+  const { services: servicesOpts =  {}, config } = options;
+  const srvs: ServiceGroup = { $config: config, $services: servicesOpts };
   const promises = Object.keys(servicesOpts).map(srvName => {
     const srvOptions = servicesOpts[srvName];
     const ctx = { srvs } as ServiceInitializeContext;
@@ -193,7 +194,6 @@ export async function init(options: Options): Promise<App> {
   if (options.ready) {
     options.ready(deeApp);
   }
-  options.config.$services = options.services;
   return deeApp;
 }
 
