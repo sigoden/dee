@@ -1,4 +1,4 @@
-import { HANDLERS, initApp } from "../../core/test-utils";
+import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
 import * as DeeMongoose from "../src";
 
 test("should create mongoose service", async () => {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { HANDLERS, initApp } from "../../core/test-utils";
+import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
 import { Model } from "sequelize";
 import * as DeeSequelize from "../src";
 import { QueryTypes } from "sequelize";

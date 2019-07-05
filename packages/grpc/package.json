@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-grpc",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "A rpc service for dee framework, powered by grpc",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -37,6 +37,7 @@
     "grpc": "^1.21.1"
   },
   "devDependencies": {
+    "@sigodenjs/dee-test-utils": "^0.14.0",
     "rimraf": "^2.6.3",
     "typescript": "^3.4.5"
   }

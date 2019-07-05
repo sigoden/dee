@@ -1,6 +1,6 @@
 import * as grpc from "grpc";
 import * as path from "path";
-import { delay, HANDLERS, initApp } from "../../core/test-utils";
+import { delay, HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
 import * as DeeGrpc from "../src";
 
 const RPC_PROTO_FILE = path.resolve(__dirname, "fixtures/rpc.proto");

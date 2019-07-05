@@ -1,4 +1,4 @@
-import { HANDLERS, initApp } from "../../core/test-utils";
+import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
 import * as DeeWinston from "../src";
 
 test("should create winston service", async () => {

@@ -1,13 +1,14 @@
 {
   "name": "@sigodenjs/dee-test-utils",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "Utility functions for test dee framework and service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "copy": "cp src/openapi.yaml dist/",
     "clean": "rimraf dist",
-    "prepublish": "npm run -s clean && npm run -s build"
+    "prepublish": "npm run -s clean && npm run -s build && npm run copy"
   },
   "publishConfig": {
     "access": "public"
@@ -22,6 +23,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/dee.git"
+  },
+  "dependencies": {
+    "@sigodenjs/dee": "^0.14.0"
   },
   "devDependencies": {
     "rimraf": "^2.6.3",

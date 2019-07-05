@@ -1,4 +1,4 @@
-import { delay, HANDLERS, initApp } from "../../core/test-utils";
+import { HANDLERS, initApp, delay } from "@sigodenjs/dee-test-utils";
 import * as DeeNatstreaming from "../src";
 
 const producers = {

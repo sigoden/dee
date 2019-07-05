@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-natstreaming",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "A mq service for dee framework, powered by nats-streaming",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -39,6 +39,7 @@
     "node-nats-streaming": "0.0.52"
   },
   "devDependencies": {
+    "@sigodenjs/dee-test-utils": "^0.14.0",
     "rimraf": "^2.6.3",
     "typescript": "^3.4.5"
   }

@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-sequelize",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "A sql service for dee framework, powered by sequelize",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -37,6 +37,7 @@
     "sequelize": "^5.8.6"
   },
   "devDependencies": {
+    "@sigodenjs/dee-test-utils": "^0.14.0",
     "mysql2": "^1.6.5",
     "rimraf": "^2.6.3",
     "typescript": "^3.4.5"
