@@ -46,16 +46,12 @@ export class HttpErr extends Error {
 export class Factory {
   public readonly status: number;
   public readonly code: string;
-  private createMessage: (args: CallArgs, withExtra?: boolean) => string;
+  private createMessage: (args: CallArgs) => string;
   constructor(code: string, params: ErrorParams) {
     this.code = code;
     this.status = params.status;
-    this.createMessage = (args: CallArgs, withExtra = false) => {
-      let ret = template(params.message)(args);
-      if (withExtra && args && args.extra) {
-        ret += ` extra: ${args.extra}`;
-      }
-      return ret;
+    this.createMessage = (args: CallArgs) => {
+      return template(params.message)(args);
     };
   }
   public json(args: CallArgs) {
@@ -69,7 +65,7 @@ export class Factory {
     res.status(this.status).json(this.json(args));
   }
   public toError(args?: CallArgs) {
-    return new HttpErr(this.createMessage(args, true), this, args);
+    return new HttpErr(this.createMessage(args), this, args);
   }
 }
 
