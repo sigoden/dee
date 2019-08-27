@@ -28,7 +28,7 @@ export interface CallArgs {
 
 export class HttpErr extends Error {
   public readonly status: number;
-  private readonly args: CallArgs;
+  public readonly args: CallArgs;
   private readonly factory: Factory;
   constructor(msg: string, f: Factory, args: CallArgs) {
     super(msg);
