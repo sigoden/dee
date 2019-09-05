@@ -5,6 +5,7 @@ import * as grpc from "grpc";
 interface ServiceExt<T> {
   server?: grpc.Server;
   clients?: T;
+  grpc: typeof grpc;
 }
 
 export type Service<T = { [k: string]: any }> = Dee.Service & ServiceExt<ClientsMapT<T>>;
@@ -62,7 +63,7 @@ export interface Context {
 
 export async function init<T extends ClientMap>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<T>> {
   const { serverProtoFile, clientProtoFile } = args;
-  const srv: Service<T> = {};
+  const srv: Service<T> = { grpc };
   if (serverProtoFile) {
     srv.server = await createServer(ctx, args);
   }
