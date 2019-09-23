@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
+import * as createDebug from "debug";
 import { Server } from "http";
+
+const debugDee = createDebug('dee');
+const debugDeeSrv = createDebug('dee:srv');
 
 declare module "express" {
   interface Request {
@@ -115,6 +119,7 @@ async function createSrvs(options: Options): Promise<ServiceGroup> {
 }
 
 async function createSrv(ctx: ServiceInitializeContext, srvName: string, options: ServiceOptions): Promise<void> {
+  debugDeeSrv(`starting srv ${srvName}`);
   let srvInitialize: ServiceInitializeFunc;
   if (typeof options.initialize === "string") {
     try {
@@ -138,6 +143,7 @@ async function createSrv(ctx: ServiceInitializeContext, srvName: string, options
       promise
         .then(srv => {
           ctx.srvs[srvName] = srv;
+          debugDeeSrv(`done srv ${srvName}`);
           resolve();
         })
         .catch(err => {
@@ -158,6 +164,7 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 }
 
 export async function init(options: Options): Promise<App> {
+  debugDee("init")
   const app = express();
   const srvs = await createSrvs(options);
   app.use((req: Request, res, next) => {
@@ -165,8 +172,10 @@ export async function init(options: Options): Promise<App> {
     next();
   });
   if (options.beforeRoute) {
+    debugDee("beforeRoute")
     useMiddlewares(srvs, app, options.beforeRoute);
   }
+  debugDee("openize")
   if (Array.isArray(options.openapize)) {
     for (const openapizeOptions of options.openapize) {
       await Openapize.openapize(app, openapizeOptions);
@@ -175,6 +184,7 @@ export async function init(options: Options): Promise<App> {
     await Openapize.openapize(app, options.openapize);
   }
   if (options.afterRoute) {
+    debugDee("afterRoute")
     useMiddlewares(srvs, app, options.afterRoute);
   }
 
@@ -185,6 +195,7 @@ export async function init(options: Options): Promise<App> {
       if (options.errorHandler) {
         app.use(options.errorHandler);
       }
+      debugDee(`listen ${host}:${port}`)
       const server = app.listen(port, host, () => {
         resolve(server);
       });
@@ -192,6 +203,7 @@ export async function init(options: Options): Promise<App> {
   };
   const deeApp = { srvs, express: app, start };
   if (options.ready) {
+    debugDee(`ready`)
     options.ready(deeApp);
   }
   return deeApp;

@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee",
-  "version": "0.14.0",
+  "version": "0.14.1",
   "description": "A framework focus on document driven design",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -31,8 +31,9 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/openapize": "^0.1.11",
+    "@sigodenjs/openapize": "^0.1.13",
     "@types/express": "^4.16.1",
+    "debug": "^4.1.1",
     "express": "^4.17.0"
   },
   "devDependencies": {
