@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-httperr",
-  "version": "0.14.5",
+  "version": "0.14.6",
   "description": "A service to handle http error for dee framework",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
