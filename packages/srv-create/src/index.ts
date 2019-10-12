@@ -23,20 +23,10 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
   const event = new EventEmitter();
   const stops = await Promise.all(Object.keys(services).map(srvName => {
     const options = services[srvName];
-    if (!options.deps || options.deps.length === 0) {
-      return createSrv(ctx, srvName, options).then(o => {
-        event.emit("ready", srvName);
-        return o.stop;
-      });
-    }
-    if (!options.deps.every(v => !!services[v])) {
-      throw new ServiceCreateError(`service<${srvName}> have invalid dependecies`);
-    }
-    const deps = options.deps.slice();
     return new Promise<Stop>((resolve, reject) => {
-      event.on("ready", name => {
-        const index = deps.findIndex(v => v === name);
-        if (index > -1) deps.splice(index, 1);
+      let deps = options.deps || [];
+      deps = deps.slice();
+      const createSrvWrap = () => {
         if (deps.length === 0) {
           createSrv(ctx, srvName, options)
             .then(o => {
@@ -44,6 +34,20 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
               resolve(o.stop);
             }).catch(reject);
         }
+      }
+      if (deps.length === 0) {
+        createSrvWrap();
+        return;
+      }
+      deps.forEach(v => {
+        if (!services[v]) {
+          return reject(new ServiceCreateError(`service<${srvName}> need dependency ${v}, but not found`));
+        }
+      })
+      event.on("ready", name => {
+        const index = deps.findIndex(v => v === name);
+        if (index > -1) deps.splice(index, 1);
+        createSrvWrap();
       });
     });
   }));
@@ -60,7 +64,17 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
     } else {
       init = options.initialize;
     }
-    const { srv, stop } = await init(ctx, options.args);
+    let deps; 
+    if (init.deps && init.deps.length > 0) {
+      if (init.deps.length !== options.deps.length) {
+        throw new ServiceCreateError(`service<${srvName}> miss dependecies`);
+      }
+      deps = init.deps.reduce((a, c, i) => {
+        a[c] = ctx.srvs[options.deps[i]];
+        return a;
+      }, {})
+    }
+    const { srv, stop } = await init(ctx, options.args, deps);
     debug(`finish starting srv ${srvName}`);
     ctx.srvs[srvName] = srv;
     return { srv, stop: stop || (() => { }) }
