@@ -5,7 +5,7 @@ import { EventEmitter } from "events";
 const debug = createDebug('dee-srv');
 
 export type ServiceOptionMap = {
-  [k: string]: ServiceOption<any, any>;
+  [k: string]: ServiceOption<any, any, any>;
 };
 
 export interface ServiceOption<T, U, C = { new(): T }> {
