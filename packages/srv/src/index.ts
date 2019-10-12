@@ -27,7 +27,7 @@ export interface IService { };
 export type Stop = () => void;
 export type InitOutput<T> = { srv: T, stop?: Stop };
 export interface InitFn<T, U, P extends {[k: string]: any}> {
-  (ctx: SrvContext, args: U, depends?: P): Promise<InitOutput<T>>
+  (ctx: SrvContext, args: U, ctor?: new() => T, depends?: P): Promise<InitOutput<T>>
   deps?: string[]
 }
 

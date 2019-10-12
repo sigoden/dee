@@ -5,8 +5,8 @@ export type Service<T extends IORedis.Redis> = IService & T;
 
 export interface Args extends IORedis.RedisOptions {};
 
-export async function init<T extends Redis>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T>>> {
-  const srv = new IORedis(args);
+export async function init<T extends Redis>(ctx: SrvContext, args: Args, ctor?: { new(): T }): Promise<InitOutput<Service<T>>> {
+  const srv = new (ctor || IORedis)(args);
   return new Promise<InitOutput<Service<T>>>((resolve, reject) => {
     (srv as any).ctx = ctx;
     srv.once("connect", () => resolve({ srv: srv as Service<T>, stop: srv.disconnect.bind(srv) }));

@@ -15,9 +15,9 @@ export interface Args {
 }
 
 
-export async function init<T extends Sequelize, U>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T, U>>> {
+export async function init<T extends Sequelize, U>(ctx: SrvContext, args: Args, ctor?: { new(): T }): Promise<InitOutput<Service<T, U>>> {
   const { database, username, password, options: connectOptions } = args;
-  const srv = new Sequelize(database, username, password, connectOptions);
+  const srv = new (ctor || Sequelize)(database, username, password, connectOptions);
   await srv.authenticate();
   const stop = () => {
     srv.close();

@@ -76,8 +76,8 @@ export class Logger {
   }
 }
 
-export async function init<T extends Logger>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T>>> {
-  const logger = new Logger(ctx.config, args);
+export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: { new(): T }): Promise<InitOutput<Service<T>>> {
+  const logger = new (ctor || Logger)(ctx.config, args);
   return { srv: logger as Service<T> };
 }
 

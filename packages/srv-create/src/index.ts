@@ -5,12 +5,13 @@ import { EventEmitter } from "events";
 const debug = createDebug('dee-srv');
 
 export type ServiceOptionMap = {
-  [k: string]: ServiceOption<any>;
+  [k: string]: ServiceOption<any, any>;
 };
 
-export interface ServiceOption<U> {
+export interface ServiceOption<T, U> {
   initialize: InitFn<any, U, any> | string;
   args: U;
+  ctor?: { new(): T };
   deps?: string[];
 }
 
@@ -63,7 +64,7 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
   return stops;
 }
 
-export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options: ServiceOption<U>): Promise<CreateSrvOutput<T>> {
+export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options: ServiceOption<T, U>): Promise<CreateSrvOutput<T>> {
   debug(`starting srv ${srvName}`);
   try {
     let init: InitFn<T, U, any>;
@@ -82,7 +83,7 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
         return a;
       }, {})
     }
-    const { srv, stop = (() => {}) } = await init(ctx, options.args, deps);
+    const { srv, stop = (() => {}) } = await init(ctx, options.args, options.ctor, deps);
     debug(`finish starting srv ${srvName}`);
     return { srv, stop }
   } catch (err) {

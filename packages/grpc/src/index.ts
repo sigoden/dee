@@ -28,7 +28,7 @@ export interface ClientConstructOptions {
   options?: object;
 }
 
-export type ClientMapT<T> = { [k in keyof T]: Client };
+export type ClientMap<T> = { [k in keyof T]: Client };
 
 export interface Client {
   call: (name: string, args: any, metdata?: grpc.Metadata) => Promise<any>;
@@ -49,27 +49,9 @@ export interface Context {
   srvs: ServiceGroup;
 }
 
-export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T, U>>> {
-  const srv = new Grpc();
-  const { serverProtoFile, clientProtoFile } = args;
-  if (serverProtoFile) {
-    srv.server = await createServer(ctx, args);
-  }
-  if (clientProtoFile) {
-    srv.clients = await createClients(ctx, args);
-  }
-  const stop = () => {
-    srv.server.tryShutdown(() => { });
-    Object.keys(srv.clients).forEach(k => srv.clients[k].grpcClient.close());
-  };
-  return { srv: srv as Service<T, U>, stop }
-}
-
-export { grpc };
-
-export class Grpc<T> {
+export class Grpc<U> {
   public server?: grpc.Server;
-  public clients: ClientMapT<T>;
+  public clients: ClientMap<U>;
 }
 
 async function createServer(ctx: SrvContext, args: Args): Promise<grpc.Server> {
@@ -166,3 +148,22 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
 function loadProtoFile(filename: string): grpc.GrpcObject {
   return grpc.loadPackageDefinition(grpcLoader.loadSync(filename));
 }
+
+
+export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T, U>>> {
+  const srv = new Grpc();
+  const { serverProtoFile, clientProtoFile } = args;
+  if (serverProtoFile) {
+    srv.server = await createServer(ctx, args);
+  }
+  if (clientProtoFile) {
+    srv.clients = await createClients(ctx, args);
+  }
+  const stop = () => {
+    srv.server.tryShutdown(() => { });
+    Object.keys(srv.clients).forEach(k => srv.clients[k].grpcClient.close());
+  };
+  return { srv: srv as Service<T, U>, stop }
+}
+
+export { grpc };
