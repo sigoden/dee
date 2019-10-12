@@ -66,7 +66,7 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
     }
     let deps; 
     if (init.deps && init.deps.length > 0) {
-      if (init.deps.length !== options.deps.length) {
+      if (!options.deps || init.deps.length !== options.deps.length) {
         throw new ServiceCreateError(`service<${srvName}> miss dependecies`);
       }
       deps = init.deps.reduce((a, c, i) => {
