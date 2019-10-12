@@ -2,7 +2,7 @@ import { SrvContext, InitFn, Stop } from "@sigodenjs/dee-srv";
 import * as createDebug from "debug";
 import { EventEmitter } from "events";
 
-const debug = createDebug('service');
+const debug = createDebug('dee-srv');
 
 export type ServiceOptionMap = {
   [k: string]: ServiceOption<any>;
@@ -23,17 +23,19 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
   const event = new EventEmitter();
   const stops = await Promise.all(Object.keys(services).map(srvName => {
     const options = services[srvName];
+    let deps = options.deps || [];
+    deps = deps.slice();
     return new Promise<Stop>((resolve, reject) => {
-      let deps = options.deps || [];
-      deps = deps.slice();
       const createSrvWrap = () => {
-        if (deps.length === 0) {
-          createSrv(ctx, srvName, options)
-            .then(o => {
-              event.emit("ready", srvName);
-              resolve(o.stop);
-            }).catch(reject);
-        }
+        createSrv(ctx, srvName, options)
+          .then(o => {
+            ctx.srvs[srvName] = o.srv;
+            event.emit("ready", srvName);
+            resolve(o.stop);
+          }).catch(err => {
+            event.emit("error", err);
+            reject(err);
+          });
       }
       if (deps.length === 0) {
         createSrvWrap();
@@ -44,10 +46,16 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
           return reject(new ServiceCreateError(`service<${srvName}> need dependency ${v}, but not found`));
         }
       })
+      event.on("error", err => reject(new ServiceCreateError(`service<${srvName}> abort, ${err}`)));
       event.on("ready", name => {
+        if (ctx.srvs[srvName]) {
+          return;
+        }
         const index = deps.findIndex(v => v === name);
         if (index > -1) deps.splice(index, 1);
-        createSrvWrap();
+        if (deps.length === 0) {
+          createSrvWrap();
+        }
       });
     });
   }));
@@ -64,7 +72,7 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
     } else {
       init = options.initialize;
     }
-    let deps; 
+    let deps;
     if (init.deps && init.deps.length > 0) {
       if (!options.deps || init.deps.length !== options.deps.length) {
         throw new ServiceCreateError(`service<${srvName}> miss dependency, need ${JSON.stringify(init.deps)}, got ${JSON.stringify(options.deps)}`);
@@ -74,10 +82,9 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
         return a;
       }, {})
     }
-    const { srv, stop } = await init(ctx, options.args, deps);
+    const { srv, stop = (() => {}) } = await init(ctx, options.args, deps);
     debug(`finish starting srv ${srvName}`);
-    ctx.srvs[srvName] = srv;
-    return { srv, stop: stop || (() => { }) }
+    return { srv, stop }
   } catch (err) {
     throw new ServiceCreateError(`service<${srvName}> fail to init, ${err.message}`);
   }

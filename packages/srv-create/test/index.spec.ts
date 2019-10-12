@@ -14,7 +14,6 @@ test("should create service", async () => {
     args: data
   });
   expect(srv.k).toBe("v");
-  expect(ctx.srvs["simple"]).toEqual(srv);
 });
 
 test("should create services", async () => {
