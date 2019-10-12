@@ -11,9 +11,10 @@ export async function createSrvLite<T, U>(name: string, options: ServiceOption<U
 };
 
 
-export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<Stop[]> {
+export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<{ctx: SrvContext, stops: Stop[]}> {
   const ctx = createContext();
-  return createSrvs(ctx, services);
+  const stops = await createSrvs(ctx, services);
+  return { ctx, stops };
 }
 
 export function delay(time: number) {
