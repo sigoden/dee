@@ -86,6 +86,7 @@ export async function init(options: Options): Promise<App> {
   const srvContext: SrvContext = { config: options.config, srvs: { }};
   const stops = await createSrvs(srvContext, options.services);
   const srvs = srvContext.srvs;
+  srvs["$config"] = options.config;
   app.use((req: Request, res, next) => {
     req.srvs = srvs;
     next();
