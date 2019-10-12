@@ -1,7 +1,6 @@
 export interface ServiceGroup extends SrvExt.ServiceGroup {
   [k: string]: any;
 }
-export type Config = SrvExt.Config & BaseConfig;
 
 export interface SrvContext {
   config: BaseConfig;
@@ -35,6 +34,5 @@ export interface InitFn<T, U, P extends {[k: string]: any}> {
 declare global {
   namespace SrvExt {
     interface ServiceGroup { }
-    interface Config { }
   }
 }
