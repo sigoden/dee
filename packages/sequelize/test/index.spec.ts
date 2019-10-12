@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
-import { Model } from "sequelize";
+import { Model, QueryTypes, Sequelize, ModelScopeOptions } from "sequelize";
+import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeSequelize from "../src";
-import { QueryTypes } from "sequelize";
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 class User extends Model {}
@@ -11,7 +10,7 @@ interface Models {
 }
 
 test("should create sequelize service", async () => {
-  const serviceOptions = <DeeSequelize.ServiceOptions>{
+  const { srv, stop } = await createSrvLite<DeeSequelize.Service<Sequelize, Models>, DeeSequelize.Args>("errs", {
     initialize: DeeSequelize.init,
     args: {
       database: "mysql",
@@ -23,10 +22,8 @@ test("should create sequelize service", async () => {
         logging: false
       }
     }
-  };
-  const app = await initApp(HANDLERS, { sequelize: serviceOptions });
-  const srv = <DeeSequelize.Service<Models>>app.srvs.sequelize;
+  });
   const res = await srv.query("select 1", { type: QueryTypes.SELECT });
   expect(res).toEqual([{ 1: 1 }]);
-  await srv.close();
+  await stop();
 });

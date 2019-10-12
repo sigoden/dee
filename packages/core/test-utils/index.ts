@@ -1,9 +1,10 @@
 import * as path from "path";
 import * as Dee from "../src/";
+import { ServiceOptionMap } from "@sigodenjs/dee-srv-create";
 
 export const OPENAPI_FILE = path.resolve(__dirname, "./openapi.yaml");
 
-export function initApp(handlers: Dee.HandlerFuncMap, services?: Dee.ServicesOptionsMap): Promise<Dee.App> {
+export function initApp(handlers: Dee.HandlerFuncMap, services?: ServiceOptionMap): Promise<Dee.App> {
   return Dee.init({
     config: {
       ns: "proj",

@@ -1,14 +1,11 @@
-import * as Dee from "@sigodenjs/dee";
 import { Sequelize, Options, Model } from "sequelize";
+import { SrvContext, IService, InitOutput } from "@sigodenjs/dee-srv";
 
-interface ServiceExt<T> {
-  getModel<TKey extends keyof T>(name: TKey): T[TKey];
-  models: T;
-}
 
-export type Service<T = {}> = Dee.Service & Sequelize & ServiceExt<T>;
-
-export type ServiceOptions = Dee.ServiceOptionsT<Args>;
+export type Service<T extends Sequelize, U> = IService & T & {
+  model<TKey extends keyof U>(name: TKey): U[TKey];
+  models: U;
+};
 
 export interface Args {
   database: string;
@@ -17,12 +14,15 @@ export interface Args {
   options?: Options;
 }
 
-export async function init<T>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<T>> {
+
+export async function init<T extends Sequelize, U>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T, U>>> {
   const { database, username, password, options: connectOptions } = args;
   const srv = new Sequelize(database, username, password, connectOptions);
-  (srv as any).getModel = srv.model;
   await srv.authenticate();
-  return srv as Service<T>;
+  const stop = () => {
+    srv.close();
+  };
+  return { srv: srv as Service<T, U>, stop }
 }
 
 export type ModelT<T> = { new (): T } & typeof Model;

@@ -10,8 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@sigodenjs/dee": "^0.11.12",
-    "@sigodenjs/dee-ioredis": "^0.11.7"
+    "@sigodenjs/dee": "^0.16.0",
+    "@sigodenjs/dee-echo": "^0.16.0",
+    "@sigodenjs/dee-srv": "^0.16.1"
   },
   "devDependencies": {
     "ts-node": "^8.1.0",

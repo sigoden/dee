@@ -1,14 +1,14 @@
-import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
+import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeWinston from "../src";
 
 test("should create winston service", async () => {
-  const serviceOptions = <DeeWinston.ServiceOptions>{
+  const { srv } = await createSrvLite<DeeWinston.Service<DeeWinston.Logger>, DeeWinston.Args>("logger", {
     initialize: DeeWinston.init,
     args: {
     }
-  };
-  const app = await initApp(HANDLERS, { winston: serviceOptions });
-  const srv = <DeeWinston.Service<any>>app.srvs.winston;
-  srv.info("hello");
+  });
+  expect(srv.info).toBeDefined();
   expect(srv.error).toBeDefined();
+  expect(srv.warn).toBeDefined();
+  expect(srv.debug).toBeDefined();
 });

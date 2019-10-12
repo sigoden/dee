@@ -1,9 +1,8 @@
 import * as Dee from "@sigodenjs/dee";
+import { SrvContext, IService, InitOutput } from "@sigodenjs/dee-srv";
 import template = require("lodash.template");
 
-export type Service<T extends Args = {}> = Dee.Service & ErrorMapT<T>;
-
-export type ServiceOptions = Dee.ServiceOptionsT<Args>;
+export type Service<T> = IService & ErrorMapT<T>;
 
 export type ErrorMapT<T> = { [k in keyof T]: Factory };
 
@@ -73,10 +72,10 @@ export class Factory {
   }
 }
 
-export async function init(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<Args>> {
-  const srv = {} as Service<Args>;
+export async function init(ctx: SrvContext, args: Args): Promise<InitOutput<Service<Args>>> {
+  const srv = {};
   Object.keys(args).forEach(code => {
     srv[code] = new Factory(code, args[code]);
   });
-  return srv;
+  return { srv, stop: () => {} };
 }

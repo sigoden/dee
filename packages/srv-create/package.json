@@ -1,7 +1,7 @@
 {
-  "name": "@sigodenjs/dee-natstreaming",
-  "version": "0.14.1",
-  "description": "A mq service for dee framework, powered by nats-streaming",
+  "name": "@sigodenjs/dee-srv-create",
+  "version": "0.16.0",
+  "description": "Utils for creating batch of dee-srvs",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -16,31 +16,22 @@
     "access": "public"
   },
   "keywords": [
-    "nats",
-    "nats-streaming",
     "dee",
-    "service",
-    "http",
-    "api",
-    "web",
-    "swagger"
+    "service"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/dee/tree/master/packages/natstreaming",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/ioredis",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.14.0",
-    "@types/node": "^12.0.2",
-    "fastest-validator": "^0.6.9",
-    "node-nats-streaming": "0.0.52"
+    "@sigodenjs/dee-srv": "^0.16.0"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.14.0",
-    "rimraf": "^2.6.3",
+    "@types/node": "^12.7.12",
+    "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }
 }

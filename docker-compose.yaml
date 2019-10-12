@@ -16,8 +16,3 @@ services:
       - MYSQL_ROOT_PASSWORD=mysql
     ports:
       - 3406:3306
-  natstreaming:
-    image: nats-streaming
-    ports:
-      - 8322:8222
-      - 4322:4222
