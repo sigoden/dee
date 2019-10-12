@@ -33,7 +33,7 @@ const myConsoleFormat = winston.format((info, opts) => {
 });
 
 export class Logger {
-  private loggers?: winston.Logger[];
+  public readonly loggers?: winston.Logger[];
   constructor(config: BaseConfig, args: Args) {
     const { json, combine } = winston.format;
     const commonProps =  { service: [config.ns, config.name].join('.') };
