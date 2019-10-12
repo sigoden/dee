@@ -9,7 +9,7 @@ import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestH
 
 export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
-export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler };
+export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler, ServiceGroup };
 
 const debugDee = createDebug('dee');
 
