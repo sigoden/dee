@@ -8,10 +8,10 @@ export type ServiceOptionMap = {
   [k: string]: ServiceOption<any, any>;
 };
 
-export interface ServiceOption<T, U> {
+export interface ServiceOption<T, U, C = { new(): T }> {
   initialize: InitFn<any, U, any> | string;
   args: U;
-  ctor?: { new(): T };
+  ctor?: C;
   deps?: string[];
 }
 
@@ -83,7 +83,7 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
         return a;
       }, {})
     }
-    const { srv, stop = (() => {}) } = await init(ctx, options.args, options.ctor, deps);
+    const { srv, stop = (() => { }) } = await init(ctx, options.args, options.ctor, deps);
     debug(`finish starting srv ${srvName}`);
     return { srv, stop }
   } catch (err) {
