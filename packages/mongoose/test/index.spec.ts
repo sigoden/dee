@@ -6,7 +6,7 @@ test("should create mongoose service", async () => {
   const { srv, stop } = await createSrvLite<DeeMongoose.Service<typeof mongoose>, DeeMongoose.Args>("mongo", {
     initialize: DeeMongoose.init,
     args: {
-      uris: "mongodb://localhost:28017/test",
+      uris: "mongodb://localhost:27017/test",
       options: {
         useNewUrlParser: true
       }

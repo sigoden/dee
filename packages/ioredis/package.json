@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-ioredis",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "A redis service for dee framework, powered by ioredis",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

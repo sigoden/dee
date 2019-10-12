@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-mongoose",
-  "version": "0.16.0",
+  "version": "0.16.1",
   "description": "A mongo service for dee framework, powered by mongoose",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

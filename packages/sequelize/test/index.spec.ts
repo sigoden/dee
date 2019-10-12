@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { Model, QueryTypes, Sequelize, ModelScopeOptions } from "sequelize";
+import { Model, QueryTypes, Sequelize } from "sequelize";
 import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeSequelize from "../src";
 
@@ -17,7 +17,7 @@ test("should create sequelize service", async () => {
       username: "root",
       password: "mysql",
       options: {
-        port: 3406,
+        port: 3306,
         dialect: "mysql",
         logging: false
       }
