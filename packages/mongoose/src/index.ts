@@ -1,7 +1,7 @@
-import { SrvContext, IService, InitOutput } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceBase, InitOutput } from "@sigodenjs/dee-srv";
 import * as mongoose from "mongoose";
 
-export type Service<T extends mongoose.Mongoose> = IService & T;
+export type Service<T extends mongoose.Mongoose> = ServiceBase & T;
 
 export interface Args {
   uris: string;

@@ -1,7 +1,7 @@
-import { SrvContext, BaseConfig, Stop } from "@sigodenjs/dee-srv";
+import { SrvContext, SrvConfig, Stop } from "@sigodenjs/dee-srv";
 import { createSrv, ServiceOption, ServiceOptionMap, CreateSrvOutput, createSrvs } from "@sigodenjs/dee-srv-create";
 
-export function createContext(config: BaseConfig = { prod: true, ns: "org", name: "App" }): SrvContext {
+export function createContext(config: SrvConfig = { prod: true, ns: "org", name: "App" }): SrvContext {
   return { config, srvs: {} };
 }
 

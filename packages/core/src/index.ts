@@ -2,7 +2,7 @@
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import * as createDebug from "debug";
-import { ServiceGroup, SrvContext, BaseConfig } from "@sigodenjs/dee-srv";
+import { ServiceGroup, SrvContext, SrvConfig } from "@sigodenjs/dee-srv";
 import { createSrvs, ServiceOptionMap } from "@sigodenjs/dee-srv-create";
 import { Server } from "http";
 import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
@@ -54,7 +54,7 @@ export interface App {
 
 export interface Service {}
 
-export interface Config extends BaseConfig {
+export interface Config extends SrvConfig {
   // namespace of service
   ns: string;
   // name of app

@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-winston",
-  "version": "0.16.2",
+  "version": "0.17.0",
   "description": "A logger service for dee framework, powered by winston",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -33,14 +33,14 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee-srv": "^0.16.0",
+    "@sigodenjs/dee-srv": "^0.17.0",
     "js-yaml": "^3.13.1",
     "lodash": "^4.17.14",
     "triple-beam": "^1.3.0",
     "winston": "^3.2.1"
   },
   "devDependencies": {
-    "@sigodenjs/dee-srv-test-utils": "^0.16.0",
+    "@sigodenjs/dee-srv-test-utils": "^0.17.0",
     "@types/node": "^12.0.2",
     "rimraf": "^3.0.0",
     "typescript": "^3.4.5"

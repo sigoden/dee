@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-srv",
-  "version": "0.16.4",
+  "version": "0.17.0",
   "description": "A way to write and organize service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

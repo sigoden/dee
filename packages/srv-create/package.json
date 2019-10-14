@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-srv-create",
-  "version": "0.16.9",
+  "version": "0.17.0",
   "description": "Utils for creating batch of dee-srvs",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -27,7 +27,7 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee-srv": "^0.16.2"
+    "@sigodenjs/dee-srv": "^0.17.0"
   },
   "devDependencies": {
     "@types/node": "^12.7.12",

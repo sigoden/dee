@@ -1,8 +1,8 @@
 import * as Dee from "@sigodenjs/dee";
-import { SrvContext, IService, InitOutput } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceBase, InitOutput } from "@sigodenjs/dee-srv";
 import template = require("lodash.template");
 
-export type Service<T> = IService & ErrorMapT<T>;
+export type Service<T> = ServiceBase & ErrorMapT<T>;
 
 export type ErrorMapT<T> = { [k in keyof T]: Factory };
 

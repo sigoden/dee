@@ -1,8 +1,8 @@
 import * as grpcLoader from "@grpc/proto-loader";
 import * as grpc from "grpc";
-import { SrvContext, ServiceGroup, IService, InitOutput } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceGroup, ServiceBase, InitOutput } from "@sigodenjs/dee-srv";
 
-export type Service<T extends Grpc<U>, U> = IService & T;
+export type Service<T extends Grpc<U>, U> = ServiceBase & T;
 
 export interface Args {
   // path to server proto file

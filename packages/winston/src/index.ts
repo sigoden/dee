@@ -2,9 +2,14 @@ import * as winston from "winston";
 import { MESSAGE } from "triple-beam";
 import { dump } from "js-yaml";
 import { isPlainObject } from "lodash";
-import { SrvContext, IService, InitOutput, BaseConfig } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceBase, Ctor, InitOutput, SrvConfig } from "@sigodenjs/dee-srv";
 
-export type Service<T extends Logger> = IService & T;
+export type Service<T extends Logger> = ServiceBase & T;
+
+export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<InitOutput<Service<T>>> {
+  const logger = new (ctor || Logger)(ctx.config, args);
+  return { srv: logger as Service<T> };
+}
 
 export interface Args {
   noConsole?: boolean;
@@ -34,7 +39,7 @@ const myConsoleFormat = winston.format((info, opts) => {
 
 export class Logger {
   public readonly loggers?: winston.Logger[];
-  constructor(config: BaseConfig, args: Args) {
+  constructor(config: SrvConfig, args: Args) {
     const { json, combine } = winston.format;
     const commonProps =  { service: [config.ns, config.name].join(".") };
     this.loggers = [];
@@ -74,11 +79,6 @@ export class Logger {
     const data = { ...messageToObj(message), ...extraToObj(extra) };
     this.loggers.forEach(logger => logger.error(data));
   }
-}
-
-export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: { new(): T }): Promise<InitOutput<Service<T>>> {
-  const logger = new (ctor || Logger)(ctx.config, args);
-  return { srv: logger as Service<T> };
 }
 
 function messageToObj(message: Error | string) {

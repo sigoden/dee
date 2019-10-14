@@ -1,4 +1,4 @@
-import { SrvContext, InitFn, Stop } from "@sigodenjs/dee-srv";
+import { SrvContext, InitFn, Ctor, Stop } from "@sigodenjs/dee-srv";
 import * as createDebug from "debug";
 import { EventEmitter } from "events";
 
@@ -8,7 +8,7 @@ export type ServiceOptionMap = {
   [k: string]: ServiceOption<any, any, any>;
 };
 
-export interface ServiceOption<T, U, C = { new(): T }> {
+export interface ServiceOption<T, U, C = Ctor<T>> {
   initialize: InitFn<any, U, any> | string;
   args: U;
   ctor?: C;

@@ -1,10 +1,10 @@
-import { SrvContext, BaseConfig } from "@sigodenjs/dee-srv";
+import { SrvContext, SrvConfig } from "@sigodenjs/dee-srv";
 import { createSrv, createSrvs } from "../src";
 import * as DeeSimple from "./fixtures/echo";
 import * as DeeAsync from "./fixtures/async";
 import * as DeeAsyncDeps from "./fixtures/asyncDeps";
 
-const DEFAULT_CONFIG: BaseConfig = { prod: true, ns: "org", name: "App" };
+const DEFAULT_CONFIG: SrvConfig = { prod: true, ns: "org", name: "App" };
 
 test("should create service", async () => {
   const data = { k: "v" };
