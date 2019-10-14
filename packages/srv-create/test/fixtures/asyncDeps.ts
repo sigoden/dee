@@ -3,9 +3,9 @@ import { SrvContext, IService, InitOutput } from "@sigodenjs/dee-srv";
 export type Service<T> = IService & T;
 export type Args<T> = (deps: any) => Promise<T>;
 
-export async function init<T, P>(ctx: SrvContext, args: Args<T>, deps: P): Promise<InitOutput<Service<T>>> {
-  const srv = await args(deps);
-  return { srv: srv as Service<T> };
+export async function init<T, U, P>(ctx: SrvContext, args: Args<T>, ctor?: U, deps?: P): Promise<InitOutput<Service<T>>> {
+  await args(deps);
+  return { srv: {} as Service<T> };
 }
 
 init.deps = ["asy"];

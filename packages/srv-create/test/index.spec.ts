@@ -2,7 +2,7 @@ import { SrvContext, BaseConfig } from "@sigodenjs/dee-srv";
 import { createSrv, createSrvs } from "../src";
 import * as DeeSimple from "./fixtures/echo";
 import * as DeeAsync from "./fixtures/async";
-import * as DeeAsync2 from "./fixtures/async2";
+import * as DeeAsyncDeps from "./fixtures/asyncDeps";
 
 const DEFAULT_CONFIG: BaseConfig = { prod: true, ns: "org", name: "App" };
 
@@ -40,7 +40,7 @@ test("should create services considering service order", async () => {
   const ctx: SrvContext = { config: DEFAULT_CONFIG, srvs: {} };
   await createSrvs(ctx, {
     async1: {
-      initialize: DeeAsync2.init,
+      initialize: DeeAsyncDeps.init,
       deps: ["async2"],
       args: async (v) => {
         expect(v["asy"]).toEqual(ctx.srvs["async2"]);

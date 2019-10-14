@@ -30,7 +30,6 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
       const createSrvWrap = () => {
         createSrv(ctx, srvName, options)
           .then(o => {
-            ctx.srvs[srvName] = o.srv;
             event.emit("ready", srvName);
             resolve(o.stop);
           }).catch(err => {
@@ -85,6 +84,7 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
     }
     const { srv, stop = (() => { }) } = await init(ctx, options.args, options.ctor, deps);
     debug(`finish starting srv ${srvName}`);
+    ctx.srvs[srvName] = srv;
     return { srv, stop }
   } catch (err) {
     throw new ServiceCreateError(`service<${srvName}> fail to init, ${err.message}`);
