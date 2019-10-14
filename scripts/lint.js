@@ -1,5 +1,3 @@
-"use strict";
-
 const path = require("path");
 const { getPackages, resolvePackages } = require("./packageUtils");
 const { execSync } = require("child_process");
@@ -20,7 +18,7 @@ if (!isAllRight) {
 }
 
 function lint(pkgFolder) {
-  const cmd = `npx eslint --ext .ts --fix --ignore-pattern dist .`;
+  const cmd = "npx eslint --ext .ts --fix --ignore-pattern dist .";
   const pkgName = path.basename(pkgFolder);
   process.stdout.write(`Linting ${pkgName}\n`);
   try {

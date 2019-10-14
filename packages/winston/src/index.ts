@@ -1,5 +1,5 @@
 import * as winston from "winston";
-import { MESSAGE } from 'triple-beam';
+import { MESSAGE } from "triple-beam";
 import { dump } from "js-yaml";
 import { isPlainObject } from "lodash";
 import { SrvContext, IService, InitOutput, BaseConfig } from "@sigodenjs/dee-srv";
@@ -36,7 +36,7 @@ export class Logger {
   public readonly loggers?: winston.Logger[];
   constructor(config: BaseConfig, args: Args) {
     const { json, combine } = winston.format;
-    const commonProps =  { service: [config.ns, config.name].join('.') };
+    const commonProps =  { service: [config.ns, config.name].join(".") };
     this.loggers = [];
     if (!args.noConsole) {
       this.loggers.push(winston.createLogger({

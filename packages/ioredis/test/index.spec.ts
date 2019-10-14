@@ -6,8 +6,8 @@ test("should create ioredis service", async () => {
   const { srv, stop } = await createSrvLite<DeeIORedis.Service<IORedis.Redis>, DeeIORedis.Args>("errs", {
     initialize: DeeIORedis.init,
     args: {
-      port: 6379
-    }
+      port: 6379,
+    },
   });
   const result = await srv.ping();
   expect(result).toEqual("PONG");

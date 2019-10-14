@@ -11,7 +11,7 @@ test("should create app instance", async () => {
 test("should init and bind service", async () => {
   const args = {};
   const app = await initApp({}, { echo : { initialize: DeeEcho.init, args } });
-  const srv = <DeeEcho.Service<typeof args>>app.srvs.echo;
+  const srv = app.srvs.echo;
   expect(srv).toBeDefined();
   expect(srv).toBe(args);
 });
@@ -30,14 +30,14 @@ test("should support array options.openapize", async () => {
   const app = await Dee.init({
     config: {
       ns: "proj",
-      name: "App"
+      name: "App",
     },
     openapize: [
       {
         api: OPENAPI_FILE,
-        handlers: HANDLERS
-      }
-    ]
+        handlers: HANDLERS,
+      },
+    ],
   });
   expect(app.start).toBeDefined();
 });
@@ -49,7 +49,7 @@ describe("handler func", () => {
         expect(req.srvs).toBeDefined();
         expect(req.openapi).toBeDefined();
         res.json("");
-      }
+      },
     });
   });
 });

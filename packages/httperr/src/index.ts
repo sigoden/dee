@@ -61,7 +61,7 @@ export class Factory {
     return {
       code: this.code,
       message: this.createMessage(args),
-      extra: (args && args.extra) ? args.extra : undefined
+      extra: (args && args.extra) ? args.extra : undefined,
     };
   }
   public resJSON(res: Dee.Response, args?: CallArgs) {

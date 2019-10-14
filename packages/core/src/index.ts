@@ -11,7 +11,7 @@ export { SecurityError, ValidationError } from "@sigodenjs/openapize";
 
 export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler, ServiceGroup };
 
-const debugDee = createDebug('dee');
+const debugDee = createDebug("dee");
 
 declare module "express" {
   interface Request {
@@ -81,7 +81,7 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 }
 
 export async function init(options: Options): Promise<App> {
-  debugDee("init")
+  debugDee("init");
   const app = express();
   const srvContext: SrvContext = { config: options.config, srvs: { }};
   const stops = await createSrvs(srvContext, options.services);
@@ -92,10 +92,10 @@ export async function init(options: Options): Promise<App> {
     next();
   });
   if (options.beforeRoute) {
-    debugDee("beforeRoute")
+    debugDee("beforeRoute");
     useMiddlewares(srvs, app, options.beforeRoute);
   }
-  debugDee("openize")
+  debugDee("openize");
   if (Array.isArray(options.openapize)) {
     for (const openapizeOptions of options.openapize) {
       await Openapize.openapize(app, openapizeOptions);
@@ -104,7 +104,7 @@ export async function init(options: Options): Promise<App> {
     await Openapize.openapize(app, options.openapize);
   }
   if (options.afterRoute) {
-    debugDee("afterRoute")
+    debugDee("afterRoute");
     useMiddlewares(srvs, app, options.afterRoute);
   }
 
@@ -115,7 +115,7 @@ export async function init(options: Options): Promise<App> {
       if (options.errorHandler) {
         app.use(options.errorHandler);
       }
-      debugDee(`listen ${host}:${port}`)
+      debugDee(`listen ${host}:${port}`);
       const server = app.listen(port, host, () => {
         resolve(server);
       });
@@ -123,10 +123,10 @@ export async function init(options: Options): Promise<App> {
   };
   const stop = async () => {
     await Promise.all(stops.map(stop => stop()));
-  }
+  };
   const deeApp = { srvs, express: app, start, stop };
   if (options.ready) {
-    debugDee(`ready`)
+    debugDee("ready");
     options.ready(deeApp);
   }
   return deeApp;

@@ -8,13 +8,13 @@ export function initApp(handlers: Dee.HandlerFuncMap, services?: ServiceOptionMa
   return Dee.init({
     config: {
       ns: "proj",
-      name: "App"
+      name: "App",
     },
     openapize: {
       api: OPENAPI_FILE,
-      handlers
+      handlers,
     },
-    services
+    services,
   });
 }
 
@@ -27,7 +27,7 @@ export const HANDLERS = {
     await delay(1);
     const name = req.params.name;
     res.json(name);
-  })
+  }),
 };
 
 export function delay(time: number) {

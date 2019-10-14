@@ -68,7 +68,7 @@ async function createServer(ctx: SrvContext, args: Args): Promise<grpc.Server> {
   const server = new grpc.Server();
   server.addService(proto.service, shimHandlers(serverHandlers, havePermision, ctx.srvs));
   if (typeof getServerBindOptions !== "function") {
-    throw new Error(`getServerBindOptions is required`);
+    throw new Error("getServerBindOptions is required");
   }
   const bindOptions = getServerBindOptions(ctx);
   server.bind(bindOptions.address, bindOptions.credentials);
@@ -85,7 +85,7 @@ function shimHandlers(handlers: HandlerFuncMap, havePermision: CheckPermisionFun
       if (!havePermision(String(origin[0]), id)) {
         cb({
           code: grpc.status.PERMISSION_DENIED,
-          message: "Permission denied"
+          message: "Permission denied",
         });
         return;
       }
@@ -111,7 +111,7 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
     }
     const GrpcClient: typeof grpc.Client = GrpcClientObj;
     if (typeof getClientConstructOptions !== "function") {
-      throw new Error(`getClientConstructOptions is required`);
+      throw new Error("getClientConstructOptions is required");
     }
     const constructOptions = getClientConstructOptions(serviceName, ctx);
     const grpcClient = new GrpcClient(constructOptions.address, constructOptions.credentials, constructOptions.options);
@@ -125,7 +125,7 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
         const fn = grpcClient[funcName];
         const unSupportedRes = {
           message: serviceName + "." + funcName + " is not supported",
-          status: grpc.status.UNIMPLEMENTED
+          status: grpc.status.UNIMPLEMENTED,
         };
         return new Promise((resolve, reject) => {
           if (!fn) {
@@ -138,7 +138,7 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
             resolve(res);
           });
         });
-      }
+      },
     };
     clients[serviceName] = client;
   });
@@ -163,7 +163,7 @@ export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): P
     srv.server.tryShutdown(() => { });
     Object.keys(srv.clients).forEach(k => srv.clients[k].grpcClient.close());
   };
-  return { srv: srv as Service<T, U>, stop }
+  return { srv: srv as Service<T, U>, stop };
 }
 
 export { grpc };

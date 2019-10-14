@@ -5,7 +5,7 @@ test("should create echo service", async () => {
   const data = { k: "v" };
   const { srv } = await createSrvLite<DeeEcho.Service<typeof data>, DeeEcho.Args>("settings", {
     initialize: DeeEcho.init,
-    args: data
+    args: data,
   });
   expect(srv.k).toBe("v");
 });

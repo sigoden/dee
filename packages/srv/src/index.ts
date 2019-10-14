@@ -22,17 +22,18 @@ export interface BaseConfig {
   prod?: boolean;
 }
 
-export interface IService { };
+export interface IService { }; // eslint-disable-line 
 
 export type Stop = () => void;
-export type InitOutput<T> = { srv: T, stop?: Stop };
+export type InitOutput<T> = { srv: T; stop?: Stop };
 export interface InitFn<T, U, P extends {[k: string]: any}> {
-  (ctx: SrvContext, args: U, ctor?: new() => T, depends?: P): Promise<InitOutput<T>>
-  deps?: string[]
+  (ctx: SrvContext, args: U, ctor?: new() => T, depends?: P): Promise<InitOutput<T>>;
+  deps?: string[];
 }
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace SrvExt {
-    interface ServiceGroup { }
+    interface ServiceGroup { } 
   }
 }

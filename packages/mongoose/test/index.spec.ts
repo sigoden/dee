@@ -8,9 +8,9 @@ test("should create mongoose service", async () => {
     args: {
       uris: "mongodb://localhost:27017/test",
       options: {
-        useNewUrlParser: true
-      }
-    }
+        useNewUrlParser: true,
+      },
+    },
   });
   const res = await srv.connection.db.command({ ping: 1 });
   expect(res.ok).toBe(1);

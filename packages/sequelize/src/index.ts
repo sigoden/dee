@@ -22,7 +22,7 @@ export async function init<T extends Sequelize, U>(ctx: SrvContext, args: Args, 
   const stop = () => {
     srv.close();
   };
-  return { srv: srv as Service<T, U>, stop }
+  return { srv: srv as Service<T, U>, stop };
 }
 
 export type ModelT<T> = { new (): T } & typeof Model;

@@ -19,9 +19,9 @@ test("should create sequelize service", async () => {
       options: {
         port: 3306,
         dialect: "mysql",
-        logging: false
-      }
-    }
+        logging: false,
+      },
+    },
   });
   const res = await srv.query("select 1", { type: QueryTypes.SELECT });
   expect(res).toEqual([{ 1: 1 }]);

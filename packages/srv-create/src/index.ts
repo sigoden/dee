@@ -2,7 +2,7 @@ import { SrvContext, InitFn, Stop } from "@sigodenjs/dee-srv";
 import * as createDebug from "debug";
 import { EventEmitter } from "events";
 
-const debug = createDebug('dee-srv');
+const debug = createDebug("dee-srv");
 
 export type ServiceOptionMap = {
   [k: string]: ServiceOption<any, any, any>;
@@ -36,7 +36,7 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
             event.emit("error", err);
             reject(err);
           });
-      }
+      };
       if (deps.length === 0) {
         createSrvWrap();
         return;
@@ -45,7 +45,7 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
         if (!services[v]) {
           return reject(new ServiceCreateError(`service<${srvName}> need dependency ${v}, but not found`));
         }
-      })
+      });
       event.on("error", err => reject(new ServiceCreateError(`service<${srvName}> abort, ${err}`)));
       event.on("ready", name => {
         if (ctx.srvs[srvName]) {
@@ -80,12 +80,12 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
       deps = init.deps.reduce((a, c, i) => {
         a[c] = ctx.srvs[options.deps[i]];
         return a;
-      }, {})
+      }, {});
     }
     const { srv, stop = (() => { }) } = await init(ctx, options.args, options.ctor, deps);
     debug(`finish starting srv ${srvName}`);
     ctx.srvs[srvName] = srv;
-    return { srv, stop }
+    return { srv, stop };
   } catch (err) {
     throw new ServiceCreateError(`service<${srvName}> fail to init, ${err.message}`);
   }

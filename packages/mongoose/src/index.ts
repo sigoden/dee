@@ -13,10 +13,10 @@ export async function init<T extends mongoose.Mongoose>(ctx: SrvContext, args: A
   await mongoose.connect(uris, connectOptions);
   const stop = async () => {
     await mongoose.disconnect();
-  }
-  const srv = mongoose as Service<T>
+  };
+  const srv = mongoose as Service<T>;
   (srv as any).ctx = ctx;
-  return { srv: srv, stop }
+  return { srv: srv, stop };
 }
 
 export interface Mongoose extends mongoose.Mongoose {

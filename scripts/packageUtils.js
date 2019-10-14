@@ -5,7 +5,7 @@ const PACKAGES_DIR = path.resolve(__dirname, "../packages");
 
 // Get absolute paths of all directories under packages
 function getPackages() {
-  let pkgNames = fs.readdirSync(PACKAGES_DIR);
+  const pkgNames = fs.readdirSync(PACKAGES_DIR);
   return resolvePackages(pkgNames);
 }
 

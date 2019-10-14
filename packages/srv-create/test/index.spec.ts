@@ -11,7 +11,7 @@ test("should create service", async () => {
   const ctx: SrvContext = { config: DEFAULT_CONFIG, srvs: {} };
   const { srv } = await createSrv<DeeSimple.Service<typeof data>, DeeSimple.Args>(ctx, "simple", {
     initialize: DeeSimple.init,
-    args: data
+    args: data,
   });
   expect(srv.k).toBe("v");
 });
@@ -28,7 +28,7 @@ test("should create services", async () => {
     simple2: {
       initialize: DeeSimple.init,
       args: data2,
-    }
+    },
   });
   expect(stops.length).toEqual(2);
   expect(ctx.srvs["simple1"]).toEqual(data1);
@@ -54,7 +54,7 @@ test("should create services considering service order", async () => {
         await delay(50);
         orders.push("async2");
       },
-    }
+    },
   });
   expect(orders).toEqual(["async2", "async1"]);
 });

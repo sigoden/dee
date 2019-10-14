@@ -7,11 +7,11 @@ export function createContext(config: BaseConfig = { prod: true, ns: "org", name
 
 export async function createSrvLite<T, U>(name: string, options: ServiceOption<T, U>): Promise<CreateSrvOutput<T>> {
   const ctx = createContext();
-  return createSrv(ctx, name, options)
+  return createSrv(ctx, name, options);
 };
 
 
-export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<{ctx: SrvContext, stops: Stop[]}> {
+export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<{ctx: SrvContext; stops: Stop[]}> {
   const ctx = createContext();
   const stops = await createSrvs(ctx, services);
   return { ctx, stops };
