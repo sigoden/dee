@@ -6,15 +6,15 @@ import { SrvContext, ServiceBase, Ctor, InitOutput, SrvConfig } from "@sigodenjs
 
 export type Service<T extends Logger> = ServiceBase & T;
 
-export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<InitOutput<Service<T>>> {
-  const logger = new (ctor || Logger)(ctx.config, args);
-  return { srv: logger as Service<T> };
-}
-
 export interface Args {
   noConsole?: boolean;
   file?: winston.transports.FileTransportOptions;
   http?: winston.transports.HttpTransportOptions;
+}
+
+export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<InitOutput<Service<T>>> {
+  const logger = new (ctor || Logger)(ctx.config, args);
+  return { srv: logger as Service<T> };
 }
 
 const myFormat = winston.format((info, opts = {}) => {
