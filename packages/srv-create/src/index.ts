@@ -28,14 +28,16 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
     deps = deps.slice();
     return new Promise<Stop>((resolve, reject) => {
       const createSrvWrap = () => {
-        createSrv(ctx, srvName, options)
-          .then(o => {
-            event.emit("ready", srvName);
-            resolve(o.stop);
-          }).catch(err => {
-            event.emit("error", err);
-            reject(err);
-          });
+        setTimeout(() => {
+          createSrv(ctx, srvName, options)
+            .then(o => {
+              event.emit("ready", srvName);
+              resolve(o.stop);
+            }).catch(err => {
+              event.emit("error", err);
+              reject(err);
+            });
+        }, 0);
       };
       if (deps.length === 0) {
         createSrvWrap();
