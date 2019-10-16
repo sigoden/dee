@@ -2,7 +2,7 @@ import { Sequelize, Options, Model } from "sequelize";
 import { SrvContext, ServiceBase, Ctor, STOP_KEY } from "@sigodenjs/dee-srv";
 
 
-export type Service<T extends Sequelize, U> = T & {
+export type Service<T extends Sequelize, U> = ServiceBase & T & {
   model<TKey extends keyof U>(name: TKey): U[TKey];
   models: U;
 };
