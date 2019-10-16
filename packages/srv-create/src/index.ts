@@ -56,6 +56,14 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
       });
     });
   }));
+  await Promise.all(Object.keys(ctx.srvs).map(async srvName => {
+    const srv = ctx.srvs[srvName];
+    if (srv[INIT_KEY]) {
+      debug(`running srv ${srvName}'s init`);
+      await srv[INIT_KEY]();
+      debug(`done srv ${srvName}'s init`);
+    }
+  }));
   event.removeAllListeners();
 }
 
@@ -79,9 +87,6 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
       }, {});
     }
     const srv = await init(ctx, options.args, options.ctor, deps);
-    if (srv[INIT_KEY]) {
-      await srv[INIT_KEY]();
-    }
     debug(`finish starting srv ${srvName}`);
     ctx.srvs[srvName] = srv;
     return srv;
