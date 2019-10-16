@@ -9,7 +9,7 @@ const DEFAULT_CONFIG: SrvConfig = { prod: true, ns: "org", name: "App" };
 test("should create service", async () => {
   const data = { k: "v" };
   const ctx: SrvContext = { config: DEFAULT_CONFIG, srvs: {} };
-  const { srv } = await createSrv<DeeSimple.Service<typeof data>, DeeSimple.Args>(ctx, "simple", {
+  const srv = await createSrv<DeeSimple.Service<typeof data>, DeeSimple.Args>(ctx, "simple", {
     initialize: DeeSimple.init,
     args: data,
   });
@@ -20,7 +20,7 @@ test("should create services", async () => {
   const data1 = { k: "v" };
   const data2 = { k2: "v2" };
   const ctx: SrvContext = { config: DEFAULT_CONFIG, srvs: {} };
-  const stops = await createSrvs(ctx, {
+  await createSrvs(ctx, {
     simple1: {
       initialize: DeeSimple.init,
       args: data1,
@@ -30,7 +30,6 @@ test("should create services", async () => {
       args: data2,
     },
   });
-  expect(stops.length).toEqual(2);
   expect(ctx.srvs["simple1"]).toEqual(data1);
   expect(ctx.srvs["simple2"]).toEqual(data2);
 });

@@ -1,8 +1,8 @@
 import * as grpcLoader from "@grpc/proto-loader";
 import * as grpc from "grpc";
-import { SrvContext, ServiceGroup, ServiceBase, InitOutput } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceGroup, ServiceBase, STOP_KEY } from "@sigodenjs/dee-srv";
 
-export type Service<T extends Grpc<U>, U> = ServiceBase & T;
+export type Service<T extends Grpc<U>, U> = T;
 
 export interface Args {
   // path to server proto file
@@ -17,7 +17,7 @@ export interface Args {
   getClientConstructOptions?: (serviceName: string, ctx: SrvContext) => ClientConstructOptions;
 }
 
-export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T, U>>> {
+export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): Promise<Service<T, U>> {
   const srv = new Grpc();
   const { serverProtoFile, clientProtoFile } = args;
   if (serverProtoFile) {
@@ -26,11 +26,7 @@ export async function init<T extends Grpc<U>, U>(ctx: SrvContext, args: Args): P
   if (clientProtoFile) {
     srv.clients = await createClients(ctx, args);
   }
-  const stop = () => {
-    srv.server.tryShutdown(() => { });
-    Object.keys(srv.clients).forEach(k => srv.clients[k].grpcClient.close());
-  };
-  return { srv: srv as Service<T, U>, stop };
+  return srv as Service<T, U>;
 }
 
 export { grpc };
@@ -67,9 +63,13 @@ export interface Context {
   srvs: ServiceGroup;
 }
 
-export class Grpc<U> {
+export class Grpc<U> implements ServiceBase {
   public server?: grpc.Server;
   public clients: ClientMap<U>;
+  public [STOP_KEY]() {
+    this.server.tryShutdown(() => { });
+    Object.keys(this.clients).forEach(k => this.clients[k].grpcClient.close());
+  }
 }
 
 async function createServer(ctx: SrvContext, args: Args): Promise<grpc.Server> {

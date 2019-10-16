@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-srv-test-utils",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "Utility functions for test dee service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -24,8 +24,8 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee-srv": "^0.17.0",
-    "@sigodenjs/dee-srv-create": "^0.17.0"
+    "@sigodenjs/dee-srv": "^0.18.0",
+    "@sigodenjs/dee-srv-create": "^0.18.0"
   },
   "devDependencies": {
     "rimraf": "^3.0.0",

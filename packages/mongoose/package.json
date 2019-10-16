@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-mongoose",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "description": "A mongo service for dee framework, powered by mongoose",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -34,11 +34,11 @@
   },
   "dependencies": {
     "@types/mongoose": "^5.5.20",
-    "@sigodenjs/dee-srv": "^0.17.0",
+    "@sigodenjs/dee-srv": "^0.18.0",
     "mongoose": "^5.7.4"
   },
   "devDependencies": {
-    "@sigodenjs/dee-srv-test-utils": "^0.17.0",
+    "@sigodenjs/dee-srv-test-utils": "^0.18.0",
     "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }

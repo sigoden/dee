@@ -2,9 +2,9 @@ import * as winston from "winston";
 import { MESSAGE } from "triple-beam";
 import { dump } from "js-yaml";
 import { isPlainObject } from "lodash";
-import { SrvContext, ServiceBase, Ctor, InitOutput, SrvConfig } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceBase, Ctor, SrvConfig, STOP_KEY } from "@sigodenjs/dee-srv";
 
-export type Service<T extends Logger> = ServiceBase & T;
+export type Service<T extends Logger> = T;
 
 export interface Args {
   noConsole?: boolean;
@@ -12,9 +12,9 @@ export interface Args {
   http?: winston.transports.HttpTransportOptions;
 }
 
-export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<InitOutput<Service<T>>> {
-  const logger = new (ctor || Logger)(ctx.config, args);
-  return { srv: logger as Service<T> };
+export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<Service<T>> {
+  const srv = new (ctor || Logger)(ctx.config, args);
+  return srv as Service<T>;
 }
 
 const myFormat = winston.format((info, opts = {}) => {
@@ -37,11 +37,11 @@ const myConsoleFormat = winston.format((info, opts) => {
   return info;
 });
 
-export class Logger {
+export class Logger implements ServiceBase {
   public readonly loggers?: winston.Logger[];
   constructor(config: SrvConfig, args: Args) {
     const { json, combine } = winston.format;
-    const commonProps =  { service: [config.ns, config.name].join(".") };
+    const commonProps = { service: [config.ns, config.name].join(".") };
     this.loggers = [];
     if (!args.noConsole) {
       this.loggers.push(winston.createLogger({
@@ -78,6 +78,9 @@ export class Logger {
   public error(message: Error | string, extra: any = {}): void {
     const data = { ...messageToObj(message), ...extraToObj(extra) };
     this.loggers.forEach(logger => logger.error(data));
+  }
+  public [STOP_KEY]() {
+    return;
   }
 }
 

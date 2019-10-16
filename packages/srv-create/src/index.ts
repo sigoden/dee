@@ -1,4 +1,4 @@
-import { SrvContext, InitFn, Ctor, Stop } from "@sigodenjs/dee-srv";
+import { SrvContext, InitFn, Ctor, INIT_KEY } from "@sigodenjs/dee-srv";
 import * as createDebug from "debug";
 import { EventEmitter } from "events";
 
@@ -15,24 +15,19 @@ export interface ServiceOption<T, U, C = Ctor<T>> {
   deps?: string[];
 }
 
-export interface CreateSrvOutput<T> {
-  srv: T;
-  stop: Stop;
-}
-
-export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {}): Promise<Stop[]> {
+export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {}): Promise<void> {
   const event = new EventEmitter();
-  const stops = await Promise.all(Object.keys(services).map(srvName => {
+  await Promise.all(Object.keys(services).map(srvName => {
     const options = services[srvName];
     let deps = options.deps || [];
     deps = deps.slice();
-    return new Promise<Stop>((resolve, reject) => {
+    return new Promise<void>((resolve, reject) => {
       const createSrvWrap = () => {
         setTimeout(() => {
           createSrv(ctx, srvName, options)
-            .then(o => {
+            .then(() => {
               event.emit("ready", srvName);
-              resolve(o.stop);
+              resolve();
             }).catch(err => {
               event.emit("error", err);
               reject(err);
@@ -62,10 +57,9 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
     });
   }));
   event.removeAllListeners();
-  return stops;
 }
 
-export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options: ServiceOption<T, U>): Promise<CreateSrvOutput<T>> {
+export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options: ServiceOption<T, U>): Promise<T> {
   debug(`starting srv ${srvName}`);
   try {
     let init: InitFn<T, U, any>;
@@ -84,10 +78,13 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
         return a;
       }, {});
     }
-    const { srv, stop = (() => { }) } = await init(ctx, options.args, options.ctor, deps);
+    const srv = await init(ctx, options.args, options.ctor, deps);
+    if (srv[INIT_KEY]) {
+      await srv[INIT_KEY]();
+    }
     debug(`finish starting srv ${srvName}`);
     ctx.srvs[srvName] = srv;
-    return { srv, stop };
+    return srv;
   } catch (err) {
     throw new ServiceCreateError(`service<${srvName}> fail to init, ${err.message}`);
   }

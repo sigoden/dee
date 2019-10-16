@@ -1,5 +1,5 @@
 export interface ServiceGroup extends SrvExt.ServiceGroup {
-  [k: string]: any;
+  [k: string]: ServiceBase;
 }
 
 export interface SrvContext {
@@ -10,6 +10,9 @@ export interface SrvContext {
 export interface Ctor<T> {
   new(...args: any): T;
 }
+
+export const INIT_KEY = Symbol("init");
+export const STOP_KEY = Symbol("stop");
 
 export interface SrvConfig {
   /**
@@ -26,12 +29,13 @@ export interface SrvConfig {
   prod?: boolean;
 }
 
-export interface ServiceBase { };
+export interface ServiceBase {
+  [INIT_KEY]?: () => Promise<void> | void;
+  [STOP_KEY]?: () => Promise<void> | void;
+};
 
-export type Stop = () => void;
-export type InitOutput<T> = { srv: T; stop?: Stop };
-export interface InitFn<T, U, P extends { [k: string]: any }> {
-  (ctx: SrvContext, args: U, ctor?: Ctor<T>, depends?: P): Promise<InitOutput<T>>;
+export interface InitFn<T extends ServiceBase, U, P extends { [k: string]: any }> {
+  (ctx: SrvContext, args: U, ctor?: Ctor<T>, depends?: P): Promise<T>;
   deps?: string[];
 }
 

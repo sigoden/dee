@@ -1,12 +1,13 @@
 import * as grpc from "grpc";
 import * as path from "path";
+import { STOP_KEY } from "@sigodenjs/dee-srv";
 import { createSrvLite, delay } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeGrpc from "../src";
 
 const RPC_PROTO_FILE = path.resolve(__dirname, "fixtures/rpc.proto");
 
 test("should create grpc service", async () => {
-  const { srv, stop } = await createSrvLite<DeeGrpc.Service<DeeGrpc.Grpc<Clients>, Clients>, DeeGrpc.Args>("grpc", {
+  const srv = await createSrvLite<DeeGrpc.Service<DeeGrpc.Grpc<Clients>, Clients>, DeeGrpc.Args>("grpc", {
     initialize: DeeGrpc.init,
     args: {
       clientProtoFile: RPC_PROTO_FILE,
@@ -34,7 +35,7 @@ test("should create grpc service", async () => {
   const name = "trump";
   const res = await srv.clients.App.call("sayHello", { name });
   expect(res.message).toBe(name);
-  await stop();
+  await srv[STOP_KEY]();
 });
 
 interface Clients {

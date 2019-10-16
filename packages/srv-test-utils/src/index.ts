@@ -1,20 +1,20 @@
-import { SrvContext, SrvConfig, Stop } from "@sigodenjs/dee-srv";
-import { createSrv, ServiceOption, ServiceOptionMap, CreateSrvOutput, createSrvs } from "@sigodenjs/dee-srv-create";
+import { SrvContext, SrvConfig } from "@sigodenjs/dee-srv";
+import { createSrv, ServiceOption, ServiceOptionMap, createSrvs } from "@sigodenjs/dee-srv-create";
 
 export function createContext(config: SrvConfig = { prod: true, ns: "org", name: "App" }): SrvContext {
   return { config, srvs: {} };
 }
 
-export async function createSrvLite<T, U>(name: string, options: ServiceOption<T, U>): Promise<CreateSrvOutput<T>> {
+export async function createSrvLite<T, U>(name: string, options: ServiceOption<T, U>): Promise<T> {
   const ctx = createContext();
   return createSrv(ctx, name, options);
 };
 
 
-export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<{ctx: SrvContext; stops: Stop[]}> {
+export async function createSrvsLite(services: ServiceOptionMap = {}): Promise<SrvContext> {
   const ctx = createContext();
-  const stops = await createSrvs(ctx, services);
-  return { ctx, stops };
+  await createSrvs(ctx, services);
+  return ctx;
 }
 
 export function delay(time: number) {

@@ -8,7 +8,7 @@ const ErrCodes = {
   },
 };
 test("should create httperr service", async () => {
-  const { srv } = await createSrvLite<DeeHttpErr.Service<typeof ErrCodes>, DeeHttpErr.Args>("errs", {
+  const srv = await createSrvLite<DeeHttpErr.Service<typeof ErrCodes>, DeeHttpErr.Args>("errs", {
     initialize: DeeHttpErr.init,
     args: ErrCodes,
   });

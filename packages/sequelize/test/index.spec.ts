@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
 import { Model, QueryTypes, Sequelize } from "sequelize";
+import { STOP_KEY } from "@sigodenjs/dee-srv";
 import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeSequelize from "../src";
 
@@ -10,7 +11,7 @@ interface Models {
 }
 
 test("should create sequelize service", async () => {
-  const { srv, stop } = await createSrvLite<DeeSequelize.Service<Sequelize, Models>, DeeSequelize.Args>("errs", {
+  const srv = await createSrvLite<DeeSequelize.Service<Sequelize, Models>, DeeSequelize.Args>("errs", {
     initialize: DeeSequelize.init,
     args: {
       database: "mysql",
@@ -25,5 +26,5 @@ test("should create sequelize service", async () => {
   });
   const res = await srv.query("select 1", { type: QueryTypes.SELECT });
   expect(res).toEqual([{ 1: 1 }]);
-  await stop();
+  await srv[STOP_KEY]();
 });

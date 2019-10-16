@@ -1,24 +1,22 @@
-import { SrvContext, ServiceBase, InitOutput } from "@sigodenjs/dee-srv";
+import { SrvContext, ServiceBase, STOP_KEY } from "@sigodenjs/dee-srv";
 import * as mongoose from "mongoose";
 
-export type Service<T extends mongoose.Mongoose> = ServiceBase & T;
+export type Service<T extends Mongoose> = T;
 
 export interface Args {
   uris: string;
   options?: mongoose.ConnectionOptions;
 }
 
-export async function init<T extends mongoose.Mongoose>(ctx: SrvContext, args: Args): Promise<InitOutput<Service<T>>> {
+export async function init<T extends Mongoose>(ctx: SrvContext, args: Args): Promise<Service<T>> {
   const { uris, options: connectOptions } = args;
   await mongoose.connect(uris, connectOptions);
-  const stop = async () => {
-    await mongoose.disconnect();
-  };
   const srv = mongoose as Service<T>;
+  srv[STOP_KEY] = () => mongoose.disconnect();
   (srv as any).ctx = ctx;
-  return { srv: srv, stop };
+  return srv;
 }
 
-export interface Mongoose extends mongoose.Mongoose {
+export interface Mongoose extends mongoose.Mongoose, ServiceBase {
   ctx: SrvContext;
 }

@@ -2,7 +2,7 @@
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import * as createDebug from "debug";
-import { ServiceGroup, SrvContext, SrvConfig } from "@sigodenjs/dee-srv";
+import { ServiceGroup, SrvContext, SrvConfig, STOP_KEY } from "@sigodenjs/dee-srv";
 import { createSrvs, ServiceOptionMap } from "@sigodenjs/dee-srv-create";
 import { Server } from "http";
 import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
@@ -23,7 +23,7 @@ declare module "express" {
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
 
-export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
+export interface HandlerFuncMap extends Openapize.HandlerFuncMap { }
 
 export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
@@ -52,7 +52,7 @@ export interface App {
   stop: () => Promise<void>;
 }
 
-export interface Service {}
+export interface Service { }
 
 export interface Config extends SrvConfig {
   // namespace of service
@@ -83,10 +83,10 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 export async function init(options: Options): Promise<App> {
   debugDee("init");
   const app = express();
-  const srvContext: SrvContext = { config: options.config, srvs: { }};
-  const stops = await createSrvs(srvContext, options.services);
+  const srvContext: SrvContext = { config: options.config, srvs: {} };
+  await createSrvs(srvContext, options.services);
   const srvs = srvContext.srvs;
-  srvs["$config"] = options.config;
+  srvs["$config"] = options.config as any;
   app.use((req: Request, res, next) => {
     req.srvs = srvs;
     next();
@@ -122,7 +122,11 @@ export async function init(options: Options): Promise<App> {
     });
   };
   const stop = async () => {
-    await Promise.all(stops.map(stop => stop()));
+    await Promise.all(Object.keys(srvs).map(async key => {
+      if (srvs[key][STOP_KEY]) {
+        await srvs[key][STOP_KEY]();
+      }
+    }));
   };
   const deeApp = { srvs, express: app, start, stop };
   if (options.ready) {
