@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-sequelize",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "description": "A sql service for dee framework, powered by sequelize",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
