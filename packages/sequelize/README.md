@@ -7,6 +7,13 @@ A sql service for dee framework, powered by sequelize
 ```ts
 import * as DeeSequelize from "@sigodenjs/dee-sequelize";
 
+class User extends Model { }
+
+const ModelMap = {
+  User: User,
+};
+
+
 Dee({
   services: {
     sql: {
@@ -15,6 +22,7 @@ Dee({
         database: "mysql",
         username: "root",
         password: "mysql",
+        models: ModelMap,
         options: {
           port: 3406,
           dialect: "mysql",
