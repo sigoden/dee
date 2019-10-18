@@ -44,11 +44,11 @@ export class Sequelize<U extends ModelMap> extends Sequelize_ implements Service
       const model = this.args.models[key] as any;
       await model.bootstrap(this);
       model.srvs = this.ctx.srvs;
-      if (this.models[key]) {
+      if (!this.models[key]) {
         (this.models as any)[key] = model;
       }
     }
-    for (const key in this.models) {
+    for (const key in this.args.models) {
       const model = this.args.models[key] as any;
       if (model["associate"]) model["associate"]();
     }
