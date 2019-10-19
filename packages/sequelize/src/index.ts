@@ -57,5 +57,3 @@ export class Sequelize<U extends ModelMap> extends Sequelize_ implements Service
     return this.close();
   }
 }
-
-export type ModelT<T> = { new(): T } & typeof Model;
