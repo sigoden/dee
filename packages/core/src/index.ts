@@ -83,10 +83,9 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 export async function init(options: Options): Promise<App> {
   debugDee("init");
   const app = express();
-  const srvContext: SrvContext = { config: options.config, srvs: {} };
+  const srvContext: SrvContext = { config: options.config, srvs: { $config: options.config as any } };
   await createSrvs(srvContext, options.services);
   const srvs = srvContext.srvs;
-  srvs["$config"] = options.config as any;
   app.use((req: Request, res, next) => {
     req.srvs = srvs;
     next();
