@@ -1,4 +1,4 @@
-import { SrvContext, InitFn, Ctor, INIT_KEY } from "@sigodenjs/dee-srv";
+import { SrvContext, InitFn, Ctor, INIT_KEY, READY_KEY } from "@sigodenjs/dee-srv";
 import * as createDebug from "debug";
 import { EventEmitter } from "events";
 
@@ -62,6 +62,14 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
       debug(`running srv ${srvName}'s init`);
       await srv[INIT_KEY]();
       debug(`done srv ${srvName}'s init`);
+    }
+  }));
+  await Promise.all(Object.keys(ctx.srvs).map(async srvName => {
+    const srv = ctx.srvs[srvName];
+    if (srv[READY_KEY]) {
+      debug(`running srv ${srvName}'s ready`);
+      await srv[READY_KEY]();
+      debug(`done srv ${srvName}'s ready`);
     }
   }));
   event.removeAllListeners();

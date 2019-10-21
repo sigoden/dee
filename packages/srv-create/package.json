@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-srv-create",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "Utils for creating batch of dee-srvs",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

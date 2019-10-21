@@ -11,9 +11,6 @@ export interface Ctor<T> {
   new(...args: any): T;
 }
 
-export const INIT_KEY = Symbol("init");
-export const STOP_KEY = Symbol("stop");
-
 export interface SrvConfig {
   /**
    * 名称空间
@@ -29,9 +26,14 @@ export interface SrvConfig {
   prod?: boolean;
 }
 
+export const INIT_KEY = Symbol("init");
+export const STOP_KEY = Symbol("stop");
+export const READY_KEY = Symbol("ready");
+
 export interface ServiceBase {
   [INIT_KEY]?: () => Promise<void> | void;
   [STOP_KEY]?: () => Promise<void> | void;
+  [READY_KEY]?: () => Promise<void> | void;
 };
 
 export interface InitFn<T extends ServiceBase, U, P extends { [k: string]: any }> {
