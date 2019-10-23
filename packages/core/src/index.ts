@@ -121,11 +121,19 @@ export async function init(options: Options): Promise<App> {
     });
   };
   const stop = async () => {
+    const errs = [];
     await Promise.all(Object.keys(srvs).map(async key => {
       if (srvs[key][STOP_KEY]) {
-        await srvs[key][STOP_KEY]();
+        try {
+          await srvs[key][STOP_KEY]();
+        } catch (err) {
+          errs.push({ err, key });
+        }
       }
     }));
+    if (errs.length > 0) {
+      throw new DeeStopError(errs);
+    }
   };
   const deeApp = { srvs, express: app, start, stop };
   if (options.ready) {
@@ -140,4 +148,17 @@ export function resolveAsynRequestHandler(fn: AsyncRequestHandler): RequestHandl
     const fnReturn = fn(req, res, next);
     Promise.resolve(fnReturn).catch(next);
   };
+}
+
+export interface ErrItem {
+  key: string;
+  err: any;
+}
+export class DeeStopError extends Error {
+  public readonly errs: ErrItem[]
+  constructor(errs: ErrItem[]) {
+    super("dee cannot stop");
+    this.errs = errs;
+    this.name = "DeeStopError";
+  }
 }
