@@ -29,7 +29,7 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
               event.emit("ready", srvName);
               resolve();
             }).catch(err => {
-              event.emit("error", err);
+              event.emit("notready", err);
               reject(err);
             });
         }, 0);
@@ -43,7 +43,7 @@ export async function createSrvs(ctx: SrvContext, services: ServiceOptionMap = {
           return reject(new ServiceCreateError(`service<${srvName}> need dependency ${v}, but not found`));
         }
       });
-      event.on("error", err => reject(new ServiceCreateError(`service<${srvName}> abort, ${err}`)));
+      event.on("notready", err => reject(new ServiceCreateError(`service<${srvName}> abort, ${err}`)));
       event.on("ready", name => {
         if (ctx.srvs[srvName]) {
           return;
