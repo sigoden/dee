@@ -33,7 +33,7 @@ const myConsoleFormat = winston.format((info, opts) => {
   const data = { ...info, ...opts, timestamp: new Date().toISOString() };
   info[MESSAGE] = dump({
     [info.level]: data,
-  });
+  }, { skipInvalid: true });
   return info;
 });
 
