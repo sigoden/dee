@@ -7,7 +7,7 @@ import { SrvContext, ServiceBase, Ctor, SrvConfig, STOP_KEY } from "@sigodenjs/d
 export type Service<T extends Logger> = T;
 
 export interface Args {
-  noConsole?: boolean;
+  console?: winston.transports.ConsoleTransportOptions | false;
   file?: winston.transports.FileTransportOptions;
   http?: winston.transports.HttpTransportOptions;
 }
@@ -43,10 +43,11 @@ export class Logger implements ServiceBase {
     const { json, combine } = winston.format;
     const commonProps = { service: [config.ns, config.name].join(".") };
     this.loggers = [];
-    if (!args.noConsole) {
+    const { console = {} } = args;
+    if (console) {
       this.loggers.push(winston.createLogger({
         format: myConsoleFormat(commonProps),
-        transports: [new winston.transports.Console()],
+        transports: [new winston.transports.Console(console)],
       }));
     }
     if (args.http || args.file) {
