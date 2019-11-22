@@ -101,10 +101,7 @@ function shimHandlers(handlers: HandlerFuncMap, havePermision: CheckPermisionFun
     result[id] = (ctx: Context, cb) => {
       const origin = ctx.metadata.get("origin");
       if (!havePermision(String(origin[0]), id)) {
-        cb({
-          code: grpc.status.PERMISSION_DENIED,
-          message: "Permission denied",
-        });
+        cb(new GrpcError(grpc.status.PERMISSION_DENIED, "Permission denied"));
         return;
       }
       ctx.srvs = srvs;
@@ -141,13 +138,9 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
         }
         metadata.add("origin", name);
         const fn = grpcClient[funcName];
-        const unSupportedRes = {
-          message: serviceName + "." + funcName + " is not supported",
-          status: grpc.status.UNIMPLEMENTED,
-        };
         return new Promise((resolve, reject) => {
           if (!fn) {
-            return reject(unSupportedRes);
+            return reject(new GrpcError(grpc.status.UNIMPLEMENTED, serviceName + "." + funcName + " is not supported"));
           }
           grpcClient[funcName](data, metadata, (err, res) => {
             if (err) {
@@ -165,4 +158,13 @@ async function createClients<T>(ctx: SrvContext, args: Args): Promise<T> {
 
 function loadProtoFile(filename: string): grpc.GrpcObject {
   return grpc.loadPackageDefinition(grpcLoader.loadSync(filename));
+}
+
+export class GrpcError extends Error {
+  public readonly code: grpc.status;
+  constructor(code: grpc.status, message: string) {
+    super(message);
+    this.code = code;
+    this.name = "GrpcError";
+  }
 }

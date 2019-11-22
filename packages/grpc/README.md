@@ -20,19 +20,19 @@ Dee({
             address: '127.0.0.1:4444',
             credentials: grpc.ServerCredentials.createInsecure()
           }
-        }
-        getClientConstructOptions: (serviceName => {
+        },
+        getClientConstructOptions: serviceName => {
           return {
             address: '127.0.0.1:4444',
             credentials: grpc.credentials.createInsecure()
           }
-        })
+        },
         serverHandlers: {
           sayHello: async (ctx: DeeGrpc.Context) => {
             await delay(1);
             return { message: ctx.request.name };
           }
-        }
+        },
       }
     }
   }
