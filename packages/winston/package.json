@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-winston",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "A logger service for dee framework, powered by winston",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",

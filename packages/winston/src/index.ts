@@ -7,7 +7,7 @@ import { SrvContext, ServiceBase, Ctor, SrvConfig, STOP_KEY } from "@sigodenjs/d
 export type Service<T extends Logger> = T;
 
 export interface Args {
-  console?: winston.transports.ConsoleTransportOptions | false;
+  console?: winston.transports.ConsoleTransportOptions & { yamlOrJson: "yaml" | "json" } | false;
   file?: winston.transports.FileTransportOptions;
   http?: winston.transports.HttpTransportOptions;
 }
@@ -25,15 +25,13 @@ const myFormat = winston.format((info, opts = {}) => {
   } else {
     messgaeObj = message;
   }
-  Object.assign(info, { level, timestamp: new Date().toISOString(), ...messgaeObj }, opts);
+  Object.assign(info, { level, timestamp: new Date().toISOString(), ...messgaeObj });
   return info;
 });
 
 const myConsoleFormat = winston.format((info, opts) => {
-  const data = { ...info, ...opts, timestamp: new Date().toISOString() };
-  info[MESSAGE] = dump({
-    [info.level]: data,
-  }, { skipInvalid: true });
+  const data = { ...info, timestamp: new Date().toISOString() };
+  info[MESSAGE] = opts.yamlOrJson === "yaml" ? dump({[info.level]: data}, { skipInvalid: true }) : JSON.stringify(data);
   return info;
 });
 
@@ -41,13 +39,15 @@ export class Logger implements ServiceBase {
   public readonly loggers?: winston.Logger[];
   constructor(config: SrvConfig, args: Args) {
     const { json, combine } = winston.format;
-    const commonProps = { service: [config.ns, config.name].join(".") };
+    const defaultMeta = { service: [config.ns, config.name].join(".") };
     this.loggers = [];
-    const { console = {} } = args;
+    const { console = { yamlOrJson: "yaml" } } = args;
     if (console) {
+      const { yamlOrJson = "yaml", ...otherConsoleArgs } = console;
       this.loggers.push(winston.createLogger({
-        format: myConsoleFormat(commonProps),
-        transports: [new winston.transports.Console(console)],
+        defaultMeta,
+        format: myConsoleFormat({ yamlOrJson }),
+        transports: [new winston.transports.Console(otherConsoleArgs)],
       }));
     }
     if (args.http || args.file) {
@@ -59,7 +59,8 @@ export class Logger implements ServiceBase {
         transports.push(new winston.transports.File(args.file));
       }
       this.loggers.push(winston.createLogger({
-        format: combine(myFormat(commonProps), json()),
+        defaultMeta,
+        format: combine(myFormat(), json()),
         transports,
       }));
     }
