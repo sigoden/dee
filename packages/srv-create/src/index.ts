@@ -81,8 +81,11 @@ export async function createSrv<T, U>(ctx: SrvContext, srvName: string, options:
     let init: InitFn<T, U, any>;
     if (typeof options.initialize === "string") {
       init = require(options.initialize).init;
-    } else {
+    } else if (typeof options.initialize === "function") {
       init = options.initialize;
+    } else {
+      debug(`skipping srv ${srvName}`);
+      return null;
     }
     let deps;
     if (init.deps && init.deps.length > 0) {
