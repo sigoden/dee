@@ -5,7 +5,7 @@ services:
     ports:
       - 27017:27017
   redis:
-    image: redis:3.2.5
+    image: redis:5
     environment:
         - REDIS_PASSWORD=redis
     ports:
