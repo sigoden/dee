@@ -31,6 +31,7 @@ export const STOP_KEY = Symbol("stop");
 export const READY_KEY = Symbol("ready");
 
 export interface ServiceBase {
+  [k: string]: any;
   [INIT_KEY]?: () => Promise<void> | void;
   [STOP_KEY]?: () => Promise<void> | void;
   [READY_KEY]?: () => Promise<void> | void;
