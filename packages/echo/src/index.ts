@@ -1,13 +1,9 @@
-import * as Dee from "@sigodenjs/dee";
+import { SrvContext, ServiceBase } from "@sigodenjs/dee-srv";
 
-export type Service<T = {}> = Dee.Service & T;
+export type Service<T> = ServiceBase & T;
+export type Args = any;
 
-export type ServiceOptions = Dee.ServiceOptionsT<Args>;
-
-export interface Args {
-  [k: string]: any;
-}
-
-export async function init<T extends Args>(ctx: Dee.ServiceInitializeContext, args: T): Promise<Service<T>> {
-  return args;
+export async function init<T, U>(ctx: SrvContext, args: U): Promise<Service<T>> {
+  const srv = args as any;
+  return srv as Service<T>;
 }

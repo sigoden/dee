@@ -1,32 +1,32 @@
 /* eslint-disable @typescript-eslint/no-namespace, @typescript-eslint/no-empty-interface */
-import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
-import { Model } from "sequelize";
+import { Model, QueryTypes } from "sequelize";
+import { STOP_KEY, INIT_KEY } from "@sigodenjs/dee-srv";
+import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
 import * as DeeSequelize from "../src";
-import { QueryTypes } from "sequelize";
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-class User extends Model {}
-interface Models {
-  User: User;
-}
+class User extends Model { }
+const ModelMap = {
+  User: User,
+};
+
 
 test("should create sequelize service", async () => {
-  const serviceOptions = <DeeSequelize.ServiceOptions>{
+  const srv = await createSrvLite<DeeSequelize.Service<DeeSequelize.Sequelize<typeof ModelMap>, typeof ModelMap>, DeeSequelize.Args<typeof ModelMap>>("errs", {
     initialize: DeeSequelize.init,
     args: {
       database: "mysql",
       username: "root",
       password: "mysql",
+      models: ModelMap,
       options: {
-        port: 3406,
+        port: 3306,
         dialect: "mysql",
-        logging: false
-      }
-    }
-  };
-  const app = await initApp(HANDLERS, { sequelize: serviceOptions });
-  const srv = <DeeSequelize.Service<Models>>app.srvs.sequelize;
+        logging: false,
+      },
+    },
+  });
   const res = await srv.query("select 1", { type: QueryTypes.SELECT });
   expect(res).toEqual([{ 1: 1 }]);
-  await srv.close();
+  await srv[STOP_KEY]();
 });

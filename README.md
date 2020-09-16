@@ -121,6 +121,6 @@ $ curl localhost:3000/hello?name=dee
 
 ## Licese
 
-Copyright (c) 2018 sigoden
+Copyright (c) 2019 sigoden
 
 Licensed under the MIT license.

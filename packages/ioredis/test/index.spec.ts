@@ -1,16 +1,15 @@
-import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
+import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
+import { STOP_KEY } from "@sigodenjs/dee-srv";
 import * as DeeIORedis from "../src";
 
 test("should create ioredis service", async () => {
-  const serviceOptions = <DeeIORedis.ServiceOptions>{
+  const srv = await createSrvLite<DeeIORedis.Service<DeeIORedis.Redis>, DeeIORedis.Args>("errs", {
     initialize: DeeIORedis.init,
     args: {
-      port: 6479
-    }
-  };
-  const app = await initApp(HANDLERS, { redis: serviceOptions });
-  const srv = <DeeIORedis.Service<{}>>app.srvs.redis;
+      port: 6379,
+    },
+  });
   const result = await srv.ping();
   expect(result).toEqual("PONG");
-  await srv.quit();
+  await srv[STOP_KEY]();
 });

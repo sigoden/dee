@@ -1,32 +1,21 @@
-import * as Dee from "@sigodenjs/dee";
-import * as DeeHttpErr from "@sigodenjs/dee-httperr";
 import * as winston from "winston";
-import { MESSAGE } from 'triple-beam';
+import { MESSAGE } from "triple-beam";
 import { dump } from "js-yaml";
-import { isPlainObject, omit } from "lodash";
+import { isPlainObject } from "lodash";
+import { SrvContext, ServiceBase, Ctor, SrvConfig, STOP_KEY } from "@sigodenjs/dee-srv";
 
-export type Service<T = {}> = Dee.Service & Logger & T;
-
-export type ServiceOptions = Dee.ServiceOptionsT<Args>;
+export type Service<T extends Logger> = T;
 
 export interface Args {
-  noConsole?: boolean;
+  console?: winston.transports.ConsoleTransportOptions & { yamlOrJson: "yaml" | "json" } | false;
   file?: winston.transports.FileTransportOptions;
   http?: winston.transports.HttpTransportOptions;
 }
 
-const OMIT_HEADERS = [
-  "accept",
-  "accept-encoding",
-  "accept-language",
-  "cache-control",
-  "connection ",
-  "cookie",
-  "host",
-  "pragma",
-  "referer",
-  "user-agent",
-]
+export async function init<T extends Logger>(ctx: SrvContext, args: Args, ctor?: Ctor<T>): Promise<Service<T>> {
+  const srv = new (ctor || Logger)(ctx.config, args);
+  return srv as Service<T>;
+}
 
 const myFormat = winston.format((info, opts = {}) => {
   const { level, message } = info;
@@ -36,28 +25,29 @@ const myFormat = winston.format((info, opts = {}) => {
   } else {
     messgaeObj = message;
   }
-  Object.assign(info, { level, timestamp: new Date().toISOString(), ...messgaeObj }, opts);
+  Object.assign(info, { level, timestamp: new Date().toISOString(), ...messgaeObj });
   return info;
 });
 
 const myConsoleFormat = winston.format((info, opts) => {
-  const data = { ...info, ...opts, timestamp: new Date().toISOString() };
-  info[MESSAGE] = dump({
-    [info.level]: data,
-  });
+  const data = { ...info, timestamp: new Date().toISOString() };
+  info[MESSAGE] = opts.yamlOrJson === "yaml" ? dump({[info.level]: data}, { skipInvalid: true }) : JSON.stringify(data);
   return info;
 });
 
-class Logger {
-  private loggers?: winston.Logger[];
-  constructor(config: Dee.Config, args: Args) {
+export class Logger implements ServiceBase {
+  public readonly loggers?: winston.Logger[];
+  constructor(config: SrvConfig, args: Args) {
     const { json, combine } = winston.format;
-    const commonProps =  { service: [config.ns, config.name].join('.') };
+    const defaultMeta = { service: [config.ns, config.name].join(".") };
     this.loggers = [];
-    if (!args.noConsole) {
+    const { console = { yamlOrJson: "yaml" } } = args;
+    if (console) {
+      const { yamlOrJson = "yaml", ...otherConsoleArgs } = console;
       this.loggers.push(winston.createLogger({
-        format: myConsoleFormat(commonProps),
-        transports: [new winston.transports.Console()],
+        defaultMeta,
+        format: myConsoleFormat({ yamlOrJson }),
+        transports: [new winston.transports.Console(otherConsoleArgs)],
       }));
     }
     if (args.http || args.file) {
@@ -69,7 +59,8 @@ class Logger {
         transports.push(new winston.transports.File(args.file));
       }
       this.loggers.push(winston.createLogger({
-        format: combine(myFormat(commonProps), json()),
+        defaultMeta,
+        format: combine(myFormat(), json()),
         transports,
       }));
     }
@@ -78,41 +69,29 @@ class Logger {
     const data = { message, ...extraToObj(extra) };
     this.loggers.forEach(logger => logger.info(data));
   }
+  public debug(message: string, extra: any = {}): void {
+    const data = { message, ...extraToObj(extra) };
+    this.loggers.forEach(logger => logger.debug(data));
+  }
+  public warn(message: string, extra: any = {}): void {
+    const data = { message, ...extraToObj(extra) };
+    this.loggers.forEach(logger => logger.warn(data));
+  }
   public error(message: Error | string, extra: any = {}): void {
     const data = { ...messageToObj(message), ...extraToObj(extra) };
     this.loggers.forEach(logger => logger.error(data));
   }
-  public errorHttp(message: Error | string, req: Dee.Request, extra: any = {}): void {
-    const data = { ...messageToObj(message), ...reqToObj(req), ...extraToObj(extra) };
-    this.loggers.forEach(logger => logger.error(data));
+  public [STOP_KEY]() {
+    return;
   }
-}
-
-export async function init<T>(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<T>> {
-  const logger = new Logger(ctx.srvs.$config, args);
-  return Promise.resolve(logger as Service<T>);
 }
 
 function messageToObj(message: Error | string) {
   if (message instanceof Error) {
-    if (message instanceof DeeHttpErr.HttpErr) {
-      return { message: message.message, stack: message.stack, class: message.name, status: message.status, args: JSON.stringify(message.args) };
-    }
     return { message: message.message, stack: message.stack, class: message.name };
   }
   return { message };
 }
 function extraToObj(extra: any) {
   return isPlainObject(extra) ? extra : { extra };
-}
-function reqToObj(req: Dee.Request) {
-  const { url, body, auth, authM, params, query, headers } = req as any;
-  const data: any = { url, body, params, query, headers: omit(headers, OMIT_HEADERS) }
-  if (auth) {
-    data.auth = auth;
-  }
-  if (authM) {
-    data.authM = authM;
-  }
-  return data;
 }

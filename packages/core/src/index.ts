@@ -2,10 +2,16 @@
 import * as Openapize from "@sigodenjs/openapize";
 import * as express from "express";
 import * as createDebug from "debug";
+import { ServiceGroup, SrvContext, SrvConfig, STOP_KEY } from "@sigodenjs/dee-srv";
+import { createSrvs, ServiceOptionMap } from "@sigodenjs/dee-srv-create";
 import { Server } from "http";
+import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
 
-const debugDee = createDebug('dee');
-const debugDeeSrv = createDebug('dee:srv');
+export { SecurityError, ValidationError } from "@sigodenjs/openapize";
+
+export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler, ServiceGroup };
+
+const debugDee = createDebug("dee");
 
 declare module "express" {
   interface Request {
@@ -13,22 +19,11 @@ declare module "express" {
     srvs: ServiceGroup;
   }
 }
-import { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler } from "express";
-
-export { Request, Response, NextFunction, RequestHandler, Express, ErrorRequestHandler };
 
 const DEFAULT_HOST = "localhost";
 const DEFAULT_PORT = 3000;
 
-declare global {
-  namespace DeeShare {
-    interface ServiceGroup {}
-  }
-}
-
-export { SecurityError, ValidationError } from "@sigodenjs/openapize";
-
-export interface HandlerFuncMap extends Openapize.HandlerFuncMap {}
+export interface HandlerFuncMap extends Openapize.HandlerFuncMap { }
 
 export type AsyncRequestHandler = (req: Request, res: Response, next: NextFunction) => Promise<any>;
 
@@ -47,34 +42,19 @@ export interface Options {
   // run when app is ready
   ready?: (app: App) => void;
   // options to init external services
-  services?: ServicesOptionsMap;
-}
-
-export interface ServiceInitializeContext {
-  srvs: ServiceGroup;
+  services?: ServiceOptionMap;
 }
 
 export interface App {
   srvs: ServiceGroup;
   express: Express;
   start: () => Promise<Server>;
+  stop: () => Promise<void>;
 }
 
-export interface ServiceGroup extends DeeShare.ServiceGroup {
-  $config: Config;
-  $services?: ServicesOptionsMap;
-  [k: string]: Service;
-}
+export interface Service { }
 
-export interface Service {}
-
-export type ServiceInitializeFunc = (
-  ctx: ServiceInitializeContext,
-  args?: any,
-  callback?: (err: Error, srv?: Service) => void
-) => Promise<Service> | void;
-
-export interface Config {
+export interface Config extends SrvConfig {
   // namespace of service
   ns: string;
   // name of app
@@ -85,73 +65,10 @@ export interface Config {
   port?: number;
   // whether production mode
   prod?: boolean;
-  $services?: ServicesOptionsMap;
   [k: string]: any;
 }
 
 export type RouteHooks = (srvs: ServiceGroup, app: Express) => void | RequestHandler[];
-
-export interface ServicesOptionsMap {
-  [k: string]: ServiceOptions;
-}
-
-export interface ServiceOptions {
-  initialize: ServiceInitializeFunc | ServiceInitializeModule;
-  args?: any;
-}
-
-export interface ServiceOptionsT<T> extends ServiceOptions {
-  args: T;
-}
-
-export type ServiceInitializeModule = string;
-
-async function createSrvs(options: Options): Promise<ServiceGroup> {
-  const { services: servicesOpts =  {}, config } = options;
-  const srvs: ServiceGroup = { $config: config, $services: servicesOpts };
-  const promises = Object.keys(servicesOpts).map(srvName => {
-    const srvOptions = servicesOpts[srvName];
-    const ctx = { srvs } as ServiceInitializeContext;
-    return createSrv(ctx, srvName, srvOptions);
-  });
-  await Promise.all(promises);
-  return srvs;
-}
-
-async function createSrv(ctx: ServiceInitializeContext, srvName: string, options: ServiceOptions): Promise<void> {
-  debugDeeSrv(`starting srv ${srvName}`);
-  let srvInitialize: ServiceInitializeFunc;
-  if (typeof options.initialize === "string") {
-    try {
-      srvInitialize = require(options.initialize).init;
-    } catch (err) {
-      throw new Error(`servcie.${srvName}.initialize is a invalid module`);
-    }
-  } else {
-    srvInitialize = options.initialize;
-  }
-  return new Promise<void>((resolve, reject) => {
-    const promise = srvInitialize(ctx, options.args, (err, srv) => {
-      if (err) {
-        reject(new Error(`service.${srvName} has error, ${err.message}`));
-        return;
-      }
-      ctx.srvs[srvName] = srv;
-      resolve();
-    });
-    if (promise && promise.then) {
-      promise
-        .then(srv => {
-          ctx.srvs[srvName] = srv;
-          debugDeeSrv(`done srv ${srvName}`);
-          resolve();
-        })
-        .catch(err => {
-          reject(new Error(`service.${srvName} has error, ${err.message}`));
-        });
-    }
-  });
-}
 
 function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
   if (typeof hooks === "function") {
@@ -164,18 +81,20 @@ function useMiddlewares(srvs: ServiceGroup, app: Express, hooks: RouteHooks) {
 }
 
 export async function init(options: Options): Promise<App> {
-  debugDee("init")
+  debugDee("init");
   const app = express();
-  const srvs = await createSrvs(options);
+  const srvContext: SrvContext = { config: options.config, srvs: { $config: options.config as any } };
+  await createSrvs(srvContext, options.services);
+  const srvs = srvContext.srvs;
   app.use((req: Request, res, next) => {
     req.srvs = srvs;
     next();
   });
   if (options.beforeRoute) {
-    debugDee("beforeRoute")
+    debugDee("beforeRoute");
     useMiddlewares(srvs, app, options.beforeRoute);
   }
-  debugDee("openize")
+  debugDee("openize");
   if (Array.isArray(options.openapize)) {
     for (const openapizeOptions of options.openapize) {
       await Openapize.openapize(app, openapizeOptions);
@@ -184,7 +103,7 @@ export async function init(options: Options): Promise<App> {
     await Openapize.openapize(app, options.openapize);
   }
   if (options.afterRoute) {
-    debugDee("afterRoute")
+    debugDee("afterRoute");
     useMiddlewares(srvs, app, options.afterRoute);
   }
 
@@ -195,15 +114,30 @@ export async function init(options: Options): Promise<App> {
       if (options.errorHandler) {
         app.use(options.errorHandler);
       }
-      debugDee(`listen ${host}:${port}`)
+      debugDee(`listen ${host}:${port}`);
       const server = app.listen(port, host, () => {
         resolve(server);
       });
     });
   };
-  const deeApp = { srvs, express: app, start };
+  const stop = async () => {
+    const errs = [];
+    await Promise.all(Object.keys(srvs).map(async key => {
+      if (srvs[key][STOP_KEY]) {
+        try {
+          await srvs[key][STOP_KEY]();
+        } catch (err) {
+          errs.push({ err, key });
+        }
+      }
+    }));
+    if (errs.length > 0) {
+      throw new DeeStopError(errs);
+    }
+  };
+  const deeApp = { srvs, express: app, start, stop };
   if (options.ready) {
-    debugDee(`ready`)
+    debugDee("ready");
     options.ready(deeApp);
   }
   return deeApp;
@@ -214,4 +148,17 @@ export function resolveAsynRequestHandler(fn: AsyncRequestHandler): RequestHandl
     const fnReturn = fn(req, res, next);
     Promise.resolve(fnReturn).catch(next);
   };
+}
+
+export interface ErrItem {
+  key: string;
+  err: any;
+}
+export class DeeStopError extends Error {
+  public readonly errs: ErrItem[]
+  constructor(errs: ErrItem[]) {
+    super("dee cannot stop");
+    this.errs = errs;
+    this.name = "DeeStopError";
+  }
 }

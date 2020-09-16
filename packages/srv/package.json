@@ -1,34 +1,35 @@
 {
-  "name": "@sigodenjs/dee-test-utils",
-  "version": "0.14.1",
-  "description": "Utility functions for test dee framework and service",
+  "name": "@sigodenjs/dee-srv",
+  "version": "0.18.3",
+  "description": "A way to write and organize service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "copy": "cp src/openapi.yaml dist/",
     "clean": "rimraf dist",
-    "prepublish": "npm run -s clean && npm run -s build && npm run copy"
-  },
-  "publishConfig": {
-    "access": "public"
+    "prepublish": "npm run -s clean && npm run -s build"
   },
   "files": [
     "dist"
   ],
-  "keywords": [],
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "dee",
+    "service"
+  ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
-  "homepage": "https://github.com/sigoden/dee",
+  "homepage": "https://github.com/sigoden/dee/tree/master/packages/ioredis",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.14.0"
   },
   "devDependencies": {
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }
 }

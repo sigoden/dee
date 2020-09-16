@@ -1,19 +1,18 @@
-import { HANDLERS, initApp } from "@sigodenjs/dee-test-utils";
+import { createSrvLite } from "@sigodenjs/dee-srv-test-utils";
+import { STOP_KEY } from "@sigodenjs/dee-srv";
 import * as DeeMongoose from "../src";
 
 test("should create mongoose service", async () => {
-  const serviceOptions = <DeeMongoose.ServiceOptions>{
+  const srv = await createSrvLite<DeeMongoose.Service<DeeMongoose.Mongoose>, DeeMongoose.Args>("mongo", {
     initialize: DeeMongoose.init,
     args: {
-      uris: "mongodb://localhost:28017/test",
+      uris: "mongodb://localhost:27017/test",
       options: {
-        useNewUrlParser: true
-      }
-    }
-  };
-  const app = await initApp(HANDLERS, { mongo: serviceOptions });
-  const srv = <DeeMongoose.Service<any>>app.srvs.mongo;
+        useNewUrlParser: true,
+      },
+    },
+  });
   const res = await srv.connection.db.command({ ping: 1 });
   expect(res.ok).toBe(1);
-  await srv.connection.close();
+  await srv[STOP_KEY]();
 });

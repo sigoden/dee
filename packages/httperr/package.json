@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-httperr",
-  "version": "0.14.6",
+  "version": "0.18.0",
   "description": "A service to handle http error for dee framework",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -17,10 +17,9 @@
   },
   "keywords": [
     "service",
+    "dee",
     "http",
-    "api",
-    "web",
-    "swagger"
+    "errcode"
   ],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "homepage": "https://github.com/sigoden/dee/tree/master/packages/httperr",
@@ -30,13 +29,14 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.14.0",
+    "@sigodenjs/dee": "^0.18.0",
+    "@sigodenjs/dee-srv": "^0.18.0",
     "lodash.template": "^4.4.0"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.14.0",
+    "@sigodenjs/dee-srv-test-utils": "^0.18.0",
     "@types/lodash.template": "^4.4.6",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }
 }

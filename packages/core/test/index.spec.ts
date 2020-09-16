@@ -1,25 +1,19 @@
 import * as supertest from "supertest";
 import * as Dee from "../src";
 import { HANDLERS, initApp, OPENAPI_FILE } from "../test-utils";
-import * as DeeSimple from "./fixtures/simple";
+import * as DeeEcho from "@sigodenjs/dee-echo";
 
 test("should create app instance", async () => {
   const app = await initApp({});
   expect(app.start).toBeDefined();
 });
 
-test("should autobind $config service", async () => {
-  const app = await initApp({});
-  expect(app.srvs.$config.ns).toBe("proj");
-  expect(app.srvs.$config.name).toBe("App");
-});
-
 test("should init and bind service", async () => {
   const args = {};
-  const app = await initApp({}, { simple: { initialize: DeeSimple, args } });
-  const srv = <DeeSimple.Service>app.srvs.simple;
+  const app = await initApp({}, { echo : { initialize: DeeEcho.init, args } });
+  const srv = app.srvs.echo;
   expect(srv).toBeDefined();
-  expect(srv.args).toBe(args);
+  expect(srv).toBe(args);
 });
 
 test("should autobind route", async () => {
@@ -36,14 +30,14 @@ test("should support array options.openapize", async () => {
   const app = await Dee.init({
     config: {
       ns: "proj",
-      name: "App"
+      name: "App",
     },
     openapize: [
       {
         api: OPENAPI_FILE,
-        handlers: HANDLERS
-      }
-    ]
+        handlers: HANDLERS,
+      },
+    ],
   });
   expect(app.start).toBeDefined();
 });
@@ -55,7 +49,7 @@ describe("handler func", () => {
         expect(req.srvs).toBeDefined();
         expect(req.openapi).toBeDefined();
         res.json("");
-      }
+      },
     });
   });
 });

@@ -1,7 +1,7 @@
 {
-  "name": "@sigodenjs/dee-utils",
-  "version": "0.14.0",
-  "description": "Utility functions for dee framework",
+  "name": "@sigodenjs/dee-srv-test-utils",
+  "version": "0.18.0",
+  "description": "Utility functions for test dee service",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "scripts": {
@@ -9,12 +9,12 @@
     "clean": "rimraf dist",
     "prepublish": "npm run -s clean && npm run -s build"
   },
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "keywords": [],
   "author": "Sigoden Huang <sigoden@gmail.com> (https://sigoden.com/)",
   "homepage": "https://github.com/sigoden/dee",
@@ -24,10 +24,11 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@types/node": "^12.0.2"
+    "@sigodenjs/dee-srv": "^0.18.0",
+    "@sigodenjs/dee-srv-create": "^0.18.0"
   },
   "devDependencies": {
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }
 }

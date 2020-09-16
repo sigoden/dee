@@ -1,6 +1,8 @@
 import * as Dee from "@sigodenjs/dee";
 import * as path from "path";
 import * as handlers from "./handlers";
+import * as DeeEcho from "@sigodenjs/dee-echo";
+import * as settings from "./settings";
 
 Dee.init({
   config: {
@@ -10,6 +12,12 @@ Dee.init({
   openapize: {
     api: path.resolve(__dirname, "./openapi.yaml"), //  Openapi doc file
     handlers
+  },
+  services: {
+    settings: {
+      initialize: DeeEcho.init,
+      args: settings
+    }
   },
   errorHandler(
     err: Error,

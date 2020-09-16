@@ -1,19 +1,22 @@
 import * as Dee from "@sigodenjs/dee";
+import { SrvContext, ServiceBase } from "@sigodenjs/dee-srv";
 import template = require("lodash.template");
 
-export type Service<T extends Args = {}> = Dee.Service & ErrorMapT<T>;
-
-export type ServiceOptions = Dee.ServiceOptionsT<Args>;
-
-export type ErrorMapT<T> = { [k in keyof T]: Factory };
+export type Service<T> = ServiceBase & ErrorMap<T>;
 
 export interface Args {
   [k: string]: ErrorParams;
 }
 
-export interface ErrorMap {
-  [k: string]: Factory;
+export async function init(ctx: SrvContext, args: Args): Promise<Service<Args>> {
+  const srv = {};
+  Object.keys(args).forEach(code => {
+    srv[code] = new Factory(code, args[code]);
+  });
+  return srv;
 }
+
+export type ErrorMap<T> = { [k in keyof T]: Factory };
 
 export interface ErrorParams {
   message: string;
@@ -62,7 +65,7 @@ export class Factory {
     return {
       code: this.code,
       message: this.createMessage(args),
-      extra: (args && args.extra) ? args.extra : undefined
+      extra: (args && args.extra) ? args.extra : undefined,
     };
   }
   public resJSON(res: Dee.Response, args?: CallArgs) {
@@ -71,12 +74,4 @@ export class Factory {
   public toError(args?: CallArgs) {
     return new HttpErr(this.createMessage(args), this, args);
   }
-}
-
-export async function init(ctx: Dee.ServiceInitializeContext, args: Args): Promise<Service<Args>> {
-  const srv = {} as Service<Args>;
-  Object.keys(args).forEach(code => {
-    srv[code] = new Factory(code, args[code]);
-  });
-  return srv;
 }

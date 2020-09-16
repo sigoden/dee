@@ -1,6 +1,6 @@
 {
   "name": "@sigodenjs/dee-ioredis",
-  "version": "0.14.1",
+  "version": "0.18.0",
   "description": "A redis service for dee framework, powered by ioredis",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -32,13 +32,13 @@
     "url": "git+https://github.com/sigoden/dee.git"
   },
   "dependencies": {
-    "@sigodenjs/dee": "^0.14.0",
-    "@types/ioredis": "^4.0.10",
-    "ioredis": "^4.9.5"
+    "@sigodenjs/dee-srv": "^0.18.0",
+    "@types/ioredis": "^4.0.18",
+    "ioredis": "^4.14.1"
   },
   "devDependencies": {
-    "@sigodenjs/dee-test-utils": "^0.14.0",
-    "rimraf": "^2.6.3",
+    "@sigodenjs/dee-srv-test-utils": "^0.18.0",
+    "rimraf": "^3.0.0",
     "typescript": "^3.4.5"
   }
 }

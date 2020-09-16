@@ -3,21 +3,16 @@ services:
   mongo:
     image: mongo:3.2
     ports:
-      - 28017:27017
+      - 27017:27017
   redis:
-    image: redis:3.2.5
+    image: redis:5
     environment:
         - REDIS_PASSWORD=redis
     ports:
-      - 6479:6379
+      - 6379:6379
   mysql:
     image: mysql:5.7
     environment:
       - MYSQL_ROOT_PASSWORD=mysql
     ports:
-      - 3406:3306
-  natstreaming:
-    image: nats-streaming
-    ports:
-      - 8322:8222
-      - 4322:4222
+      - 3306:3306

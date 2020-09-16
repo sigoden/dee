@@ -35,7 +35,7 @@ function test(pkgFolder, pathPattern) {
   } catch (err) {
     isAllRight = false;
   }
-  process.stdout.write(`\n`);
+  process.stdout.write("\n");
 }
 
 function existTest(pkgFolder) {
